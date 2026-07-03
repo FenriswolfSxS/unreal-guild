@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unreal Guild | Sword and Staff</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="particles"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#home">
+      <img src="assets/unreal-banner.jpg" alt="Unreal guild banner" />
+      <span>Unreal</span>
+    </a>
+
+    <button class="menu-button" id="menuButton">☰</button>
+
+    <nav class="site-nav" id="siteNav">
+      <a href="#home">Home</a>
+      <a href="#events">Events</a>
+      <a href="#leadership">Leadership</a>
+      <a href="#builds">Builds</a>
+      <a href="#guides">Guides</a>
+      <a href="#recruitment">Recruitment</a>
+      <a href="#page2">Page 2</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <p class="kicker">Sword and Staff Guild</p>
+        <h1>Unreal</h1>
+        <p class="hero-line">United • Relentless • Unreal</p>
+        <div class="hero-actions">
+          <a class="primary-btn" href="https://discord.gg/xWHdMsVxKG" target="_blank">Join Discord</a>
+          <a class="secondary-btn" href="#recruitment">Apply</a>
+        </div>
+      </div>
+      <div class="scroll-cue">Scroll</div>
+    </section>
+
+    <section class="section intro-section">
+      <div class="section-heading">
+        <p class="kicker">Guild Command</p>
+        <h2>Unreal Hub</h2>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card">
+          <span class="feature-icon">⚔️</span>
+          <h3>Guild Clash</h3>
+          <p>Every 2 days. Currently in progress.</p>
+          <div class="countdown" id="guildClashCountdown">Calculating...</div>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-icon">🏰</span>
+          <h3>Conquest</h3>
+          <p>Daily at 1300 and 2000 UTC.</p>
+          <div class="countdown" id="conquestCountdown">Calculating...</div>
+        </article>
+
+        <article class="feature-card">
+          <span class="feature-icon">📚</span>
+          <h3>Guides</h3>
+          <p>Builds, farming, Fantamon, food, and stat information.</p>
+          <a href="#guides">Open Library →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="events">
+      <div class="section-heading">
+        <p class="kicker">War Schedule</p>
+        <h2>Events</h2>
+      </div>
+
+      <div class="event-board">
+        <article class="event-panel">
+          <div>
+            <p class="event-label">Every 2 Days</p>
+            <h3>Guild Clash</h3>
+            <p>Coordinate teams, review strategy, and push Unreal higher.</p>
+          </div>
+          <strong>Currently in progress</strong>
+        </article>
+
+        <article class="event-panel">
+          <div>
+            <p class="event-label">Daily</p>
+            <h3>Conquest</h3>
+            <p>Runs twice daily.</p>
+          </div>
+          <div class="time-pills">
+            <span>1300</span>
+            <span>2000</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="leadership">
+      <div class="section-heading">
+        <p class="kicker">Command Roster</p>
+        <h2>Leadership</h2>
+      </div>
+
+      <div class="leader-grid">
+        <article class="leader-card leader">
+          <img src="assets/troublemaker.jpg" alt="Troublemaker" />
+          <div>
+            <h3>Troublemaker</h3>
+            <p>Guild Leader</p>
+          </div>
+        </article>
+
+        <article class="leader-card deputy">
+          <img src="assets/orijen.jpg" alt="Orijen" />
+          <div>
+            <h3>Orijen</h3>
+            <p>Deputy</p>
+          </div>
+        </article>
+
+        <article class="leader-card deputy">
+          <img src="assets/phee.jpg" alt="Phee" />
+          <div>
+            <h3>Phee</h3>
+            <p>Deputy</p>
+          </div>
+        </article>
+
+        <article class="leader-card officer">
+          <img src="assets/fenriswolf.jpg" alt="Fenriswolf" />
+          <div>
+            <h3>Fenriswolf</h3>
+            <p>Officer</p>
+          </div>
+        </article>
+
+        <article class="leader-card officer">
+          <img src="assets/tez.jpg" alt="Tez" />
+          <div>
+            <h3>Tez</h3>
+            <p>Officer</p>
+          </div>
+        </article>
+
+        <article class="leader-card officer">
+          <img src="assets/xiao-wu.jpg" alt="小伍" />
+          <div>
+            <h3>小伍</h3>
+            <p>Officer</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="notice-card">
+        <h3>Members</h3>
+        <p>Member roster can be added later.</p>
+      </div>
+    </section>
+
+    <section class="section" id="builds">
+      <div class="section-heading">
+        <p class="kicker">Class Archive</p>
+        <h2>Builds</h2>
+      </div>
+
+      <div class="class-grid">
+        <article class="class-card paladin">
+          <img src="assets/paladin-icon.jpg" alt="Paladin icon" />
+          <h3>Paladin</h3>
+          <p>Orange class builds.</p>
+          <ul>
+            <li>Tank Build: To be added</li>
+            <li>Support Build: To be added</li>
+            <li>PvP Build: To be added</li>
+          </ul>
+        </article>
+
+        <article class="class-card beserker">
+          <img src="assets/beserker-icon.jpg" alt="Beserker icon" />
+          <h3>Beserker</h3>
+          <p>Red class builds.</p>
+          <ul>
+            <li>Damage Build: To be added</li>
+            <li>Sustain Build: To be added</li>
+            <li>PvP Build: To be added</li>
+          </ul>
+        </article>
+
+        <article class="class-card archmage">
+          <img src="assets/archmage-icon.jpg" alt="Archmage icon" />
+          <h3>Archmage</h3>
+          <p>Blue class builds.</p>
+          <ul>
+            <li>Burst Build: To be added</li>
+            <li>AoE Build: To be added</li>
+            <li>Control Build: To be added</li>
+          </ul>
+        </article>
+
+        <article class="class-card arcanist">
+          <img src="assets/arcanist-icon.jpg" alt="Arcanist icon" />
+          <h3>Arcanist</h3>
+          <p>Mint class builds.</p>
+          <ul>
+            <li>Magic Damage Build: To be added</li>
+            <li>Utility Build: To be added</li>
+            <li>Support Build: To be added</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="guides">
+      <div class="section-heading">
+        <p class="kicker">Guild Library</p>
+        <h2>Guides</h2>
+      </div>
+
+      <div class="guide-grid">
+        <article><span>⚔️</span><h3>Class Builds</h3><p>Build links and setups.</p></article>
+        <article><span>⛏️</span><h3>Farming Guides</h3><p>Routes, resources, and farming tips.</p></article>
+        <article><span>⭐</span><h3>Fantamon Guides</h3><p>Fantamon info and upgrade tips.</p></article>
+        <article><span>🍖</span><h3>Food Guide</h3><p>Food buffs and activity recommendations.</p></article>
+        <article><span>📊</span><h3>Stat Guide</h3><p>Stat priorities and explanations.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="recruitment">
+      <div class="section-heading">
+        <p class="kicker">Join Unreal</p>
+        <h2>Recruitment</h2>
+      </div>
+
+      <div class="recruit-grid">
+        <article class="notice-card">
+          <h3>Requirements</h3>
+          <p>Requirements will be listed later.</p>
+        </article>
+
+        <article class="notice-card">
+          <h3>Application Form</h3>
+          <p>Add your application form link or embed here.</p>
+        </article>
+
+        <article class="notice-card">
+          <h3>Leave of Absence Form</h3>
+          <p>Add your leave of absence form link or embed here.</p>
+        </article>
+      </div>
+
+      <a class="primary-btn" href="https://discord.gg/xWHdMsVxKG" target="_blank">Join Our Discord</a>
+    </section>
+
+    <section class="section" id="page2">
+      <div class="section-heading">
+        <p class="kicker">Reserved</p>
+        <h2>Page 2</h2>
+      </div>
+
+      <div class="notice-card">
+        <h3>Information Coming Soon</h3>
+        <p>This page is ready for Page 2 information when you provide it later.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <img src="assets/unreal-banner.jpg" alt="Unreal banner" />
+    <p>© Unreal Guild • Sword and Staff</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
