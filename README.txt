@@ -1,23 +1,21 @@
-Unreal Guild Official-Style Website
+Unreal Guild Multi-Page Portal
 
-Open index.html in a browser to preview.
+Upload the CONTENTS of this folder to the root of your GitHub repository.
 
-Files:
+Required root files/folders:
 - index.html
-- styles.css
-- script.js
+- events.html
+- roster.html
+- builds.html
+- guides.html
+- food-guide.html
+- recruitment.html
+- css/
+- js/
 - assets/
 
 Notes:
-- Discord link is set to https://discord.gg/xWHdMsVxKG
-- Sword and Staff text is used throughout.
-- Class colors:
-  Paladin = orange
-  Beserker = red
-  Archmage = blue
-  Arcanist = mint
-- Page 2 is included as a reserved section.
-- Guild Clash countdown uses a placeholder 2-day cycle anchor in script.js.
-  Change the anchor date/time when you know the exact reset time.
-
-Update: Conquest countdown now uses 1300 UTC and 2000 UTC. Food Guide section and screenshots added.
+- Conquest uses 1300 UTC and 2000 UTC.
+- Guild Clash countdown has a placeholder 2-day cycle anchor in js/app.js.
+- Food Guide is now its own page.
+- Guides, Builds, Roster, Events, and Recruitment are separate pages.

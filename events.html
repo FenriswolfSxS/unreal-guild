@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Events | Unreal Guild</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="">
+  <div class="particles"></div>
+  <div class="ambient-glow glow-one"></div>
+  <div class="ambient-glow glow-two"></div>
+
+<header class="site-header">
+  <a class="brand" href="index.html">
+    <img src="assets/unreal-banner.jpg" alt="Unreal guild banner" />
+    <span>Unreal</span>
+  </a>
+
+  <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
+
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="roster.html">Roster</a>
+    <div class="nav-group">
+      <a href="builds.html">Builds ▾</a>
+      <div class="dropdown">
+        <a href="builds.html#paladin">Paladin</a>
+        <a href="builds.html#beserker">Beserker</a>
+        <a href="builds.html#archmage">Archmage</a>
+        <a href="builds.html#arcanist">Arcanist</a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <a href="guides.html">Guides ▾</a>
+      <div class="dropdown">
+        <a href="food-guide.html">Food Guide</a>
+        <a href="guides.html#farming">Farming</a>
+        <a href="guides.html#fantamon">Fantamon</a>
+        <a href="guides.html#stats">Stats</a>
+      </div>
+    </div>
+    <a href="recruitment.html">Recruitment</a>
+    <a class="discord-link" href="https://discord.gg/xWHdMsVxKG" target="_blank">Discord</a>
+  </nav>
+</header>
+
+
+<main class="page-main">
+  <section class="page-hero compact">
+    <p class="kicker">War Schedule</p>
+    <h1>Events</h1>
+    <p>Guild event timing and reminders.</p>
+  </section>
+
+  <section class="section">
+    <div class="event-board">
+      <article class="event-panel">
+        <div>
+          <p class="event-label">Every 2 Days</p>
+          <h2>Guild Clash</h2>
+          <p>Coordinate teams, review strategy, and push Unreal higher.</p>
+          <div class="countdown" id="guildClashCountdown">Calculating...</div>
+        </div>
+        <strong>Currently in progress</strong>
+      </article>
+
+      <article class="event-panel">
+        <div>
+          <p class="event-label">Daily UTC</p>
+          <h2>Conquest</h2>
+          <p>Conquest runs twice daily.</p>
+          <div class="time-pills">
+            <span>1300 UTC</span>
+            <span>2000 UTC</span>
+          </div>
+          <div class="countdown" id="conquestCountdown">Calculating...</div>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+
+<footer class="site-footer">
+  <img src="assets/unreal-banner.jpg" alt="Unreal banner" />
+  <p>© Unreal Guild • Sword and Staff</p>
+</footer>
+<script src="js/app.js"></script>
+</body>
+</html>
+

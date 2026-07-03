@@ -3,433 +3,116 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unreal Guild | Sword and Staff</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Home | Unreal Guild</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body>
+<body class="">
   <div class="particles"></div>
+  <div class="ambient-glow glow-one"></div>
+  <div class="ambient-glow glow-two"></div>
 
-  <header class="site-header">
-    <a class="brand" href="#home">
-      <img src="assets/unreal-banner.jpg" alt="Unreal guild banner" />
-      <span>Unreal</span>
-    </a>
+<header class="site-header">
+  <a class="brand" href="index.html">
+    <img src="assets/unreal-banner.jpg" alt="Unreal guild banner" />
+    <span>Unreal</span>
+  </a>
 
-    <button class="menu-button" id="menuButton">☰</button>
+  <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
 
-    <nav class="site-nav" id="siteNav">
-      <a href="#home">Home</a>
-      <a href="#events">Events</a>
-      <a href="#leadership">Leadership</a>
-      <a href="#builds">Builds</a>
-      <a href="#guides">Guides</a>
-      <a href="#recruitment">Recruitment</a>
-      <a href="#page2">Page 2</a>
-    </nav>
-  </header>
-
-  <main>
-    <section class="hero" id="home">
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <p class="kicker">Sword and Staff Guild</p>
-        <h1>Unreal</h1>
-        <p class="hero-line">United • Relentless • Unreal</p>
-        <div class="hero-actions">
-          <a class="primary-btn" href="https://discord.gg/xWHdMsVxKG" target="_blank">Join Discord</a>
-          <a class="secondary-btn" href="#recruitment">Apply</a>
-        </div>
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="roster.html">Roster</a>
+    <div class="nav-group">
+      <a href="builds.html">Builds ▾</a>
+      <div class="dropdown">
+        <a href="builds.html#paladin">Paladin</a>
+        <a href="builds.html#beserker">Beserker</a>
+        <a href="builds.html#archmage">Archmage</a>
+        <a href="builds.html#arcanist">Arcanist</a>
       </div>
-      <div class="scroll-cue">Scroll</div>
-    </section>
-
-    <section class="section intro-section">
-      <div class="section-heading">
-        <p class="kicker">Guild Command</p>
-        <h2>Unreal Hub</h2>
+    </div>
+    <div class="nav-group">
+      <a href="guides.html">Guides ▾</a>
+      <div class="dropdown">
+        <a href="food-guide.html">Food Guide</a>
+        <a href="guides.html#farming">Farming</a>
+        <a href="guides.html#fantamon">Fantamon</a>
+        <a href="guides.html#stats">Stats</a>
       </div>
+    </div>
+    <a href="recruitment.html">Recruitment</a>
+    <a class="discord-link" href="https://discord.gg/xWHdMsVxKG" target="_blank">Discord</a>
+  </nav>
+</header>
 
-      <div class="feature-grid">
-        <article class="feature-card">
-          <span class="feature-icon">⚔️</span>
-          <h3>Guild Clash</h3>
-          <p>Every 2 days. Currently in progress.</p>
-          <div class="countdown" id="guildClashCountdown">Calculating...</div>
-        </article>
 
-        <article class="feature-card">
-          <span class="feature-icon">🏰</span>
-          <h3>Conquest</h3>
-          <p>Daily at 1300 UTC and 2000 UTC.</p>
-          <div class="countdown" id="conquestCountdown">Calculating...</div>
-        </article>
-
-        <article class="feature-card">
-          <span class="feature-icon">📚</span>
-          <h3>Guides</h3>
-          <p>Builds, farming, Fantamon, food, and stat information.</p>
-          <a href="#guides">Open Library →</a>
-        </article>
+<main>
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content rune-frame">
+      <p class="kicker">Sword and Staff Guild</p>
+      <h1>Unreal</h1>
+      <p class="hero-line">United • Relentless • Unreal</p>
+      <div class="hero-actions">
+        <a class="primary-btn" href="https://discord.gg/xWHdMsVxKG" target="_blank">Join Discord</a>
+        <a class="secondary-btn" href="recruitment.html">Apply</a>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section" id="events">
-      <div class="section-heading">
-        <p class="kicker">War Schedule</p>
-        <h2>Events</h2>
-      </div>
+  <section class="section">
+    <div class="section-heading">
+      <p class="kicker">Guild Command</p>
+      <h2>Unreal Hub</h2>
+    </div>
 
-      <div class="event-board">
-        <article class="event-panel">
-          <div>
-            <p class="event-label">Every 2 Days</p>
-            <h3>Guild Clash</h3>
-            <p>Coordinate teams, review strategy, and push Unreal higher.</p>
-          </div>
-          <strong>Currently in progress</strong>
-        </article>
-
-        <article class="event-panel">
-          <div>
-            <p class="event-label">Daily</p>
-            <h3>Conquest</h3>
-            <p>Runs twice daily at local time.</p>
-          </div>
-          <div class="time-pills">
-            <span>1300 UTC</span>
-            <span>2000 UTC</span>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="leadership">
-      <div class="section-heading">
-        <p class="kicker">Command Roster</p>
-        <h2>Leadership</h2>
-      </div>
-
-      <div class="leader-grid">
-        <article class="leader-card leader">
-          <img src="assets/troublemaker.jpg" alt="Troublemaker" />
-          <div>
-            <h3>Troublemaker</h3>
-            <p>Guild Leader</p>
-          </div>
-        </article>
-
-        <article class="leader-card deputy">
-          <img src="assets/orijen.jpg" alt="Orijen" />
-          <div>
-            <h3>Orijen</h3>
-            <p>Deputy</p>
-          </div>
-        </article>
-
-        <article class="leader-card deputy">
-          <img src="assets/phee.jpg" alt="Phee" />
-          <div>
-            <h3>Phee</h3>
-            <p>Deputy</p>
-          </div>
-        </article>
-
-        <article class="leader-card officer">
-          <img src="assets/fenriswolf.jpg" alt="Fenriswolf" />
-          <div>
-            <h3>Fenriswolf</h3>
-            <p>Officer</p>
-          </div>
-        </article>
-
-        <article class="leader-card officer">
-          <img src="assets/tez.jpg" alt="Tez" />
-          <div>
-            <h3>Tez</h3>
-            <p>Officer</p>
-          </div>
-        </article>
-
-        <article class="leader-card officer">
-          <img src="assets/xiao-wu.jpg" alt="小伍" />
-          <div>
-            <h3>小伍</h3>
-            <p>Officer</p>
-          </div>
-        </article>
-      </div>
-
-      <div class="notice-card">
-        <h3>Members</h3>
-        <p>Member roster can be added later.</p>
-      </div>
-    </section>
-
-    <section class="section" id="builds">
-      <div class="section-heading">
-        <p class="kicker">Class Archive</p>
-        <h2>Builds</h2>
-      </div>
-
-      <div class="class-grid">
-        <article class="class-card paladin">
-          <img src="assets/paladin-icon.jpg" alt="Paladin icon" />
-          <h3>Paladin</h3>
-          <p>Orange class builds.</p>
-          <ul>
-            <li>Tank Build: To be added</li>
-            <li>Support Build: To be added</li>
-            <li>PvP Build: To be added</li>
-          </ul>
-        </article>
-
-        <article class="class-card beserker">
-          <img src="assets/beserker-icon.jpg" alt="Beserker icon" />
-          <h3>Beserker</h3>
-          <p>Red class builds.</p>
-          <ul>
-            <li>Damage Build: To be added</li>
-            <li>Sustain Build: To be added</li>
-            <li>PvP Build: To be added</li>
-          </ul>
-        </article>
-
-        <article class="class-card archmage">
-          <img src="assets/archmage-icon.jpg" alt="Archmage icon" />
-          <h3>Archmage</h3>
-          <p>Blue class builds.</p>
-          <ul>
-            <li>Burst Build: To be added</li>
-            <li>AoE Build: To be added</li>
-            <li>Control Build: To be added</li>
-          </ul>
-        </article>
-
-        <article class="class-card arcanist">
-          <img src="assets/arcanist-icon.jpg" alt="Arcanist icon" />
-          <h3>Arcanist</h3>
-          <p>Mint class builds.</p>
-          <ul>
-            <li>Magic Damage Build: To be added</li>
-            <li>Utility Build: To be added</li>
-            <li>Support Build: To be added</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="guides">
-      <div class="section-heading">
-        <p class="kicker">Guild Library</p>
-        <h2>Guides</h2>
-      </div>
-
-      <div class="guide-grid">
-        <article><span>⚔️</span><h3>Class Builds</h3><p>Build links and setups.</p></article>
-        <article><span>⛏️</span><h3>Farming Guides</h3><p>Routes, resources, and farming tips.</p></article>
-        <article><span>⭐</span><h3>Fantamon Guides</h3><p>Fantamon info and upgrade tips.</p></article>
-        <article class="guide-link-card" onclick="location.href='#food-guide'"><span>🍖</span><h3>Food Guide</h3><p>Food system, recipes, farm locations, and screenshots by map.</p><a href="#food-guide">Open Food Guide →</a></article>
-        <article><span>📊</span><h3>Stat Guide</h3><p>Stat priorities and explanations.</p></article>
-      </div>
-    </section>
-
-
-    <section class="section food-guide-section" id="food-guide">
-      <div class="section-heading">
-        <p class="kicker">Author: Phee</p>
-        <h2>Sword X Staff Food System</h2>
-      </div>
-
-      <article class="guide-article">
-        <h3>Intro</h3>
-        <p>
-          The food system in SxS is an overlooked, mainly free-to-play in-game system
-          to increase stats during battles and grant permanent stats depending on the
-          type and rarity of the food recipe.
-        </p>
-        <p>
-          Recipe materials can and should be farmed daily from each of the world maps
-          in game.
-        </p>
-        <p>
-          There are daily caps for each level of rarity of food items: normal, rare,
-          and epic. There are also mining nodes for refined ore on all world maps,
-          excluding the beginning zone. These mining nodes also have a daily cap. The
-          daily cap allows all players to have an opportunity to collect food materials
-          and refined ore without having to fight other players trying to hoard these
-          resources.
-        </p>
-        <p>
-          The rarity level of a material affects the number of that material on a map.
-          Normal food items are plentiful. Rare items are fewer in number but still
-          easy to gather. Epic materials spawn 1–2 per map with a respawn timer.
-        </p>
-        <p>
-          Normal food material nodes can give either normal or rare quality materials.
-          Rare nodes can give rare or epic quality materials. Epic nodes can give epic
-          or legendary quality food materials.
-        </p>
-        <p>
-          Each zone map also has mushrooms and green grains that are considered food
-          materials, but there is no limit to how much you can farm these two materials.
-          These materials are useful for normal HP replenishment foods and some rare
-          level recipes.
-        </p>
-
-        <h3>Food System Breakdown</h3>
-        <p>
-          The SxS food system grants permanent stats by eating for the following stats:
-          <strong>Attack, HP, Def, and Speed</strong>.
-        </p>
-        <p>
-          Depending on your class and play style, some stats may not be as high of a
-          priority, but all of these stats are helpful for surviving PvP and PvE content.
-        </p>
-        <p>
-          Recipes can be obtained from commission quests, the map town vendor, and the
-          auction. Only epic, legendary, and mythic recipes can be sold on the auction.
-          Rare recipes can be bought from town vendors. Epic and legendary recipes have
-          only been seen in commission quests at this point in the game.
-        </p>
-        <p>
-          Each recipe is tied to a region based on its ingredients. Current known
-          regions are <strong>Verdantglade</strong>, <strong>Cinder Ridge</strong>, and
-          <strong>Aqualis</strong>. Loong Haven should also follow this pattern.
-        </p>
-
-        <div class="recipe-grid">
-          <section class="recipe-card verdant">
-            <h3>Verdantglade</h3>
-            <h4>Recipes</h4>
-            <p><strong>Legendary:</strong> Sunshine Scramble, Roundberry Cake</p>
-            <p><strong>Epic:</strong> Honeyed Roast, Kanstein Burger, Sweet 'n' Sour Meat, Rounbery Wine</p>
-            <p><strong>Rare:</strong> Stewed Meat and Potatoes, Cheerful Greens, Meat &amp; Veggie Pot</p>
-            <h4>Items to Farm</h4>
-            <ul>
-              <li>Refined Ore</li>
-              <li>Potato — Normal</li>
-              <li>Rounberry — Rare</li>
-              <li>Bird Egg — Epic</li>
-            </ul>
-          </section>
-
-          <section class="recipe-card cinder">
-            <h3>Cinder Ridge</h3>
-            <h4>Recipes</h4>
-            <p><strong>Legendary:</strong> Solar Halo, Curry Feast</p>
-            <p><strong>Epic:</strong> Fruit Glazed Stew, Tangine Pot Stew, Roasted Meat with Chestnuts, Toasted Sweet Nut</p>
-            <p><strong>Rare:</strong> Mushroom and Meat Skewers, Mushroom Soup, Prickly Refesher</p>
-            <h4>Items to Farm</h4>
-            <ul>
-              <li>Refined Ore</li>
-              <li>Pear — Normal</li>
-              <li>Chestnut — Rare</li>
-              <li>Oasis — Epic</li>
-            </ul>
-          </section>
-
-          <section class="recipe-card aqualis">
-            <h3>Aqualis</h3>
-            <h4>Recipes</h4>
-            <p><strong>Legendary:</strong> Lucky Sashimi</p>
-            <p><strong>Epic:</strong> Ocean's Bounty Platter, Fish Tempura</p>
-            <p><strong>Rare:</strong> Ocean Greens, Verdant Sushi, Oden</p>
-            <h4>Items to Farm</h4>
-            <ul>
-              <li>Refined Ore</li>
-              <li>Leaf — Normal</li>
-              <li>Fish — Rare</li>
-              <li>Octopus — Epic</li>
-            </ul>
-            <p>
-              Special note: Any water location can spawn fish and octopus. Leaf can
-              spawn on land or water. Fish and octopus will not spawn on land areas.
-            </p>
-          </section>
-        </div>
-
-        <h3>Food Material Screenshots by Map</h3>
-
-        <h4>Verdantglade</h4>
-        <div class="screenshot-grid">
-          <figure><img src="assets/food-verdantglade-xvii-3.png" alt="Verdantglade XVII food material screenshot"><figcaption>Verdantglade XVII</figcaption></figure>
-          <figure><img src="assets/food-verdantglade-xvii-2.png" alt="Verdantglade XVII food material screenshot"><figcaption>Verdantglade XVII</figcaption></figure>
-          <figure><img src="assets/food-verdantglade-xvii.png" alt="Verdantglade XVII food material screenshot"><figcaption>Verdantglade XVII</figcaption></figure>
-          <figure><img src="assets/food-verdantglade-iv.png" alt="Verdantglade IV food material screenshot"><figcaption>Verdantglade IV</figcaption></figure>
-        </div>
-
-        <h4>Cinder Ridge</h4>
-        <div class="screenshot-grid">
-          <figure><img src="assets/food-cinder-ridge-xviii-3.png" alt="Cinder Ridge XVIII food material screenshot"><figcaption>Cinder Ridge XVIII</figcaption></figure>
-          <figure><img src="assets/food-cinder-ridge-xviii-2.png" alt="Cinder Ridge XVIII food material screenshot"><figcaption>Cinder Ridge XVIII</figcaption></figure>
-          <figure><img src="assets/food-cinder-ridge-xviii.png" alt="Cinder Ridge XVIII food material screenshot"><figcaption>Cinder Ridge XVIII</figcaption></figure>
-        </div>
-
-        <h4>Aqualis</h4>
-        <div class="screenshot-grid">
-          <figure><img src="assets/food-aqualis-hellhold-2.png" alt="Aqualis Hellhold food material screenshot"><figcaption>Aqualis Hellhold</figcaption></figure>
-          <figure><img src="assets/food-aqualis-hellhold.png" alt="Aqualis Hellhold food material screenshot"><figcaption>Aqualis Hellhold</figcaption></figure>
-          <figure><img src="assets/food-aqualis-coral-maze.png" alt="Aqualis Coral Maze food material screenshot"><figcaption>Aqualis Coral Maze</figcaption></figure>
-        </div>
-
-        <h3>Closing</h3>
-        <p>
-          These screenshots show what food material nodes look like on the map, what
-          the cap message looks like when farming, and some locations for epic grade
-          food materials. These locations are not exhaustive.
-        </p>
-        <p>
-          If you have any questions or need additional information, feel free to
-          <strong>@Phee</strong> in Discord or PM Phee in game.
-        </p>
+    <div class="feature-grid">
+      <article class="feature-card">
+        <span class="feature-icon">⚔️</span>
+        <h3>Guild Clash</h3>
+        <p>Every 2 days. Currently in progress.</p>
+        <div class="countdown" id="guildClashCountdown">Calculating...</div>
       </article>
-    </section>
+
+      <article class="feature-card">
+        <span class="feature-icon">🏰</span>
+        <h3>Conquest</h3>
+        <p>Daily at 1300 UTC and 2000 UTC.</p>
+        <div class="countdown" id="conquestCountdown">Calculating...</div>
+      </article>
+
+      <article class="feature-card">
+        <span class="feature-icon">📚</span>
+        <h3>Guild Library</h3>
+        <p>Builds, farming, Fantamon, food, and stat information.</p>
+        <a href="guides.html">Open Library →</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="section split-section">
+    <div class="notice-card large-card">
+      <p class="kicker">Featured Guide</p>
+      <h2>Food System</h2>
+      <p>Phee's guide explains recipes, food materials, rarity, permanent stats, daily caps, and farming locations by region.</p>
+      <a class="primary-btn small" href="food-guide.html">Open Food Guide</a>
+    </div>
+
+    <div class="notice-card large-card dragon-card">
+      <p class="kicker">Guild Identity</p>
+      <h2>Unreal Banner</h2>
+      <p>The dragon banner now anchors the site identity across every page.</p>
+    </div>
+  </section>
+</main>
 
 
-    <section class="section" id="recruitment">
-      <div class="section-heading">
-        <p class="kicker">Join Unreal</p>
-        <h2>Recruitment</h2>
-      </div>
-
-      <div class="recruit-grid">
-        <article class="notice-card">
-          <h3>Requirements</h3>
-          <p>Requirements will be listed later.</p>
-        </article>
-
-        <article class="notice-card">
-          <h3>Application Form</h3>
-          <p>Add your application form link or embed here.</p>
-        </article>
-
-        <article class="notice-card">
-          <h3>Leave of Absence Form</h3>
-          <p>Add your leave of absence form link or embed here.</p>
-        </article>
-      </div>
-
-      <a class="primary-btn" href="https://discord.gg/xWHdMsVxKG" target="_blank">Join Our Discord</a>
-    </section>
-
-    <section class="section" id="page2">
-      <div class="section-heading">
-        <p class="kicker">Reserved</p>
-        <h2>Page 2</h2>
-      </div>
-
-      <div class="notice-card">
-        <h3>Information Coming Soon</h3>
-        <p>This page is ready for Page 2 information when you provide it later.</p>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <img src="assets/unreal-banner.jpg" alt="Unreal banner" />
-    <p>© Unreal Guild • Sword and Staff</p>
-  </footer>
-
-  <script src="script.js"></script>
+<footer class="site-footer">
+  <img src="assets/unreal-banner.jpg" alt="Unreal banner" />
+  <p>© Unreal Guild • Sword and Staff</p>
+</footer>
+<script src="js/app.js"></script>
 </body>
 </html>
+
