@@ -60,7 +60,7 @@
         <article class="feature-card">
           <span class="feature-icon">🏰</span>
           <h3>Conquest</h3>
-          <p>Daily at 1300 and 2000 UTC.</p>
+          <p>Daily at 1300 UTC and 2000 UTC.</p>
           <div class="countdown" id="conquestCountdown">Calculating...</div>
         </article>
 
@@ -93,11 +93,11 @@
           <div>
             <p class="event-label">Daily</p>
             <h3>Conquest</h3>
-            <p>Runs twice daily.</p>
+            <p>Runs twice daily at local time.</p>
           </div>
           <div class="time-pills">
-            <span>1300</span>
-            <span>2000</span>
+            <span>1300 UTC</span>
+            <span>2000 UTC</span>
           </div>
         </article>
       </div>
@@ -228,10 +228,163 @@
         <article><span>⚔️</span><h3>Class Builds</h3><p>Build links and setups.</p></article>
         <article><span>⛏️</span><h3>Farming Guides</h3><p>Routes, resources, and farming tips.</p></article>
         <article><span>⭐</span><h3>Fantamon Guides</h3><p>Fantamon info and upgrade tips.</p></article>
-        <article><span>🍖</span><h3>Food Guide</h3><p>Food buffs and activity recommendations.</p></article>
+        <article class="guide-link-card" onclick="location.href='#food-guide'"><span>🍖</span><h3>Food Guide</h3><p>Food system, recipes, farm locations, and screenshots by map.</p><a href="#food-guide">Open Food Guide →</a></article>
         <article><span>📊</span><h3>Stat Guide</h3><p>Stat priorities and explanations.</p></article>
       </div>
     </section>
+
+
+    <section class="section food-guide-section" id="food-guide">
+      <div class="section-heading">
+        <p class="kicker">Author: Phee</p>
+        <h2>Sword X Staff Food System</h2>
+      </div>
+
+      <article class="guide-article">
+        <h3>Intro</h3>
+        <p>
+          The food system in SxS is an overlooked, mainly free-to-play in-game system
+          to increase stats during battles and grant permanent stats depending on the
+          type and rarity of the food recipe.
+        </p>
+        <p>
+          Recipe materials can and should be farmed daily from each of the world maps
+          in game.
+        </p>
+        <p>
+          There are daily caps for each level of rarity of food items: normal, rare,
+          and epic. There are also mining nodes for refined ore on all world maps,
+          excluding the beginning zone. These mining nodes also have a daily cap. The
+          daily cap allows all players to have an opportunity to collect food materials
+          and refined ore without having to fight other players trying to hoard these
+          resources.
+        </p>
+        <p>
+          The rarity level of a material affects the number of that material on a map.
+          Normal food items are plentiful. Rare items are fewer in number but still
+          easy to gather. Epic materials spawn 1–2 per map with a respawn timer.
+        </p>
+        <p>
+          Normal food material nodes can give either normal or rare quality materials.
+          Rare nodes can give rare or epic quality materials. Epic nodes can give epic
+          or legendary quality food materials.
+        </p>
+        <p>
+          Each zone map also has mushrooms and green grains that are considered food
+          materials, but there is no limit to how much you can farm these two materials.
+          These materials are useful for normal HP replenishment foods and some rare
+          level recipes.
+        </p>
+
+        <h3>Food System Breakdown</h3>
+        <p>
+          The SxS food system grants permanent stats by eating for the following stats:
+          <strong>Attack, HP, Def, and Speed</strong>.
+        </p>
+        <p>
+          Depending on your class and play style, some stats may not be as high of a
+          priority, but all of these stats are helpful for surviving PvP and PvE content.
+        </p>
+        <p>
+          Recipes can be obtained from commission quests, the map town vendor, and the
+          auction. Only epic, legendary, and mythic recipes can be sold on the auction.
+          Rare recipes can be bought from town vendors. Epic and legendary recipes have
+          only been seen in commission quests at this point in the game.
+        </p>
+        <p>
+          Each recipe is tied to a region based on its ingredients. Current known
+          regions are <strong>Verdantglade</strong>, <strong>Cinder Ridge</strong>, and
+          <strong>Aqualis</strong>. Loong Haven should also follow this pattern.
+        </p>
+
+        <div class="recipe-grid">
+          <section class="recipe-card verdant">
+            <h3>Verdantglade</h3>
+            <h4>Recipes</h4>
+            <p><strong>Legendary:</strong> Sunshine Scramble, Roundberry Cake</p>
+            <p><strong>Epic:</strong> Honeyed Roast, Kanstein Burger, Sweet 'n' Sour Meat, Rounbery Wine</p>
+            <p><strong>Rare:</strong> Stewed Meat and Potatoes, Cheerful Greens, Meat &amp; Veggie Pot</p>
+            <h4>Items to Farm</h4>
+            <ul>
+              <li>Refined Ore</li>
+              <li>Potato — Normal</li>
+              <li>Rounberry — Rare</li>
+              <li>Bird Egg — Epic</li>
+            </ul>
+          </section>
+
+          <section class="recipe-card cinder">
+            <h3>Cinder Ridge</h3>
+            <h4>Recipes</h4>
+            <p><strong>Legendary:</strong> Solar Halo, Curry Feast</p>
+            <p><strong>Epic:</strong> Fruit Glazed Stew, Tangine Pot Stew, Roasted Meat with Chestnuts, Toasted Sweet Nut</p>
+            <p><strong>Rare:</strong> Mushroom and Meat Skewers, Mushroom Soup, Prickly Refesher</p>
+            <h4>Items to Farm</h4>
+            <ul>
+              <li>Refined Ore</li>
+              <li>Pear — Normal</li>
+              <li>Chestnut — Rare</li>
+              <li>Oasis — Epic</li>
+            </ul>
+          </section>
+
+          <section class="recipe-card aqualis">
+            <h3>Aqualis</h3>
+            <h4>Recipes</h4>
+            <p><strong>Legendary:</strong> Lucky Sashimi</p>
+            <p><strong>Epic:</strong> Ocean's Bounty Platter, Fish Tempura</p>
+            <p><strong>Rare:</strong> Ocean Greens, Verdant Sushi, Oden</p>
+            <h4>Items to Farm</h4>
+            <ul>
+              <li>Refined Ore</li>
+              <li>Leaf — Normal</li>
+              <li>Fish — Rare</li>
+              <li>Octopus — Epic</li>
+            </ul>
+            <p>
+              Special note: Any water location can spawn fish and octopus. Leaf can
+              spawn on land or water. Fish and octopus will not spawn on land areas.
+            </p>
+          </section>
+        </div>
+
+        <h3>Food Material Screenshots by Map</h3>
+
+        <h4>Verdantglade</h4>
+        <div class="screenshot-grid">
+          <figure><img src="assets/food-verdantglade-xvii-3.png" alt="Verdantglade XVII food material screenshot"><figcaption>Verdantglade XVII</figcaption></figure>
+          <figure><img src="assets/food-verdantglade-xvii-2.png" alt="Verdantglade XVII food material screenshot"><figcaption>Verdantglade XVII</figcaption></figure>
+          <figure><img src="assets/food-verdantglade-xvii.png" alt="Verdantglade XVII food material screenshot"><figcaption>Verdantglade XVII</figcaption></figure>
+          <figure><img src="assets/food-verdantglade-iv.png" alt="Verdantglade IV food material screenshot"><figcaption>Verdantglade IV</figcaption></figure>
+        </div>
+
+        <h4>Cinder Ridge</h4>
+        <div class="screenshot-grid">
+          <figure><img src="assets/food-cinder-ridge-xviii-3.png" alt="Cinder Ridge XVIII food material screenshot"><figcaption>Cinder Ridge XVIII</figcaption></figure>
+          <figure><img src="assets/food-cinder-ridge-xviii-2.png" alt="Cinder Ridge XVIII food material screenshot"><figcaption>Cinder Ridge XVIII</figcaption></figure>
+          <figure><img src="assets/food-cinder-ridge-xviii.png" alt="Cinder Ridge XVIII food material screenshot"><figcaption>Cinder Ridge XVIII</figcaption></figure>
+        </div>
+
+        <h4>Aqualis</h4>
+        <div class="screenshot-grid">
+          <figure><img src="assets/food-aqualis-hellhold-2.png" alt="Aqualis Hellhold food material screenshot"><figcaption>Aqualis Hellhold</figcaption></figure>
+          <figure><img src="assets/food-aqualis-hellhold.png" alt="Aqualis Hellhold food material screenshot"><figcaption>Aqualis Hellhold</figcaption></figure>
+          <figure><img src="assets/food-aqualis-coral-maze.png" alt="Aqualis Coral Maze food material screenshot"><figcaption>Aqualis Coral Maze</figcaption></figure>
+        </div>
+
+        <h3>Closing</h3>
+        <p>
+          These screenshots show what food material nodes look like on the map, what
+          the cap message looks like when farming, and some locations for epic grade
+          food materials. These locations are not exhaustive.
+        </p>
+        <p>
+          If you have any questions or need additional information, feel free to
+          <strong>@Phee</strong> in Discord or PM Phee in game.
+        </p>
+      </article>
+    </section>
+
 
     <section class="section" id="recruitment">
       <div class="section-heading">

@@ -27,10 +27,12 @@ function formatCountdown(ms) {
 
 function nextConquestTime() {
   const now = new Date();
+
+  // Conquest times are UTC: 1300 UTC and 2000 UTC.
   const options = [
-    new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 0),
-    new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 0, 0),
-    new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 9, 0, 0)
+    new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 13, 0, 0)),
+    new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 20, 0, 0)),
+    new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 13, 0, 0))
   ];
 
   return options.find((time) => time > now);
