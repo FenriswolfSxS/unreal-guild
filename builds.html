@@ -6,138 +6,150 @@
   <title>Build Lab | Unreal Guild</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body class="builds-page">
+<body class="builds-page theme-red forge-ui">
   <div class="particles"></div>
   <div class="ambient-glow glow-one"></div>
   <div class="ambient-glow glow-two"></div>
 
-<header class="site-header">
-  <a class="brand" href="index.html">
+<header class="site-header forge-header">
+  <a class="brand forge-brand" href="index.html">
     <img src="assets/unreal-banner.jpg" alt="Unreal guild banner" />
-    <span>Unreal</span>
+    <span><em>Class Forge</em>Build Lab</span>
   </a>
   <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
   <nav class="site-nav" id="siteNav">
     <a href="index.html">Home</a>
     <a href="events.html">Events</a>
     <a href="roster.html">Roster</a>
-    <div class="nav-group">
-      <a href="builds.html">Build Lab ▾</a>
-      <div class="dropdown">
-        <a href="builds.html#duelist-line">Duelist Line</a>
-        <a href="builds.html#knight-line">Knight Line</a>
-        <a href="builds.html#sorcerer-line">Sorcerer Line</a>
-        <a href="builds.html#sage-line">Sage Line</a>
-      </div>
-    </div>
-    <div class="nav-group">
-      <a href="guides.html">Guides ▾</a>
-      <div class="dropdown">
-        <a href="food-guide.html">Food Guide</a>
-        <a href="guides.html#farming">Farming</a>
-        <a href="guides.html#fantamon">Fantamon</a>
-        <a href="guides.html#stats">Stats</a>
-      </div>
-    </div>
+    <a class="active" href="builds.html">Build Lab</a>
+    <a href="food-guide.html">Food Guide</a>
+    <a href="guides.html">Guides</a>
     <a href="recruitment.html">Recruitment</a>
     <a class="discord-link" href="https://discord.gg/xWHdMsVxKG" target="_blank">Discord</a>
   </nav>
 </header>
 
-<main class="page-main build-lab">
-  <section class="page-hero compact build-hero">
-    <p class="kicker">Class Forge</p>
-    <h1>Build Lab</h1>
-    <p>Choose a class path, pick your current tier, then fill 4 Techniques and 4 Charms. Higher tiers include every earlier tier in the same path.</p>
-  </section>
+<main class="forge-shell">
+  <aside class="forge-sidebar">
+    <a href="index.html">⌂ <span>Home</span></a>
+    <a href="events.html">▣ <span>Events</span></a>
+    <a href="roster.html">♜ <span>Roster</span></a>
+    <a class="active" href="builds.html">⚒ <span>Build Lab</span></a>
+    <a href="#skill-codex">◈ <span>Skill Codex</span><b>232</b></a>
+    <a href="guides.html">✦ <span>Guides</span></a>
+    <a href="recruitment.html">☻ <span>Recruitment</span></a>
+    <div class="discord-card">💬<strong>Join our Discord</strong><small>Connect with the guild!</small></div>
+  </aside>
 
-  <section class="section class-picker-panel">
-    <div class="class-picker-header">
-      <p class="kicker">Choose Path</p>
-      <h2>Class Trees</h2>
-    </div>
-    <div class="class-tree-picker" id="classTreePicker"></div>
-  </section>
-
-  <section class="section tier-picker-panel">
-    <div class="class-picker-header">
-      <p class="kicker">Choose Tier</p>
-      <h2 id="tierPanelTitle">Warrior → Duelist → Berserker → Conqueror</h2>
-    </div>
-    <div class="tier-picker" id="tierPicker"></div>
-  </section>
-
-  <section class="section build-save-panel">
-    <div class="save-row">
-      <label for="buildName">Build Name</label>
-      <input id="buildName" type="text" placeholder="Name this build" />
-      <button id="saveBuild" class="portal-button" type="button">Save Build</button>
-    </div>
-    <div class="saved-row">
-      <label for="savedBuilds">Saved Builds</label>
-      <select id="savedBuilds"><option value="">No saved builds yet</option></select>
-      <button id="deleteBuild" class="ghost-button" type="button">Delete</button>
-    </div>
-    <p id="saveStatus" class="save-status">No default build loaded. Start with empty slots.</p>
-  </section>
-
-  <section class="section build-builder-grid">
-    <article class="build-board">
-      <div class="build-board-topline"></div>
-      <div class="board-header">
-        <div>
-          <p class="kicker" id="currentPathLabel">Red Path</p>
-          <h2 id="currentBuildTitle">Unnamed Build</h2>
-        </div>
-        <span class="build-class-pill" id="currentTierPill">Warrior</span>
+  <section class="forge-main">
+    <section class="forge-hero">
+      <div>
+        <p class="kicker">Class Forge</p>
+        <h1>Build Lab</h1>
+        <p>Choose a class path, pick your current tier, then fill 4 Techniques and 4 Charms. Higher tiers include every earlier tier in the same path.</p>
       </div>
+      <div class="forge-actions">
+        <span class="total-skills-badge">✴ 232 Total Skills</span>
+        <button id="saveBuild" class="save-build-top" type="button">Save Build</button>
+      </div>
+    </section>
 
-      <div class="skill-row-title"><span>Techniques</span><em id="techCount">0 / 4</em></div>
-      <div class="skill-slots" id="techniqueSlots"></div>
+    <div class="forge-grid">
+      <section class="forge-card path-card step-card">
+        <div class="step-title"><span>1</span><h2>Choose a Class Path</h2></div>
+        <div class="class-tree-picker" id="classTreePicker"></div>
+      </section>
 
-      <div class="skill-row-title"><span>Charms</span><em id="charmCount">0 / 4</em></div>
-      <div class="skill-slots" id="charmSlots"></div>
-    </article>
+      <section class="forge-card tier-card step-card">
+        <div class="step-title"><span>2</span><h2>Choose Your Current Tier</h2><small>Higher tiers include all previous tier skills</small></div>
+        <div class="selected-path-line">Selected Path: <b id="currentPathLabel">Red Path</b></div>
+        <h3 id="tierPanelTitle">Warrior → Duelist → Berserker → Conqueror → Ravager</h3>
+        <div class="tier-picker" id="tierPicker"></div>
+      </section>
 
-    <aside class="skill-detail-card" id="skillDetail">
-      <p class="kicker">Highlighted Skill</p>
-      <div class="detail-icon-wrap"><span id="detailEmptyIcon">?</span><img id="detailIcon" src="" alt="" hidden /></div>
-      <h2 id="detailName">Pick a skill</h2>
-      <div class="detail-tags"><span id="detailType">None</span><span id="detailTier">No tier</span></div>
-      <p id="detailDescription">Click one of the eight circles, then choose a skill from the dropdown.</p>
-      <p class="cooldown-line" id="detailCooldown">Cooldown: —</p>
-    </aside>
-  </section>
+      <section class="forge-card save-panel build-save-panel">
+        <div class="save-row">
+          <label for="buildName">Build Name</label>
+          <input id="buildName" type="text" placeholder="Name this build" />
+          <button id="saveBuild2" class="portal-button" type="button" onclick="document.getElementById('saveBuild').click()">Save</button>
+        </div>
+        <div class="saved-row">
+          <label for="savedBuilds">Saved Builds</label>
+          <select id="savedBuilds"><option value="">No saved builds yet</option></select>
+          <button id="deleteBuild" class="ghost-button" type="button">Delete</button>
+        </div>
+        <p id="saveStatus" class="save-status">No default build loaded. Start with empty slots.</p>
+      </section>
 
-  <section class="section skill-library-panel">
-    <div class="class-picker-header">
-      <p class="kicker">Available Skills</p>
-      <h2 id="libraryTitle">Warrior Skills</h2>
-      <p id="libraryHelp">This list automatically expands as you select higher tiers.</p>
+      <section class="forge-card assign-card build-board">
+        <div class="step-title"><span>3</span><h2>Assign Your Skills</h2><button class="clear-slots" type="button" onclick="location.reload()">Clear All Slots</button></div>
+        <div class="board-header compact-board-header">
+          <div>
+            <p class="kicker">Current Build</p>
+            <h2 id="currentBuildTitle">Unnamed Build</h2>
+          </div>
+          <span class="build-class-pill" id="currentTierPill">Warrior</span>
+        </div>
+        <div class="skill-row-title"><span>Techniques</span><em id="techCount">0 / 4</em></div>
+        <div class="skill-slots" id="techniqueSlots"></div>
+        <div class="skill-row-title"><span>Charms</span><em id="charmCount">0 / 4</em></div>
+        <div class="skill-slots" id="charmSlots"></div>
+      </section>
+
+      <section class="forge-card browser-card skill-library-panel">
+        <div class="step-title"><span>4</span><h2>Browse All Skills in This Path</h2></div>
+        <div class="library-tabs">
+          <button class="active" data-library="technique" type="button">Techniques</button>
+          <button data-library="charm" type="button">Charms</button>
+        </div>
+        <div class="skill-library" id="skillLibrary"></div>
+        <a class="view-codex" href="#skill-codex">View All 232 Skills in Codex →</a>
+      </section>
+
+      <aside class="forge-card details-card skill-detail-card" id="skillDetail">
+        <p class="kicker">Skill Details</p>
+        <div class="detail-icon-wrap"><span id="detailEmptyIcon">?</span><img id="detailIcon" src="" alt="" hidden /></div>
+        <h2 id="detailName">Pick a skill</h2>
+        <div class="detail-tags"><span id="detailType">None</span><span id="detailTier">No tier</span></div>
+        <p id="detailDescription">Click one of the eight slots, then choose a skill from the dropdown.</p>
+        <p class="cooldown-line" id="detailCooldown">Cooldown: —</p>
+      </aside>
+
+      <aside class="forge-card summary-card">
+        <p class="kicker">Build Summary</p>
+        <div class="summary-stat"><span>Path</span><b id="summaryPath">Auto updates</b></div>
+        <div class="summary-stat"><span>Current Tier</span><b id="summaryTier">Auto updates</b></div>
+        <div class="summary-stat"><span>Techniques Assigned</span><b id="summaryTech">0 / 4</b></div>
+        <div class="summary-stat"><span>Charms Assigned</span><b id="summaryCharm">0 / 4</b></div>
+        <div class="advantage-box">♛ <strong>High Tier Advantage</strong><small>All skills from previous tiers are automatically included.</small></div>
+      </aside>
     </div>
-    <div class="library-tabs">
-      <button class="active" data-library="technique" type="button">Techniques</button>
-      <button data-library="charm" type="button">Charms</button>
-    </div>
-    <div class="skill-library" id="skillLibrary"></div>
-  </section>
 
-  <section class="section all-skills-panel" id="skill-codex">
-    <div class="class-picker-header">
-      <p class="kicker">Skill Codex</p>
-      <h2>All Skills by Class Tree</h2>
-      <p>Every imported Technique and Charm is listed below by class path and tier. This version now includes the 232-skill Prydwen/EOG launch database set, including the next-tier Ravager, Templar, Magister, and Prophet skills.</p>
-    </div>
-    <div class="codex-actions" id="codexActions"></div>
-    <div class="all-class-skills" id="allClassSkills"></div>
+    <section class="forge-card all-skills-panel" id="skill-codex">
+      <div class="step-title"><span>5</span><h2>Skill Codex — All Skills by Class Tree</h2></div>
+      <p class="codex-note">All 232 imported skills are included here. Class paths include the current 4-tier lines plus the next tier cards: Ravager, Templar, Magister, and Prophet.</p>
+      <div class="codex-actions" id="codexActions"></div>
+      <div class="all-class-skills" id="allClassSkills"></div>
+    </section>
   </section>
-
 </main>
 
-<footer class="site-footer">
-  <img src="assets/unreal-banner.jpg" alt="Unreal banner" />
-  <p>© Unreal Guild • Sword and Staff</p>
+<footer class="site-footer forge-footer">
+  <p>© Unreal Guild • Sword and Staff • Build Lab</p>
 </footer>
 <script src="js/app.js"></script>
+<script>
+  function updateSummary(){
+    const path=document.getElementById('currentPathLabel')?.textContent||'-';
+    const tier=document.getElementById('currentTierPill')?.textContent||'-';
+    const tech=document.getElementById('techCount')?.textContent||'0 / 4';
+    const charm=document.getElementById('charmCount')?.textContent||'0 / 4';
+    if(document.getElementById('summaryPath')) document.getElementById('summaryPath').textContent=path;
+    if(document.getElementById('summaryTier')) document.getElementById('summaryTier').textContent=tier;
+    if(document.getElementById('summaryTech')) document.getElementById('summaryTech').textContent=tech;
+    if(document.getElementById('summaryCharm')) document.getElementById('summaryCharm').textContent=charm;
+  }
+  setInterval(updateSummary, 300);
+</script>
 </body>
 </html>

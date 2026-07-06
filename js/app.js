@@ -338,6 +338,21 @@ const skills = [
   { id: 'prophet-summoning-pact', name: 'Summoning Pact', type: 'charm', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '—', description: 'Summoning consumes 2% of the caster\'s max HP to increase the summon\'s HP. Restores all HP consumed by this Charm if the caster survives until victory.' }
 ];
 
+function generatedSkillIcon(skill) {
+  const tierColors = {
+    Warrior: ['#ff3e57','#3d050c'], Duelist: ['#ff2b4f','#42040b'], Berserker: ['#ff4b32','#501006'], Conqueror: ['#ff163a','#430004'], Ravager: ['#ff5a2b','#451100'],
+    Knight: ['#ffae24','#3b2100'], Paladin: ['#ffd24a','#553100'], Guardian: ['#ff9f1a','#402000'], Templar: ['#ffe26a','#4b3000'],
+    Mage: ['#3aa5ff','#05172e'], Sorcerer: ['#20a4ff','#002747'], Archmage: ['#74d8ff','#07314b'], Destroyer: ['#1f7bff','#061b4f'], Magister: ['#80bfff','#082148'],
+    Sage: ['#31f5d0','#052f29'], Arcanist: ['#36ffd8','#063b34'], Dominator: ['#20ddb8','#06322c'], Prophet: ['#84ffdd','#0b463d']
+  };
+  const [a,b] = tierColors[skill.tier] || ['#d8e8ff','#07131f'];
+  const letters = skill.name.split(/\s+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
+  const shape = skill.type === 'technique' ? 'M17 45 L45 17 L55 27 L32 50 L53 71 L42 81 Z' : 'M50 13 L61 37 L87 39 L67 57 L73 83 L50 69 L27 83 L33 57 L13 39 L39 37 Z';
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="g" cx="50%" cy="38%" r="68%"><stop stop-color="${a}"/><stop offset="0.55" stop-color="${b}"/><stop offset="1" stop-color="#02070c"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect x="3" y="3" width="94" height="94" rx="18" fill="url(#g)" stroke="${a}" stroke-width="3"/><path d="${shape}" fill="none" stroke="#fff6df" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" opacity=".95"/><circle cx="50" cy="50" r="43" fill="none" stroke="#ffffff" stroke-opacity=".20" stroke-width="2"/><text x="50" y="88" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="13" fill="#fff">${letters}</text></svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+skills.forEach((skill) => { skill.icon = generatedSkillIcon(skill); });
+
 function initBuildLab() {
   const treePicker = document.getElementById("classTreePicker");
   const tierPicker = document.getElementById("tierPicker");
