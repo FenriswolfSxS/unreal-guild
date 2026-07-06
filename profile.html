@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile | SxS The Unreal</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="particles"></div>
+  <div class="ambient-glow glow-one"></div>
+  <div class="ambient-glow glow-two"></div>
+
+<header class="site-header">
+  <a class="brand" href="index.html"><img src="assets/unreal-banner.jpg" alt="Unreal guild banner" /><span>Unreal</span></a>
+  <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html">Home</a>
+    <a href="events.html">Events</a>
+    <a href="roster.html">Roster</a>
+    <div class="nav-group">
+      <a href="builds.html">Builds ▾</a>
+      <div class="dropdown">
+        <a href="builds.html">Build Lab</a>
+        <a href="community-builds.html">Community Builds</a>
+        <a class="spec-nav-link" href="community-builds.html#conqueror"><img src="assets/class-icons/conqueror.png" alt="">Conqueror</a>
+        <a class="spec-nav-link" href="community-builds.html#guardian"><img src="assets/class-icons/guardian.png" alt="">Guardian</a>
+        <a class="spec-nav-link" href="community-builds.html#destroyer"><img src="assets/class-icons/destroyer.png" alt="">Destroyer</a>
+        <a class="spec-nav-link" href="community-builds.html#dominator"><img src="assets/class-icons/dominator.png" alt="">Dominator</a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <a href="guides.html">Guides ▾</a>
+      <div class="dropdown">
+        <a href="food-guide.html">Food Guide</a>
+        <a href="guides.html#farming">Farming</a>
+      </div>
+    </div>
+    <a href="recruitment.html">Guild Forums</a>
+    <a class="discord-link" href="https://discord.gg/xWHdMsVxKG" target="_blank" rel="noopener">Discord</a>
+  </nav>
+</header>
+
+<main class="page-main">
+  <section class="page-hero compact">
+    <p class="kicker">Account</p>
+    <h1 id="profileTitle">Profile</h1>
+    <p id="profileMeta">Loading...</p>
+  </section>
+
+  <section class="section account-layout single">
+    <article class="notice-card account-card">
+      <h2>Edit Profile</h2>
+      <p>Changing your in-game name or class updates the roster automatically.</p>
+      <form id="profileForm" class="sxs-form">
+        <label for="ingameName">In-game Name</label>
+        <input id="ingameName" name="ingameName" type="text" required />
+
+        <div id="guildProfileFields">
+          <label for="classSlug">Class</label>
+          <select id="classSlug" name="classSlug" required></select>
+        </div>
+
+        <button class="pretty-button" type="submit">Save Profile</button>
+        <button class="pretty-button ghost" type="button" id="logoutButton">Sign Out</button>
+      </form>
+      <div id="profileMessage" class="form-message"></div>
+    </article>
+  </section>
+</main>
+
+<footer class="site-footer"><img src="assets/unreal-banner.jpg" alt="Unreal banner" /><p>© SxS The Unreal • Sword and Staff</p></footer>
+<script src="js/app.js"></script>
+<script src="js/auth-ui.js"></script>
+<script src="js/profile.js"></script>
+</body>
+</html>

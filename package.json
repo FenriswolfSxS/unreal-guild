@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "sync:lootwaifus": "node tools/update-lootwaifus-skills.mjs"
+  }
+}

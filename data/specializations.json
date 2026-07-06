@@ -1,0 +1,50 @@
+{
+  "duelist": {
+    "name": "Conqueror",
+    "icon": "assets/class-icons/conqueror.png",
+    "accent": "#e10600",
+    "classes": [
+      "Warrior",
+      "Duelist",
+      "Berserker",
+      "Conqueror",
+      "Ravager"
+    ]
+  },
+  "knight": {
+    "name": "Guardian",
+    "icon": "assets/class-icons/guardian.png",
+    "accent": "#ff8c00",
+    "classes": [
+      "Warrior",
+      "Knight",
+      "Paladin",
+      "Guardian",
+      "Templar"
+    ]
+  },
+  "sorcerer": {
+    "name": "Destroyer",
+    "icon": "assets/class-icons/destroyer.png",
+    "accent": "#1e88ff",
+    "classes": [
+      "Mage",
+      "Sorcerer",
+      "Archmage",
+      "Destroyer",
+      "Magister"
+    ]
+  },
+  "sage": {
+    "name": "Dominator",
+    "icon": "assets/class-icons/dominator.png",
+    "accent": "#22e6bd",
+    "classes": [
+      "Mage",
+      "Sage",
+      "Arcanist",
+      "Dominator",
+      "Prophet"
+    ]
+  }
+}

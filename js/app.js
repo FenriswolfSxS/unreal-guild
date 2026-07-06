@@ -593,3 +593,24 @@ function initBuildLab() {
 }
 
 initBuildLab();
+
+
+/* Under construction notice */
+(function(){
+  const key = 'unrealGuildConstructionNoticeSeenV1';
+  if (localStorage.getItem(key) === 'yes') return;
+  const overlay = document.createElement('div');
+  overlay.className = 'construction-overlay';
+  overlay.innerHTML = `
+    <div class="construction-modal" role="dialog" aria-modal="true" aria-labelledby="constructionTitle">
+      <p class="kicker">Notice</p>
+      <h2 id="constructionTitle">Website Under Construction</h2>
+      <p>This website is under construction and subject to change.</p>
+      <button class="primary-btn" type="button">I acknowledge</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('button').addEventListener('click', () => {
+    localStorage.setItem(key, 'yes');
+    overlay.remove();
+  });
+})();
