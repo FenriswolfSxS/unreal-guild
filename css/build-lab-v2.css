@@ -25,12 +25,15 @@ h1{margin:0;font-size:clamp(3.4rem,8vw,7.2rem);line-height:.88;letter-spacing:7p
 .hero-card{min-width:170px;text-align:center;background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.035));border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 24px 65px rgba(0,0,0,.28)}
 .hero-card strong{display:block;font-size:3rem;color:var(--gold)}
 .hero-card span{color:var(--muted);text-transform:uppercase;letter-spacing:2px;font-size:.78rem}
+.build-tagline{font-size:1.35rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin-top:10px}
+.build-tagline strong{color:var(--gold);font-weight:900}
+
 .forge-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;padding:12px;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:18px}
 .forge-toolbar button,.forge-toolbar a,.filter-row input,.filter-row select,.filter-row button{background:rgba(255,255,255,.06);border:1px solid var(--line);color:#fff;border-radius:11px;padding:11px 14px}
 .forge-toolbar .danger{border-color:rgba(225,6,0,.55);color:#ff8a80}
 .forge-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
 .forge-main{display:grid;gap:18px}
-.forge-side{display:grid;gap:18px}
+.forge-side{display:grid;gap:18px;position:sticky;top:92px;align-self:start;max-height:calc(100vh - 110px);overflow:auto;padding-right:4px}
 .panel{position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 24px 65px rgba(0,0,0,.28);backdrop-filter:blur(12px)}
 .panel:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.11),transparent 34%);pointer-events:none}
 .panel-title{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px}
@@ -46,7 +49,7 @@ h1{margin:0;font-size:clamp(3.4rem,8vw,7.2rem);line-height:.88;letter-spacing:7p
 .path-card button,.tier-card{width:100%;background:rgba(255,255,255,.06);border:1px solid color-mix(in srgb,var(--accent) 55%,white 0%);color:#fff;border-radius:12px;padding:10px}
 .tier-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 .tier-card{display:block;text-align:left;border-color:var(--line)}
-.tier-card.active{border-color:var(--gold);box-shadow:0 0 22px rgba(255,209,102,.18)}
+.tier-card.active{border-color:var(--gold);box-shadow:0 0 0 2px rgba(255,255,255,.72),0 0 0 5px color-mix(in srgb,var(--gold) 72%,transparent),0 0 38px color-mix(in srgb,var(--gold) 68%,transparent),inset 0 0 26px rgba(255,209,102,.18);transform:translateY(-2px)}
 .tier-card strong{display:block;font-size:1.4rem;color:var(--gold)}
 .tier-card span{display:block;color:#fff;font-weight:900;margin-top:4px}
 .tier-card small{color:var(--muted)}
@@ -75,7 +78,7 @@ h1{margin:0;font-size:clamp(3.4rem,8vw,7.2rem);line-height:.88;letter-spacing:7p
 .skill-card strong{display:block;font-size:.78rem;line-height:1.12;margin-top:6px}
 .skill-card small{display:block;color:var(--muted);margin-top:5px;text-transform:capitalize}
 .skill-card.ineligible{opacity:.42;filter:grayscale(.55)}
-.sticky-panel{position:sticky;top:92px}
+.sticky-panel{position:relative;top:auto}
 .summary-path{border:1px solid var(--line);border-radius:16px;padding:14px;background:rgba(255,255,255,.045);margin-bottom:12px}
 .summary-list{display:grid;gap:9px}
 .summary-item{display:flex;gap:9px;align-items:center;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:8px}
@@ -89,66 +92,43 @@ dialog{background:#0b111c;color:#fff;border:1px solid var(--line);border-radius:
 dialog::backdrop{background:rgba(0,0,0,.7)}
 .saved-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:12px 0}
 .saved-row button,dialog button{background:rgba(255,255,255,.08);border:1px solid var(--line);color:#fff;border-radius:10px;padding:9px 12px}
-@media(max-width:1180px){.forge-layout{grid-template-columns:1fr}.sticky-panel{position:static}.path-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1180px){.forge-layout{grid-template-columns:1fr}.forge-side{position:static;max-height:none;overflow:visible;padding-right:0}.sticky-panel{position:static}.path-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:820px){.forge-topbar{align-items:flex-start;flex-wrap:wrap}.forge-menu{display:block}.forge-nav{display:none;width:100%;flex-direction:column;align-items:flex-start;margin-top:12px}.forge-nav.open{display:flex}.forge-hero{display:block}.hero-card{margin-top:18px}.tier-grid,.path-grid,.slot-columns,.filter-row{grid-template-columns:1fr}.slot-grid{grid-template-columns:repeat(2,1fr)}h1{letter-spacing:4px}}
 
 
-/* --- Unreal Build Lab usability fixes --- */
+/* Community Builds page */
+.community-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.community-line-card{display:block;min-height:210px;border:1px solid var(--line);border-radius:20px;padding:20px;background:radial-gradient(circle at top, color-mix(in srgb,var(--accent) 22%,transparent), transparent 62%),rgba(255,255,255,.045);color:#fff;transition:transform .16s,border-color .16s,box-shadow .16s}
+.community-line-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 0 34px color-mix(in srgb,var(--accent) 28%,transparent)}
+.community-line-card h2{margin:0 0 8px;text-transform:uppercase;letter-spacing:2px;font-size:1.2rem}
+.community-line-card p{color:var(--muted);line-height:1.5;margin:0 0 14px}
+.community-line-card ul{margin:0;padding-left:18px;color:#dce3ff;line-height:1.7}
+.build-showcase{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px}
+.build-card{border:1px solid var(--line);border-radius:18px;padding:16px;background:rgba(255,255,255,.045)}
+.build-card h3{margin:0 0 6px}.build-card p{margin:.35rem 0;color:var(--muted);line-height:1.45}.build-card .tag{display:inline-block;margin-top:8px;padding:6px 8px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.055);font-size:.8rem;color:#fff}
+@media(max-width:1180px){.community-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:820px){.community-grid{grid-template-columns:1fr}}
 
-/* Make selected tier unmistakable. */
-.tier-card.active{
-  border-color: var(--gold) !important;
-  background:
-    radial-gradient(circle at 18% 20%, rgba(255,209,102,.36), transparent 42%),
-    linear-gradient(135deg, rgba(255,209,102,.20), rgba(255,255,255,.075)) !important;
-  box-shadow:
-    0 0 0 2px rgba(255,209,102,.75),
-    0 0 28px rgba(255,209,102,.42),
-    inset 0 0 28px rgba(255,209,102,.12) !important;
-  transform: translateY(-2px);
-}
-.tier-card.active strong{
-  color: #fff !important;
-  text-shadow: 0 0 16px var(--gold);
-}
+.skill-card{position:relative}
+.skill-card.added{border-color:var(--gold);box-shadow:0 0 0 1px rgba(255,209,102,.35),0 0 20px rgba(255,209,102,.18)}
+.skill-card .added-badge{position:absolute;top:8px;right:8px;padding:4px 7px;border-radius:999px;background:rgba(255,209,102,.18);border:1px solid rgba(255,209,102,.65);color:#ffd166;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
 
-/* Keep right-side summary/details above background panels and prevent disappearing behind content. */
-.forge-layout{align-items:start}
-.forge-side{
-  position: relative;
-  z-index: 8;
-  min-width: 0;
-}
-.sticky-panel{
-  z-index: 12;
-  overflow: visible;
-}
-.panel > *{
-  position: relative;
-  z-index: 1;
-}
+.community-build-card .summary-list{margin:8px 0 12px}.community-build-card .summary-item{padding:8px 0}.community-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.community-actions button{display:inline-block;margin-top:8px;padding:6px 8px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.055);font-size:.8rem;color:#fff;cursor:pointer}.community-actions button.danger{border-color:rgba(255,0,0,.45);color:#ffb6b6}.community-import-row input{min-width:0}
 
-/* Make auto-fill behavior feel clear. */
-.skill-card{
-  cursor: pointer;
-}
-.skill-card.selected{
-  border-color: var(--gold) !important;
-  box-shadow:
-    0 0 0 2px rgba(255,209,102,.55),
-    0 0 26px rgba(255,209,102,.34) !important;
-}
-.skill-card.assigned{
-  opacity: .55;
-  cursor: not-allowed;
-}
-.skill-card.assigned::after{
-  content: "Added";
-  display: block;
-  margin-top: 6px;
-  color: var(--gold);
-  font-size: .72rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-}
+
+/* Specialization identity polish */
+.summary-specialization{display:flex;align-items:center;gap:12px}
+.summary-specialization img{width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(142,239,255,.35))}
+.spec-card img{width:72px;height:72px;object-fit:contain;margin-bottom:10px;filter:drop-shadow(0 0 15px color-mix(in srgb,var(--accent) 55%,transparent))}
+.build-card-head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.build-card-head img{width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(142,239,255,.35))}
+
+/* Consistent shared navigation dropdowns */
+.forge-nav .nav-group{position:relative;display:flex;align-items:center;padding:10px 0}
+.forge-nav .nav-group .dropdown{position:absolute;top:100%;left:0;min-width:220px;display:none;z-index:50;padding:10px;border:1px solid rgba(142,239,255,.22);border-radius:14px;background:rgba(7,10,18,.96);box-shadow:0 18px 35px rgba(0,0,0,.45)}
+.forge-nav .nav-group:hover .dropdown,.forge-nav .nav-group:focus-within .dropdown{display:flex;flex-direction:column;gap:4px}
+.forge-nav .nav-group .dropdown a{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;white-space:nowrap}
+.forge-nav .nav-group .dropdown a:hover{background:rgba(142,239,255,.1)}
+.forge-nav .spec-nav-link img{width:22px;height:22px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(142,239,255,.35))}
+.forge-nav .account-nav-link{font-weight:800}
+@media(max-width:820px){.forge-nav .nav-group{width:100%;display:block;padding:0}.forge-nav .nav-group .dropdown{position:static;display:flex;box-shadow:none;background:transparent;border:0;padding:4px 0 4px 16px}.forge-nav .nav-group .dropdown a{padding:8px 10px}}

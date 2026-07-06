@@ -1,0 +1,34 @@
+[
+  {
+    "line": "warrior",
+    "name": "PvP Ravager Pressure",
+    "author": "Community",
+    "role": "PvP / Burst",
+    "tier": "Ravager",
+    "skills": ["Slash", "Whirlwind", "Rage Burst", "Executioner"]
+  },
+  {
+    "line": "paladin",
+    "name": "Templar Frontline Guard",
+    "author": "Community",
+    "role": "Tank / Party",
+    "tier": "Templar",
+    "skills": ["Holy Aegis", "Oath of Vigil", "Swirling Blade", "Iron Will"]
+  },
+  {
+    "line": "mage",
+    "name": "Magister Elemental Burst",
+    "author": "Community",
+    "role": "PvE / Damage",
+    "tier": "Magister",
+    "skills": ["Fireball", "Cyclone", "Tempest Sphere", "Elemental Mystery"]
+  },
+  {
+    "line": "arcanist",
+    "name": "Prophet Control Support",
+    "author": "Community",
+    "role": "Support / Control",
+    "tier": "Prophet",
+    "skills": ["Curse Resonance", "Unstable Aura", "Void Blessing", "Insight"]
+  }
+]

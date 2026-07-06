@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recruitment | Unreal Guild</title>
+  <title>Guild Forums | Unreal Guild</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body class="">
+<body class="forums-page">
   <div class="particles"></div>
   <div class="ambient-glow glow-one"></div>
   <div class="ambient-glow glow-two"></div>
@@ -26,10 +26,11 @@
     <div class="nav-group">
       <a href="builds.html">Builds ▾</a>
       <div class="dropdown">
-        <a href="builds.html#paladin">Paladin</a>
-        <a href="builds.html#beserker">Beserker</a>
-        <a href="builds.html#archmage">Archmage</a>
-        <a href="builds.html#arcanist">Arcanist</a>
+        <a href="community-builds.html">Community Builds</a>
+        <a class="spec-nav-link" href="community-builds.html#conqueror"><img src="assets/class-icons/conqueror.png" alt="">Conqueror</a>
+        <a class="spec-nav-link" href="community-builds.html#guardian"><img src="assets/class-icons/guardian.png" alt="">Guardian</a>
+        <a class="spec-nav-link" href="community-builds.html#destroyer"><img src="assets/class-icons/destroyer.png" alt="">Destroyer</a>
+        <a class="spec-nav-link" href="community-builds.html#dominator"><img src="assets/class-icons/dominator.png" alt="">Dominator</a>
       </div>
     </div>
     <div class="nav-group">
@@ -37,51 +38,279 @@
       <div class="dropdown">
         <a href="food-guide.html">Food Guide</a>
         <a href="guides.html#farming">Farming</a>
-        <a href="guides.html#fantamon">Fantamon</a>
-        <a href="guides.html#stats">Stats</a>
       </div>
     </div>
-    <a href="recruitment.html">Recruitment</a>
-    <a class="discord-link" href="https://discord.gg/xWHdMsVxKG" target="_blank">Discord</a>
+    <a class="active" href="recruitment.html">Guild Forums</a>
+    <a class="discord-link" href="https://discord.gg/xWHdMsVxKG" target="_blank" rel="noopener">Discord</a>
   </nav>
 </header>
 
-
 <main class="page-main">
-  <section class="page-hero compact">
-    <p class="kicker">Join Unreal</p>
-    <h1>Recruitment</h1>
-    <p>Apply, join Discord, or submit leave of absence.</p>
+  <section class="page-hero compact forum-hero">
+    <p class="kicker">Unreal Guild</p>
+    <h1>Guild Forums</h1>
+    <p>Class discussion, game questions, announcements, and away notices for members.</p>
   </section>
 
-  <section class="section recruit-grid">
-    <article class="notice-card">
-      <h2>Requirements</h2>
-      <p>Requirements will be listed later.</p>
-    </article>
-
-    <article class="notice-card">
-      <h2>Application Form</h2>
-      <p>Add your application form link or embed here.</p>
-    </article>
-
-    <article class="notice-card">
-      <h2>Leave of Absence Form</h2>
-      <p>Add your leave of absence form link or embed here.</p>
+  <section class="section forum-control-panel">
+    <article class="notice-card forum-login-card">
+      <h2>Forum Access</h2>
+      <p class="muted">This is a front-end forum manager for GitHub Pages. It stores forums in this browser until we connect real accounts.</p>
+      <div class="forum-login-row">
+        <input id="forumNameInput" type="text" placeholder="Display name" />
+        <select id="forumRoleSelect">
+          <option value="member">Member</option>
+          <option value="admin">Admin / Officer</option>
+        </select>
+        <input id="forumAdminPin" type="password" placeholder="Admin PIN" />
+        <button id="forumLoginBtn" class="primary-btn" type="button">Enter</button>
+      </div>
+      <p id="forumLoginStatus" class="forum-status">Browsing as Guest.</p>
     </article>
   </section>
 
-  <section class="section center-section">
-    <a class="primary-btn" href="https://discord.gg/xWHdMsVxKG" target="_blank">Join Our Discord</a>
+  <section class="section forum-tools-section" id="forumAdminTools" hidden>
+    <article class="notice-card">
+      <h2>Create New Forum</h2>
+      <div class="forum-create-grid">
+        <input id="newForumTitle" type="text" placeholder="Forum name" />
+        <select id="newForumType">
+          <option value="class">Class Forum</option>
+          <option value="game">Game Forum</option>
+          <option value="away">Away / Attendance</option>
+          <option value="general">General</option>
+        </select>
+        <textarea id="newForumDescription" placeholder="Short description"></textarea>
+        <button id="createForumBtn" class="primary-btn" type="button">Create Forum</button>
+      </div>
+      <p class="muted">Members can create forums and posts. Admin / Officer can delete forums.</p>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <h2>Starting Categories</h2>
+      <p class="muted">Click a forum to view its posts. New forums you create will appear here.</p>
+    </div>
+    <div class="forum-grid" id="forumGrid"></div>
+  </section>
+
+  <section class="section forum-reader" id="forumReader" hidden>
+    <article class="notice-card forum-reader-card">
+      <button id="closeForumBtn" class="secondary-btn forum-close" type="button">← Back to Forums</button>
+      <p class="kicker" id="readerType">Forum</p>
+      <h2 id="readerTitle">Forum Title</h2>
+      <p id="readerDescription" class="muted"></p>
+      <div id="threadList" class="thread-list"></div>
+      <div class="thread-composer" id="threadComposer">
+        <h3>Create Post</h3>
+        <input id="threadTitle" type="text" placeholder="Post title" />
+        <textarea id="threadBody" placeholder="Write your post..."></textarea>
+        <button id="createThreadBtn" class="primary-btn" type="button">Post</button>
+      </div>
+    </article>
+  </section>
+
+  <section class="section forum-note">
+    <article class="notice-card">
+      <h2>Login / Permissions Plan</h2>
+      <p>Real user accounts, private permissions, and site-wide moderation need a backend. The cleanest next step is Firebase or Supabase Auth with roles for Member and Admin / Officer.</p>
+      <div class="permission-grid">
+        <span>Guest: read public forums</span>
+        <span>Member: create forums and posts</span>
+        <span>Admin / Officer: delete forums/posts and manage roles</span>
+      </div>
+    </article>
   </section>
 </main>
-
 
 <footer class="site-footer">
   <img src="assets/unreal-banner.jpg" alt="Unreal banner" />
   <p>© Unreal Guild • Sword and Staff</p>
 </footer>
 <script src="js/app.js"></script>
+<script src="js/auth-ui.js"></script>
+<script>
+(function(){
+  const STARTER_FORUMS = [
+    { id:'conqueror', title:'Conqueror', type:'class', icon:'<img src="assets/class-icons/conqueror.png" alt="Conqueror">', description:'Warrior damage builds, Conqueror / Ravager rotations, PvP pressure, and weapon choices.', threads:[] },
+    { id:'guardian', title:'Guardian', type:'class', icon:'<img src="assets/class-icons/guardian.png" alt="Guardian">', description:'Tank builds, Guardian / Templar questions, survivability, threat, and group support.', threads:[] },
+    { id:'destroyer', title:'Destroyer', type:'class', icon:'<img src="assets/class-icons/destroyer.png" alt="Destroyer">', description:'Mage damage, Destroyer / Magister theorycrafting, cooldowns, burst, and utility.', threads:[] },
+    { id:'dominator', title:'Dominator', type:'class', icon:'<img src="assets/class-icons/dominator.png" alt="Dominator">', description:'Sage builds, Dominator / Prophet setups, healing, summons, support, and control.', threads:[] },
+    { id:'game', title:'The Game', type:'game', icon:'🎮', description:'General Sword X Staff discussion, questions, guides, updates, and progression help.', threads:[] },
+    { id:'away', title:'Away / Unable to Attend', type:'away', icon:'📅', description:'Post when you will be away, late, or unable to attend guild events.', threads:[] }
+  ];
+  const STORAGE_KEY = 'unrealGuildForumsV1';
+  const USER_KEY = 'unrealGuildForumUserV1';
+  const ADMIN_PIN = 'unrealadmin';
+  let forums = loadForums();
+  let currentUser = loadUser();
+  let activeForumId = null;
+
+  const $ = id => document.getElementById(id);
+  const grid = $('forumGrid');
+  const adminTools = $('forumAdminTools');
+  const loginStatus = $('forumLoginStatus');
+
+  function migrateForums(list){
+    const map = {
+      paladin:{id:'guardian', title:'Guardian', icon:'<img src="assets/class-icons/guardian.png" alt="Guardian">'},
+      beserker:{id:'conqueror', title:'Conqueror', icon:'<img src="assets/class-icons/conqueror.png" alt="Conqueror">'},
+      berserker:{id:'conqueror', title:'Conqueror', icon:'<img src="assets/class-icons/conqueror.png" alt="Conqueror">'},
+      archmage:{id:'destroyer', title:'Destroyer', icon:'<img src="assets/class-icons/destroyer.png" alt="Destroyer">'},
+      arcanist:{id:'dominator', title:'Dominator', icon:'<img src="assets/class-icons/dominator.png" alt="Dominator">'}
+    };
+    const seen = new Set();
+    return (list || STARTER_FORUMS).map(f => {
+      const key = String(f.id || f.title || '').toLowerCase();
+      const patch = map[key];
+      const next = patch ? {...f, ...patch} : f;
+      if(seen.has(next.id)) return null;
+      seen.add(next.id);
+      return next;
+    }).filter(Boolean);
+  }
+  function loadForums(){
+    try { return migrateForums(JSON.parse(localStorage.getItem(STORAGE_KEY)) || STARTER_FORUMS); }
+    catch(e){ return STARTER_FORUMS; }
+  }
+  function saveForums(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(forums)); }
+  function loadUser(){
+    try { return JSON.parse(localStorage.getItem(USER_KEY)) || { name:'Guest', role:'guest' }; }
+    catch(e){ return { name:'Guest', role:'guest' }; }
+  }
+  function saveUser(){ localStorage.setItem(USER_KEY, JSON.stringify(currentUser)); }
+  function canCreateForum(){ return currentUser.role === 'member' || currentUser.role === 'admin'; }
+  function canDeleteForum(){ return currentUser.role === 'admin'; }
+  function canPost(){ return currentUser.role === 'member' || currentUser.role === 'admin'; }
+  function roleLabel(role){ return role.charAt(0).toUpperCase() + role.slice(1); }
+
+  function updateAccessUI(){
+    loginStatus.textContent = 'Browsing as ' + currentUser.name + ' • ' + roleLabel(currentUser.role);
+    adminTools.hidden = !canCreateForum();
+    $('threadComposer').hidden = !canPost();
+    renderForums();
+    if(activeForumId) renderReader(activeForumId);
+  }
+
+  function renderForums(){
+    grid.innerHTML = '';
+    forums.forEach(forum => {
+      const card = document.createElement('article');
+      card.className = 'notice-card forum-card forum-type-' + forum.type;
+      card.innerHTML = `
+        <div class="forum-card-head">
+          <span class="forum-icon">${forum.icon || '💬'}</span>
+          <span class="forum-badge">${forum.type}</span>
+        </div>
+        <h3>${escapeHtml(forum.title)}</h3>
+        <p>${escapeHtml(forum.description || '')}</p>
+        <div class="forum-card-foot">
+          <button class="secondary-btn open-forum" type="button">Open Forum</button>
+          <span>${(forum.threads || []).length} posts</span>
+        </div>
+      `;
+      card.querySelector('.open-forum').addEventListener('click', () => openForum(forum.id));
+      if(canDeleteForum()){
+        const del = document.createElement('button');
+        del.className = 'forum-delete';
+        del.type = 'button';
+        del.textContent = 'Delete';
+        del.addEventListener('click', () => deleteForum(forum.id));
+        card.appendChild(del);
+      }
+      grid.appendChild(card);
+    });
+  }
+
+  function openForum(id){
+    activeForumId = id;
+    renderReader(id);
+    $('forumReader').hidden = false;
+    $('forumReader').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  function renderReader(id){
+    const forum = forums.find(f => f.id === id);
+    if(!forum) return;
+    $('readerType').textContent = forum.type + ' forum';
+    $('readerTitle').textContent = forum.title;
+    $('readerDescription').textContent = forum.description || '';
+    const list = $('threadList');
+    list.innerHTML = '';
+    if(!forum.threads || forum.threads.length === 0){
+      list.innerHTML = '<p class="muted">No posts yet. Be the first to start a discussion.</p>';
+      return;
+    }
+    forum.threads.slice().reverse().forEach(thread => {
+      const item = document.createElement('div');
+      item.className = 'thread-item';
+      item.innerHTML = `<strong>${escapeHtml(thread.title)}</strong><small>by ${escapeHtml(thread.author)} • ${escapeHtml(thread.date)}</small><p>${escapeHtml(thread.body)}</p>`;
+      list.appendChild(item);
+    });
+  }
+
+  function deleteForum(id){
+    const forum = forums.find(f => f.id === id);
+    if(!forum) return;
+    if(!confirm('Delete the forum "' + forum.title + '"?')) return;
+    forums = forums.filter(f => f.id !== id);
+    saveForums();
+    if(activeForumId === id){ $('forumReader').hidden = true; activeForumId = null; }
+    renderForums();
+  }
+
+  function escapeHtml(text){
+    return String(text).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+  }
+
+  $('forumLoginBtn').addEventListener('click', () => {
+    const name = $('forumNameInput').value.trim() || 'Guild Member';
+    let role = $('forumRoleSelect').value;
+    const pin = $('forumAdminPin').value.trim();
+    if(role === 'admin' && pin !== ADMIN_PIN){ alert('Admin / Officer PIN required.'); return; }
+    currentUser = { name, role };
+    saveUser();
+    updateAccessUI();
+  });
+
+  $('createForumBtn').addEventListener('click', () => {
+    if(!canCreateForum()) return;
+    const title = $('newForumTitle').value.trim();
+    const type = $('newForumType').value;
+    const description = $('newForumDescription').value.trim();
+    if(!title){ alert('Add a forum name first.'); return; }
+    const iconMap = { class:'⚔️', game:'🎮', away:'📅', general:'💬' };
+    forums.push({ id: 'forum-' + Date.now(), title, type, icon: iconMap[type] || '💬', description, threads: [] });
+    saveForums();
+    $('newForumTitle').value = '';
+    $('newForumDescription').value = '';
+    renderForums();
+  });
+
+  $('createThreadBtn').addEventListener('click', () => {
+    if(!canPost() || !activeForumId) return;
+    const forum = forums.find(f => f.id === activeForumId);
+    const title = $('threadTitle').value.trim();
+    const body = $('threadBody').value.trim();
+    if(!title || !body){ alert('Add a post title and message.'); return; }
+    forum.threads = forum.threads || [];
+    forum.threads.push({ title, body, author: currentUser.name, date: new Date().toLocaleString() });
+    saveForums();
+    $('threadTitle').value = '';
+    $('threadBody').value = '';
+    renderForums();
+    renderReader(activeForumId);
+  });
+
+  $('closeForumBtn').addEventListener('click', () => {
+    $('forumReader').hidden = true;
+    activeForumId = null;
+    window.scrollTo({ top: document.querySelector('.forum-grid').offsetTop - 120, behavior:'smooth' });
+  });
+
+  updateAccessUI();
+})();
+</script>
 </body>
 </html>
-

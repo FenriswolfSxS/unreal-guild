@@ -25,6 +25,10 @@
   function classIcon(cls){
     return `assets/class-icons/${String(cls||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}.svg`;
   }
+  function pathIcon(pid){
+    const path = DATA.paths[pid];
+    return path?.icon || classIcon(path?.name || pid);
+  }
   function skillIcon(skill){
     return skill.iconPath || `assets/skills/${skill.id}.png`;
   }
@@ -49,9 +53,8 @@
     if(!grid) return;
     grid.innerHTML = pathIds.map(pid => {
       const path = DATA.paths[pid];
-      const firstClass = path.classes?.[0] || pid;
       return `<article class="path-card ${state.path===pid?"active":""}" style="--accent:${path.accent}">
-        <img src="${classIcon(firstClass)}" alt="${escapeHtml(path.name)}">
+        <img src="${pathIcon(pid)}" alt="${escapeHtml(path.name)}">
         <h3>${escapeHtml(path.name)}</h3>
         <p>${escapeHtml(path.classes.join(" → "))}</p>
         <button type="button" data-path="${pid}">${state.path===pid?"Selected":"Select Path"}</button>
@@ -174,8 +177,9 @@
       <div class="skill-grid">
         ${arr.map(s => {
           const eligible = isEligible(s);
-          const assigned = state.technique.includes(s.id) || state.charm.includes(s.id);
-          return `<button type="button" class="skill-card ${state.selectedSkill===s.id?"selected":""} ${eligible?"":"ineligible"} ${assigned?"assigned":""}" style="--skillColor:${skillColor(s)}" data-skill-id="${s.id}">
+          const added = state.technique.includes(s.id) || state.charm.includes(s.id);
+          return `<button type="button" class="skill-card ${state.selectedSkill===s.id?"selected":""} ${eligible?"":"ineligible"} ${added?"added":""}" style="--skillColor:${skillColor(s)}" data-skill-id="${s.id}">
+            ${added ? `<span class="added-badge">Added</span>` : ""}
             ${imageTag(s)}
             <strong>${escapeHtml(s.name)}</strong>
             <small>${escapeHtml(s.type)}</small>
@@ -185,6 +189,14 @@
     </section>`).join("") || `<p class="muted">No skills match these filters.</p>`;
 
     box.querySelectorAll("[data-skill-id]").forEach(btn => {
+      btn.addEventListener("mouseenter", () => {
+        state.selectedSkill = btn.dataset.skillId;
+        renderDetails();
+      });
+      btn.addEventListener("focus", () => {
+        state.selectedSkill = btn.dataset.skillId;
+        renderDetails();
+      });
       btn.addEventListener("click", () => selectSkill(btn.dataset.skillId));
     });
   }
@@ -195,22 +207,23 @@
     state.selectedSkill = id;
 
     const type = s.type === "charm" ? "charm" : "technique";
+    const existing = state[type].indexOf(id);
 
-    // Do not allow the same skill twice in either Techniques or Charms.
-    if(state.technique.includes(id) || state.charm.includes(id)){
+    // Clicking an already-added ability removes it. This also prevents duplicate techniques/charms.
+    if(existing >= 0){
+      state[type][existing] = null;
       render();
       return;
     }
 
-    // Clicking a skill automatically fills the first open matching slot.
+    // Auto-fill from left to right into the first open matching slot.
     const empty = state[type].findIndex(x => !x);
     if(empty >= 0){
       state[type][empty] = id;
       state.selectedSlot = { type, index: Math.min(empty + 1, 3) };
-    }else{
-      alert(`${type === "charm" ? "Charm" : "Technique"} slots are full. Clear a slot before adding another.`);
+    } else {
+      alert(`${type === "charm" ? "Charms" : "Techniques"} are full. Remove one before adding another.`);
     }
-
     render();
   }
 
@@ -244,9 +257,10 @@
       ...state.technique.filter(Boolean).map(id=>({slot:"Technique", skill:byId.get(id)})),
       ...state.charm.filter(Boolean).map(id=>({slot:"Charm", skill:byId.get(id)}))
     ].filter(x=>x.skill);
-    box.innerHTML = `<div class="summary-path">
-        <strong>${escapeHtml(p?.name || "No path")}</strong><br>
-        <span class="muted">${escapeHtml(currentClass())} • Tier ${state.tierIndex+1}</span>
+    box.innerHTML = `<div class="summary-path summary-specialization">
+        <img src="${pathIcon(state.path)}" alt="${escapeHtml(p?.name || "Specialization")}">
+        <div><strong>${escapeHtml(p?.name || "No path")}</strong><br>
+        <span class="muted">${escapeHtml(currentClass())} • Tier ${state.tierIndex+1}</span></div>
       </div>
       <div class="summary-list">
       ${all.length ? all.map(x => `<div class="summary-item">${imageTag(x.skill)}<span>${x.slot}: ${escapeHtml(x.skill.name)}</span></div>`).join("") : `<p class="muted">No skills selected yet.</p>`}
