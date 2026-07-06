@@ -56,28 +56,28 @@ const classTrees = {
     colorName: "Red Path",
     theme: "red",
     icon: "assets/beserker-icon.jpg",
-    tiers: ["Warrior", "Duelist", "Berserker", "Conqueror"]
+    tiers: ["Warrior", "Duelist", "Berserker", "Conqueror", "Ravager"]
   },
   "knight-line": {
     name: "Knight Line",
     colorName: "Orange Path",
     theme: "orange",
     icon: "assets/paladin-icon.jpg",
-    tiers: ["Warrior", "Knight", "Paladin", "Guardian"]
+    tiers: ["Warrior", "Knight", "Paladin", "Guardian", "Templar"]
   },
   "sorcerer-line": {
     name: "Sorcerer Line",
     colorName: "Blue Path",
     theme: "blue",
     icon: "assets/archmage-icon.jpg",
-    tiers: ["Mage", "Sorcerer", "Archmage", "Destroyer"]
+    tiers: ["Mage", "Sorcerer", "Archmage", "Destroyer", "Magister"]
   },
   "sage-line": {
     name: "Sage Line",
     colorName: "Mint Path",
     theme: "mint",
     icon: "assets/arcanist-icon.jpg",
-    tiers: ["Mage", "Sage", "Arcanist", "Dominator"]
+    tiers: ["Mage", "Sage", "Arcanist", "Dominator", "Prophet"]
   }
 };
 
@@ -95,7 +95,11 @@ const iconByTier = {
   Destroyer: "assets/archmage-icon.jpg",
   Sage: "assets/arcanist-icon.jpg",
   Arcanist: "assets/arcanist-icon.jpg",
-  Dominator: "assets/arcanist-icon.jpg"
+  Dominator: "assets/arcanist-icon.jpg",
+  Ravager: "assets/beserker-icon.jpg",
+  Templar: "assets/paladin-icon.jpg",
+  Magister: "assets/archmage-icon.jpg",
+  Prophet: "assets/arcanist-icon.jpg"
 };
 
 const skills = [
@@ -283,6 +287,55 @@ const skills = [
   { id: 'dominator-phantom-light', name: 'Phantom Light', type: 'charm', tier: 'Dominator', icon: iconByTier.Dominator, cooldown: '—', description: 'Phantom Light (Dominator Charm) from Prydwen skill data. Full detailed text can be refined as we continue the import.' },
   { id: 'dominator-soul-pact-resonance', name: 'Soul Pact Resonance', type: 'charm', tier: 'Dominator', icon: iconByTier.Dominator, cooldown: '—', description: 'Soul Pact Resonance (Dominator Charm) from Prydwen skill data. Full detailed text can be refined as we continue the import.' },
   { id: 'dominator-soulbond-restoration', name: 'Soulbond Restoration', type: 'charm', tier: 'Dominator', icon: iconByTier.Dominator, cooldown: '—', description: 'Soulbond Restoration (Dominator Charm) from Prydwen skill data. Full detailed text can be refined as we continue the import.' },
+,
+  { id: 'ravager-air-break', name: 'Air Break', type: 'technique', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '1', description: 'Attacks 1 enemy within 1 grid of the caster, dealing Physical Doom DMG once, with an 80% base chance to inflict Armor Break 2 for 2 turns. (Prioritizes large targets)' },
+  { id: 'ravager-glacial-song', name: 'Glacial Song', type: 'technique', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '—', description: 'Selects a grid within 4 grids of the caster. Deals Wind DMG once to all enemies within 2 grids of the target grid, with a 30% base chance to inflict Slow 2 for 2 turns.' },
+  { id: 'ravager-night-curse', name: 'Night Curse', type: 'technique', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '1', description: 'Attacks all enemies within 2 grids of the caster, dealing Dark DMG once, with an 80% base chance to inflict Blood Source for 1 turn.' },
+  { id: 'ravager-shadow-end', name: 'Shadow End', type: 'technique', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '2', description: 'Teleports to an empty grid adjacent to 1 enemy within 5 grids of the caster. Deals Dark DMG once to the target. Killing the target triggers this skill again. Can be cast up to 4 additional times per turn.' },
+  { id: 'ravager-shattering-dance', name: 'Shattering Dance', type: 'technique', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '—', description: 'Attacks 1 enemy within 1 grid of the caster, dealing Physical DMG 3 times, with a 60% base chance to inflict 1 stack of Riven Heart for 1 turn. Stacks up to 3 times. (Prioritizes large targets)' },
+  { id: 'ravager-solaris-storm', name: 'Solaris Storm', type: 'technique', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '1', description: 'Deals Fire DMG 3 times to all enemies within a 1-grid square area around the caster, then deals Fire DMG once to all enemies within a 2-grid circular area around the caster. (Zero Initial CD)' },
+  { id: 'ravager-dominant-gaze', name: 'Dominant Gaze', type: 'charm', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '—', description: 'Deals increased Technique DMG to targets above 70% HP.' },
+  { id: 'ravager-flaming-heel', name: 'Flaming Heel', type: 'charm', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '—', description: 'After actively moving, deals Fire DMG once to all enemies within 1 grid of the caster.' },
+  { id: 'ravager-scarlet-zeal', name: 'Scarlet Zeal', type: 'charm', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '—', description: 'Each Technique cast grants a stack of Battle Zeal and increases the caster\'s ATK. At 6 stacks, Battle Zeal converts to Scarlet Zeal, greatly increasing the caster\'s ATK for 2 turns. Battle Zeal doesn\'t stack while Scarlet Zeal is active.' },
+  { id: 'ravager-shadowstep', name: 'Shadowstep', type: 'charm', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '—', description: 'Within a single turn, each time the caster loses over 10% of max HP, reduces DMG taken and increases SPD for 2 turns. Stacks up to 5 times.' },
+  { id: 'ravager-tempest-edge', name: 'Tempest Edge', type: 'charm', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '—', description: 'Each time the caster\'s Technique deals Crit DMG to an enemy, causes additional Wind DMG once.' },
+  { id: 'ravager-zephyr-battle-zeal', name: 'Zephyr Battle Zeal', type: 'charm', tier: 'Ravager', icon: iconByTier.Ravager, cooldown: '—', description: 'Ravager charm listed in the extended database. Detailed tooltip still needs verification against the live database.' },
+  { id: 'templar-dawnburst', name: 'Dawnburst', type: 'technique', tier: 'Templar', icon: iconByTier.Templar, cooldown: '1', description: 'Deals Light DMG once to all enemies within 3 grids of the caster. Large targets may take multiple hits.' },
+  { id: 'templar-first-light', name: 'First Light', type: 'technique', tier: 'Templar', icon: iconByTier.Templar, cooldown: '—', description: 'Removes all shields to select a grid within 4 grids of the caster and deals Light DMG once to all enemies within a 1-grid square area around the target grid. The DMG dealt is a percentage of the shields consumed.' },
+  { id: 'templar-iron-slashes', name: 'Iron Slashes', type: 'technique', tier: 'Templar', icon: iconByTier.Templar, cooldown: '1', description: 'Deals Physical DMG twice to 1 enemy within 1 grid of the caster. (Prioritizes large targets)' },
+  { id: 'templar-last-stand', name: 'Last Stand', type: 'technique', tier: 'Templar', icon: iconByTier.Templar, cooldown: '—', description: 'Moves to any empty space within 4 grids of the caster, dealing Physical DMG once to 1 enemy within 1 grid of the caster, with an 85% base chance to inflict Taunt for 1 turn. Increases the chance to Taunt non-character units by 100%. (Prioritizes large targets.)' },
+  { id: 'templar-sacred-shine', name: 'Sacred Shine', type: 'technique', tier: 'Templar', icon: iconByTier.Templar, cooldown: '—', description: 'Selects a grid within 3 grids of the caster. Deals Light DMG once to all enemies within a 1-grid square area of the target grid.' },
+  { id: 'templar-sanctified-soul', name: 'Sanctified Soul', type: 'technique', tier: 'Templar', icon: iconByTier.Templar, cooldown: '2', description: 'Enters the Sanctification state for 2 turns, reducing DMG taken by the caster and all allied characters within 4 grids of the caster. The effect is unique and cannot be dispelled. (Zero Initial CD)' },
+  { id: 'templar-healing-shift', name: 'Healing Shift', type: 'charm', tier: 'Templar', icon: iconByTier.Templar, cooldown: '—', description: 'Increases healing received. Instead of restoring HP, all healing is converted at a 1:1 ratio into a shield for 2 turns. When the shield disappears, any remaining shield strength is converted 1:1 back into HP.' },
+  { id: 'templar-holy-bulwark', name: 'Holy Bulwark', type: 'charm', tier: 'Templar', icon: iconByTier.Templar, cooldown: '—', description: 'Counterattack skills deal more DMG.' },
+  { id: 'templar-holy-recuperation', name: 'Holy Recuperation', type: 'charm', tier: 'Templar', icon: iconByTier.Templar, cooldown: '—', description: 'At the end of the caster\'s turn, if no Techniques were cast this turn, heals the caster once and increases DMG dealt next turn by 50%.' },
+  { id: 'templar-holy-restoration', name: 'Holy Restoration', type: 'charm', tier: 'Templar', icon: iconByTier.Templar, cooldown: '—', description: 'Casting each Light Technique has a 70% chance to gain 1 stack of Renewing Light. At 6 stacks of Renewing Light, heals the caster once.' },
+  { id: 'templar-sacred-rhythm', name: 'Sacred Rhythm', type: 'charm', tier: 'Templar', icon: iconByTier.Templar, cooldown: '—', description: 'From the caster\'s 3rd turn onward, increases DMG dealt at the start of each turn. Stacks up to 3 times.' },
+  { id: 'templar-twin-radiance-shield', name: 'Twin Radiance Shield', type: 'charm', tier: 'Templar', icon: iconByTier.Templar, cooldown: '—', description: 'Templar charm listed in the extended database. Detailed tooltip still needs verification against the live database.' },
+  { id: 'magister-blast-spirit', name: 'Blast Spirit', type: 'technique', tier: 'Magister', icon: iconByTier.Magister, cooldown: '2', description: 'Places 2 Blast Spirits in front of the caster. They remain on the battlefield for up to 3 turns. (Zero Initial CD)' },
+  { id: 'magister-crimson-whirl', name: 'Crimson Whirl', type: 'technique', tier: 'Magister', icon: iconByTier.Magister, cooldown: '2', description: 'Deals Fire Doom DMG 3 times to all enemies in a 3×3 grid area in front of the caster.' },
+  { id: 'magister-frost-thorn', name: 'Frost Thorn', type: 'technique', tier: 'Magister', icon: iconByTier.Magister, cooldown: '1', description: 'Deals Water DMG twice to all enemies in a 3×3 grid area in front of the caster, with a 30% base chance to inflict Frozen for 1 turn.' },
+  { id: 'magister-light-burst', name: 'Light Burst', type: 'technique', tier: 'Magister', icon: iconByTier.Magister, cooldown: '1', description: 'Deals Light DMG once to 1 enemy within 4 grids of the caster. Each instance of damage can chain to 2 random enemies within 4 grids of the target, up to 2 times. Each enemy can only be hit once by the same chain.' },
+  { id: 'magister-storm-rhapsody', name: 'Storm Rhapsody', type: 'technique', tier: 'Magister', icon: iconByTier.Magister, cooldown: '1', description: 'Selects a grid within 5 grids of the caster. Deals Wind DMG 3 times to all enemies within 3 grids of the target grid with a 35% base chance to knock them back by 1 grid towards the center of the battlefield.' },
+  { id: 'magister-twin-gale', name: 'Twin Gale', type: 'technique', tier: 'Magister', icon: iconByTier.Magister, cooldown: '—', description: 'Deals Wind DMG twice to 1 enemy within 3 to 5 grids of the caster.' },
+  { id: 'magister-ember-flare', name: 'Ember Flare', type: 'charm', tier: 'Magister', icon: iconByTier.Magister, cooldown: '—', description: 'Increases the caster\'s Fire DMG. Killing an enemy has a 30% chance to place 1 Blast Spirit on the spot.' },
+  { id: 'magister-frostsoul-ward', name: 'Frostsoul Ward', type: 'charm', tier: 'Magister', icon: iconByTier.Magister, cooldown: '—', description: 'Increases the caster\'s Water DMG. When attacked, there\'s a 70% base chance to inflict Wet on the attacker for 2 turns.' },
+  { id: 'magister-thunder-judgment', name: 'Thunder Judgment', type: 'charm', tier: 'Magister', icon: iconByTier.Magister, cooldown: '—', description: 'When an enemy within 5 grids of the caster casts a Technique, there\'s a 30% chance to trigger Thunder Strike, dealing Light DMG once. The chance increases to 90% if the target is inflicted with Electro or Wet.' },
+  { id: 'magister-thunderbolt-mark', name: 'Thunderbolt Mark', type: 'charm', tier: 'Magister', icon: iconByTier.Magister, cooldown: '—', description: 'Each time the caster\'s Technique deals Light DMG to an enemy, there is a 65% base chance to inflict Electro.' },
+  { id: 'magister-vital-rhythm', name: 'Vital Rhythm', type: 'charm', tier: 'Magister', icon: iconByTier.Magister, cooldown: '—', description: 'At the start of the caster\'s turn, gains 1 stack of Rhythm if the caster\'s HP is above 30%. This effect stacks up to 5 times and cannot be dispelled.' },
+  { id: 'magister-judgment-thunder', name: 'Judgment Thunder', type: 'charm', tier: 'Magister', icon: iconByTier.Magister, cooldown: '—', description: 'Magister charm listed in the extended database. Detailed tooltip still needs verification against the live database.' },
+  { id: 'prophet-desperate-shadow', name: 'Desperate Shadow', type: 'technique', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '1', description: 'Deals Dark DMG once to all enemies within a 1×4 grid area in front of the caster, with a 70% base chance to inflict 1 random debuff for 2 turns.' },
+  { id: 'prophet-hexed-blast', name: 'Hexed Blast', type: 'technique', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '1', description: 'Selects a grid within 3 grids of the caster. Deals Dark DMG once to all enemies within 2 grids of the target grid. For each type of debuff the target carries, deals additional Dark DMG once, up to 3 times.' },
+  { id: 'prophet-radiant-rhythm', name: 'Radiant Rhythm', type: 'technique', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '1', description: 'Heals 1 ally within 4 grids of the caster once. The effect then chains to 1 random ally within 4 grids of the target, up to 5 times. Repeated healing on the same target is diminished by 35% per instance.' },
+  { id: 'prophet-soul-reap', name: 'Soul Reap', type: 'technique', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '2', description: 'Deals Dark DMG twice to 1 enemy within 3 grids of the caster. For every 5% HP lost by the target, this skill deals 5% more DMG, up to a max of 50% increase. (Prioritizes large targets)' },
+  { id: 'prophet-thalasson-summon', name: 'Thalasson Summon', type: 'technique', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '—', description: 'Summons 1 Thalasson next to the caster that immediately acts. The summon inherits a percentage of the caster\'s stats. (The Technique can only trigger once per battle.)' },
+  { id: 'prophet-void-chant', name: 'Void Chant', type: 'technique', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '2', description: 'Creates a magic rune that lasts 2 turns. When an enemy within 5 grids casts a Technique, the rune deals Dark DMG once to them. If the target carries Erosion, triggers the Erosion effect once. (Zero Initial CD)' },
+  { id: 'prophet-cursed-armor', name: 'Cursed Armor', type: 'charm', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '—', description: 'Each time the caster takes Technique DMG, there\'s a 50% base chance to inflict Erosion on the attacker.' },
+  { id: 'prophet-rejuvenating-elixir', name: 'Rejuvenating Elixir', type: 'charm', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '—', description: 'Carries 3 potions at the start of battle. When an allied character\'s HP falls below 50%, uses a potion to heal them. Produces 1 potion every 3 turns, holding up to 3 at a time.' },
+  { id: 'prophet-ring-of-omen', name: 'Ring of Omen', type: 'charm', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '—', description: 'At the start of the caster\'s turn, reduces Effect RES of all enemies within 5 grids of the caster. This effect is unique. Also there\'s a 50% base chance to inflict Vulnerability for 1 turn.' },
+  { id: 'prophet-shadowy-current', name: 'Shadowy Current', type: 'charm', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '—', description: 'Increases the caster\'s Dark DMG. Killing an enemy deals additional Dark DMG once to all enemies within 1 grid of the target.' },
+  { id: 'prophet-soulweave', name: 'Soulweave', type: 'charm', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '—', description: 'When 3 of the caster\'s summons die or disappear, summons 1 Infernal Fiend in front of the caster that immediately acts. The summon inherits a percentage of the caster\'s stats. (The Charm can only trigger once per battle.)' },
+  { id: 'prophet-summoning-pact', name: 'Summoning Pact', type: 'charm', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '—', description: 'Summoning consumes 2% of the caster\'s max HP to increase the summon\'s HP. Restores all HP consumed by this Charm if the caster survives until victory.' }
 ];
 
 function initBuildLab() {
