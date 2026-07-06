@@ -174,7 +174,8 @@
       <div class="skill-grid">
         ${arr.map(s => {
           const eligible = isEligible(s);
-          return `<button type="button" class="skill-card ${state.selectedSkill===s.id?"selected":""} ${eligible?"":"ineligible"}" style="--skillColor:${skillColor(s)}" data-skill-id="${s.id}">
+          const assigned = state.technique.includes(s.id) || state.charm.includes(s.id);
+          return `<button type="button" class="skill-card ${state.selectedSkill===s.id?"selected":""} ${eligible?"":"ineligible"} ${assigned?"assigned":""}" style="--skillColor:${skillColor(s)}" data-skill-id="${s.id}">
             ${imageTag(s)}
             <strong>${escapeHtml(s.name)}</strong>
             <small>${escapeHtml(s.type)}</small>
@@ -194,12 +195,22 @@
     state.selectedSkill = id;
 
     const type = s.type === "charm" ? "charm" : "technique";
-    if(state.selectedSlot.type === type){
-      state[type][state.selectedSlot.index] = id;
-    } else {
-      const empty = state[type].findIndex(x => !x);
-      state[type][empty >= 0 ? empty : 0] = id;
+
+    // Do not allow the same skill twice in either Techniques or Charms.
+    if(state.technique.includes(id) || state.charm.includes(id)){
+      render();
+      return;
     }
+
+    // Clicking a skill automatically fills the first open matching slot.
+    const empty = state[type].findIndex(x => !x);
+    if(empty >= 0){
+      state[type][empty] = id;
+      state.selectedSlot = { type, index: Math.min(empty + 1, 3) };
+    }else{
+      alert(`${type === "charm" ? "Charm" : "Technique"} slots are full. Clear a slot before adding another.`);
+    }
+
     render();
   }
 
