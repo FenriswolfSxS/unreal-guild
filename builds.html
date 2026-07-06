@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Builds | Unreal Guild</title>
+  <title>Build Lab | Unreal Guild</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-<body class="">
+<body class="builds-page">
   <div class="particles"></div>
   <div class="ambient-glow glow-one"></div>
   <div class="ambient-glow glow-two"></div>
@@ -16,20 +16,18 @@
     <img src="assets/unreal-banner.jpg" alt="Unreal guild banner" />
     <span>Unreal</span>
   </a>
-
   <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
-
   <nav class="site-nav" id="siteNav">
     <a href="index.html">Home</a>
     <a href="events.html">Events</a>
     <a href="roster.html">Roster</a>
     <div class="nav-group">
-      <a href="builds.html">Builds ▾</a>
+      <a href="builds.html">Build Lab ▾</a>
       <div class="dropdown">
-        <a href="builds.html#paladin">Paladin</a>
-        <a href="builds.html#beserker">Beserker</a>
-        <a href="builds.html#archmage">Archmage</a>
-        <a href="builds.html#arcanist">Arcanist</a>
+        <a href="builds.html#duelist-line">Duelist Line</a>
+        <a href="builds.html#knight-line">Knight Line</a>
+        <a href="builds.html#sorcerer-line">Sorcerer Line</a>
+        <a href="builds.html#sage-line">Sage Line</a>
       </div>
     </div>
     <div class="nav-group">
@@ -46,61 +44,84 @@
   </nav>
 </header>
 
-
-<main class="page-main">
-  <section class="page-hero compact">
-    <p class="kicker">Class Archive</p>
-    <h1>Builds</h1>
-    <p>Class builds separated by class color and role.</p>
+<main class="page-main build-lab">
+  <section class="page-hero compact build-hero">
+    <p class="kicker">Class Forge</p>
+    <h1>Build Lab</h1>
+    <p>Choose a class path, pick your current tier, then fill 4 Techniques and 4 Charms. Higher tiers include every earlier tier in the same path.</p>
   </section>
 
-  <section class="section class-grid">
-    <article class="class-card paladin" id="paladin">
-      <img src="assets/paladin-icon.jpg" alt="Paladin icon" />
-      <h2>Paladin</h2>
-      <p>Orange class builds.</p>
-      <ul>
-        <li>Tank Build: To be added</li>
-        <li>Support Build: To be added</li>
-        <li>PvP Build: To be added</li>
-      </ul>
+  <section class="section class-picker-panel">
+    <div class="class-picker-header">
+      <p class="kicker">Choose Path</p>
+      <h2>Class Trees</h2>
+    </div>
+    <div class="class-tree-picker" id="classTreePicker"></div>
+  </section>
+
+  <section class="section tier-picker-panel">
+    <div class="class-picker-header">
+      <p class="kicker">Choose Tier</p>
+      <h2 id="tierPanelTitle">Warrior → Duelist → Berserker → Conqueror</h2>
+    </div>
+    <div class="tier-picker" id="tierPicker"></div>
+  </section>
+
+  <section class="section build-save-panel">
+    <div class="save-row">
+      <label for="buildName">Build Name</label>
+      <input id="buildName" type="text" placeholder="Name this build" />
+      <button id="saveBuild" class="portal-button" type="button">Save Build</button>
+    </div>
+    <div class="saved-row">
+      <label for="savedBuilds">Saved Builds</label>
+      <select id="savedBuilds"><option value="">No saved builds yet</option></select>
+      <button id="deleteBuild" class="ghost-button" type="button">Delete</button>
+    </div>
+    <p id="saveStatus" class="save-status">No default build loaded. Start with empty slots.</p>
+  </section>
+
+  <section class="section build-builder-grid">
+    <article class="build-board">
+      <div class="build-board-topline"></div>
+      <div class="board-header">
+        <div>
+          <p class="kicker" id="currentPathLabel">Red Path</p>
+          <h2 id="currentBuildTitle">Unnamed Build</h2>
+        </div>
+        <span class="build-class-pill" id="currentTierPill">Warrior</span>
+      </div>
+
+      <div class="skill-row-title"><span>Techniques</span><em id="techCount">0 / 4</em></div>
+      <div class="skill-slots" id="techniqueSlots"></div>
+
+      <div class="skill-row-title"><span>Charms</span><em id="charmCount">0 / 4</em></div>
+      <div class="skill-slots" id="charmSlots"></div>
     </article>
 
-    <article class="class-card beserker" id="beserker">
-      <img src="assets/beserker-icon.jpg" alt="Beserker icon" />
-      <h2>Beserker</h2>
-      <p>Red class builds.</p>
-      <ul>
-        <li>Damage Build: To be added</li>
-        <li>Sustain Build: To be added</li>
-        <li>PvP Build: To be added</li>
-      </ul>
-    </article>
+    <aside class="skill-detail-card" id="skillDetail">
+      <p class="kicker">Highlighted Skill</p>
+      <div class="detail-icon-wrap"><span id="detailEmptyIcon">?</span><img id="detailIcon" src="" alt="" hidden /></div>
+      <h2 id="detailName">Pick a skill</h2>
+      <div class="detail-tags"><span id="detailType">None</span><span id="detailTier">No tier</span></div>
+      <p id="detailDescription">Click one of the eight circles, then choose a skill from the dropdown.</p>
+      <p class="cooldown-line" id="detailCooldown">Cooldown: —</p>
+    </aside>
+  </section>
 
-    <article class="class-card archmage" id="archmage">
-      <img src="assets/archmage-icon.jpg" alt="Archmage icon" />
-      <h2>Archmage</h2>
-      <p>Blue class builds.</p>
-      <ul>
-        <li>Burst Build: To be added</li>
-        <li>AoE Build: To be added</li>
-        <li>Control Build: To be added</li>
-      </ul>
-    </article>
-
-    <article class="class-card arcanist" id="arcanist">
-      <img src="assets/arcanist-icon.jpg" alt="Arcanist icon" />
-      <h2>Arcanist</h2>
-      <p>Mint class builds.</p>
-      <ul>
-        <li>Magic Damage Build: To be added</li>
-        <li>Utility Build: To be added</li>
-        <li>Support Build: To be added</li>
-      </ul>
-    </article>
+  <section class="section skill-library-panel">
+    <div class="class-picker-header">
+      <p class="kicker">Available Skills</p>
+      <h2 id="libraryTitle">Warrior Skills</h2>
+      <p id="libraryHelp">This list automatically expands as you select higher tiers.</p>
+    </div>
+    <div class="library-tabs">
+      <button class="active" data-library="technique" type="button">Techniques</button>
+      <button data-library="charm" type="button">Charms</button>
+    </div>
+    <div class="skill-library" id="skillLibrary"></div>
   </section>
 </main>
-
 
 <footer class="site-footer">
   <img src="assets/unreal-banner.jpg" alt="Unreal banner" />
@@ -109,4 +130,3 @@
 <script src="js/app.js"></script>
 </body>
 </html>
-
