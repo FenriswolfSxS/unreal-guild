@@ -50,6 +50,9 @@
       </div>
       <div class="forge-actions">
         <span class="total-skills-badge">✴ 232 Total Skills</span>
+        <button class="ghost-top" type="button">My Builds</button>
+        <button class="ghost-top" type="button">Import / Export</button>
+        <button class="ghost-top" type="button">Clear All</button>
         <button id="saveBuild" class="save-build-top" type="button">Save Build</button>
       </div>
     </section>
@@ -98,6 +101,8 @@
 
       <section class="forge-card browser-card skill-library-panel">
         <div class="step-title"><span>4</span><h2>Browse All Skills in This Path</h2></div>
+        <h3 id="libraryTitle" class="library-title">Available Skills</h3>
+        <div class="library-tools"><input id="skillSearch" placeholder="Search skills..." disabled><select disabled><option>All Tiers</option></select><select disabled><option>All Types</option></select></div>
         <div class="library-tabs">
           <button class="active" data-library="technique" type="button">Techniques</button>
           <button data-library="charm" type="button">Charms</button>
