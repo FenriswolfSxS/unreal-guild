@@ -1,0 +1,1571 @@
+{
+  "source": "https://lootandwaifus.com/sword-x-staff-skill-database/",
+  "local_skill_count": 223,
+  "loot_icon_record_count": 405,
+  "downloaded_count": 223,
+  "missing_count": 0,
+  "downloaded": [
+    {
+      "id": "warrior-boiling-bloodlust",
+      "name": "Boiling Bloodlust",
+      "matched": "Boiling Bloodlust",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10051.png",
+      "file": "assets/sxs/skills/warrior-boiling-bloodlust.png"
+    },
+    {
+      "id": "warrior-diving-gale",
+      "name": "Diving Gale",
+      "matched": "Diving Gale",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10043.png",
+      "file": "assets/sxs/skills/warrior-diving-gale.png"
+    },
+    {
+      "id": "warrior-edge-strike",
+      "name": "Edge Strike",
+      "matched": "Edge Strike",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10008.png",
+      "file": "assets/sxs/skills/warrior-edge-strike.png"
+    },
+    {
+      "id": "warrior-gravity-pull",
+      "name": "Gravity Pull",
+      "matched": "Gravity Pull",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10018.png",
+      "file": "assets/sxs/skills/warrior-gravity-pull.png"
+    },
+    {
+      "id": "warrior-heavy-impact",
+      "name": "Heavy Impact",
+      "matched": "Heavy Impact",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10009.png",
+      "file": "assets/sxs/skills/warrior-heavy-impact.png"
+    },
+    {
+      "id": "warrior-leap-attack",
+      "name": "Leap Attack",
+      "matched": "Leap Attack",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10015.png",
+      "file": "assets/sxs/skills/warrior-leap-attack.png"
+    },
+    {
+      "id": "warrior-lion-combo",
+      "name": "Lion Combo",
+      "matched": "Lion Combo",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10011.png",
+      "file": "assets/sxs/skills/warrior-lion-combo.png"
+    },
+    {
+      "id": "warrior-luminous-shield",
+      "name": "Luminous Shield",
+      "matched": "Luminous Shield",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10024.png",
+      "file": "assets/sxs/skills/warrior-luminous-shield.png"
+    },
+    {
+      "id": "warrior-mountain-collapse",
+      "name": "Mountain Collapse",
+      "matched": "Mountain Collapse",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10052.png",
+      "file": "assets/sxs/skills/warrior-mountain-collapse.png"
+    },
+    {
+      "id": "warrior-phantom-assault",
+      "name": "Phantom Assault",
+      "matched": "Phantom Assault",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10054.png",
+      "file": "assets/sxs/skills/warrior-phantom-assault.png"
+    },
+    {
+      "id": "warrior-quadrant-slash",
+      "name": "Quadrant Slash",
+      "matched": "Quadrant Slash",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10013.png",
+      "file": "assets/sxs/skills/warrior-quadrant-slash.png"
+    },
+    {
+      "id": "warrior-whirlwind-slash",
+      "name": "Whirlwind Slash",
+      "matched": "Whirlwind Slash",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10014.png",
+      "file": "assets/sxs/skills/warrior-whirlwind-slash.png"
+    },
+    {
+      "id": "warrior-wind-blade-slash",
+      "name": "Wind Blade Slash",
+      "matched": "Wind Blade Slash",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10012.png",
+      "file": "assets/sxs/skills/warrior-wind-blade-slash.png"
+    },
+    {
+      "id": "warrior-blade-tempest",
+      "name": "Blade Tempest",
+      "matched": "Blade Tempest",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10562.png",
+      "file": "assets/sxs/skills/warrior-blade-tempest.png"
+    },
+    {
+      "id": "warrior-blade-of-lament",
+      "name": "Blade of Lament",
+      "matched": "Blade of Lament",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10544.png",
+      "file": "assets/sxs/skills/warrior-blade-of-lament.png"
+    },
+    {
+      "id": "warrior-block-awareness",
+      "name": "Block Awareness",
+      "matched": "Block Awareness",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10507.png",
+      "file": "assets/sxs/skills/warrior-block-awareness.png"
+    },
+    {
+      "id": "warrior-counter-blade",
+      "name": "Counter Blade",
+      "matched": "Counter Blade",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10537.png",
+      "file": "assets/sxs/skills/warrior-counter-blade.png"
+    },
+    {
+      "id": "warrior-crystal-armor",
+      "name": "Crystal Armor",
+      "matched": "Crystal Armor",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10501.png",
+      "file": "assets/sxs/skills/warrior-crystal-armor.png"
+    },
+    {
+      "id": "warrior-feline-dance",
+      "name": "Feline Dance",
+      "matched": "Feline Dance",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10510.png",
+      "file": "assets/sxs/skills/warrior-feline-dance.png"
+    },
+    {
+      "id": "warrior-insightful-eye",
+      "name": "Insightful Eye",
+      "matched": "Insightful Eye",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10500.png",
+      "file": "assets/sxs/skills/warrior-insightful-eye.png"
+    },
+    {
+      "id": "warrior-iron-fortress",
+      "name": "Iron Fortress",
+      "matched": "Iron Fortress",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10571.png",
+      "file": "assets/sxs/skills/warrior-iron-fortress.png"
+    },
+    {
+      "id": "warrior-life-blessing",
+      "name": "Life Blessing",
+      "matched": "Life Blessing",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10505.png",
+      "file": "assets/sxs/skills/warrior-life-blessing.png"
+    },
+    {
+      "id": "warrior-pure-protection",
+      "name": "Pure Protection",
+      "matched": "Pure Protection",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10539.png",
+      "file": "assets/sxs/skills/warrior-pure-protection.png"
+    },
+    {
+      "id": "warrior-relentless-frenzy",
+      "name": "Relentless Frenzy",
+      "matched": "Relentless Frenzy",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10546.png",
+      "file": "assets/sxs/skills/warrior-relentless-frenzy.png"
+    },
+    {
+      "id": "warrior-strength-rules",
+      "name": "Strength Rules",
+      "matched": "Strength Rules",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10535.png",
+      "file": "assets/sxs/skills/warrior-strength-rules.png"
+    },
+    {
+      "id": "duelist-darkness-descends",
+      "name": "Darkness Descends",
+      "matched": "Darkness Descends",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10055.png",
+      "file": "assets/sxs/skills/duelist-darkness-descends.png"
+    },
+    {
+      "id": "duelist-fire-slash",
+      "name": "Fire Slash",
+      "matched": "Fire Slash",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10026.png",
+      "file": "assets/sxs/skills/duelist-fire-slash.png"
+    },
+    {
+      "id": "duelist-flame-aura",
+      "name": "Flame Aura",
+      "matched": "Flame Aura",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10061.png",
+      "file": "assets/sxs/skills/duelist-flame-aura.png"
+    },
+    {
+      "id": "duelist-flash-dash",
+      "name": "Flash Dash",
+      "matched": "Flash Dash",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10016.png",
+      "file": "assets/sxs/skills/duelist-flash-dash.png"
+    },
+    {
+      "id": "duelist-shattering-sigil",
+      "name": "Shattering Sigil",
+      "matched": "Shattering Sigil",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10042.png",
+      "file": "assets/sxs/skills/duelist-shattering-sigil.png"
+    },
+    {
+      "id": "duelist-sunset-sword",
+      "name": "Sunset Sword",
+      "matched": "Sunset Sword",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10053.png",
+      "file": "assets/sxs/skills/duelist-sunset-sword.png"
+    },
+    {
+      "id": "duelist-blazing-clash",
+      "name": "Blazing Clash",
+      "matched": "Blazing Clash",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10564.png",
+      "file": "assets/sxs/skills/duelist-blazing-clash.png"
+    },
+    {
+      "id": "duelist-crit-mastery",
+      "name": "Crit Mastery",
+      "matched": "Crit Mastery",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10588.png",
+      "file": "assets/sxs/skills/duelist-crit-mastery.png"
+    },
+    {
+      "id": "duelist-frame-of-battles",
+      "name": "Frame of Battles",
+      "matched": "Frame of Battles",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10582.png",
+      "file": "assets/sxs/skills/duelist-frame-of-battles.png"
+    },
+    {
+      "id": "duelist-indomitable-will",
+      "name": "Indomitable Will",
+      "matched": "Indomitable Will",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10518.png",
+      "file": "assets/sxs/skills/duelist-indomitable-will.png"
+    },
+    {
+      "id": "duelist-potential-vitality",
+      "name": "Potential Vitality",
+      "matched": "Potential Vitality",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10589.png",
+      "file": "assets/sxs/skills/duelist-potential-vitality.png"
+    },
+    {
+      "id": "berserker-doom-blade",
+      "name": "Doom Blade",
+      "matched": "Doom Blade",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10069.png",
+      "file": "assets/sxs/skills/berserker-doom-blade.png"
+    },
+    {
+      "id": "berserker-eclipse-slash",
+      "name": "Eclipse Slash",
+      "matched": "Eclipse Slash",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10065.png",
+      "file": "assets/sxs/skills/berserker-eclipse-slash.png"
+    },
+    {
+      "id": "berserker-gale-dance",
+      "name": "Gale Dance",
+      "matched": "Gale Dance",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10086.png",
+      "file": "assets/sxs/skills/berserker-gale-dance.png"
+    },
+    {
+      "id": "berserker-blade-siphon",
+      "name": "Blade Siphon",
+      "matched": "Blade Siphon",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10519.png",
+      "file": "assets/sxs/skills/berserker-blade-siphon.png"
+    },
+    {
+      "id": "berserker-blade-of-judgment",
+      "name": "Blade of Judgment",
+      "matched": "Blade of Judgment",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10574.png",
+      "file": "assets/sxs/skills/berserker-blade-of-judgment.png"
+    },
+    {
+      "id": "berserker-desperate-valor",
+      "name": "Desperate Valor",
+      "matched": "Desperate Valor",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10547.png",
+      "file": "assets/sxs/skills/berserker-desperate-valor.png"
+    },
+    {
+      "id": "berserker-soul-splash",
+      "name": "Soul Splash",
+      "matched": "Soul Splash",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10545.png",
+      "file": "assets/sxs/skills/berserker-soul-splash.png"
+    },
+    {
+      "id": "berserker-soulfire-protection",
+      "name": "Soulfire Protection",
+      "matched": "Soulfire Protection",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10590.png",
+      "file": "assets/sxs/skills/berserker-soulfire-protection.png"
+    },
+    {
+      "id": "conqueror-blade-storm",
+      "name": "Blade Storm",
+      "matched": "Blade Storm",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10088.png",
+      "file": "assets/sxs/skills/conqueror-blade-storm.png"
+    },
+    {
+      "id": "conqueror-dreadful-shadow",
+      "name": "Dreadful Shadow",
+      "matched": "Dreadful Shadow",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10104.png",
+      "file": "assets/sxs/skills/conqueror-dreadful-shadow.png"
+    },
+    {
+      "id": "conqueror-flash-fire",
+      "name": "Flash Fire",
+      "matched": "Flash Fire",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10101.png",
+      "file": "assets/sxs/skills/conqueror-flash-fire.png"
+    },
+    {
+      "id": "conqueror-flickering-blade",
+      "name": "Flickering Blade",
+      "matched": "Flickering Blade",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10100.png",
+      "file": "assets/sxs/skills/conqueror-flickering-blade.png"
+    },
+    {
+      "id": "conqueror-hellfire-requiem",
+      "name": "Hellfire Requiem",
+      "matched": "Hellfire Requiem",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10068.png",
+      "file": "assets/sxs/skills/conqueror-hellfire-requiem.png"
+    },
+    {
+      "id": "conqueror-soul-piercer",
+      "name": "Soul Piercer",
+      "matched": "Soul Piercer",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10089.png",
+      "file": "assets/sxs/skills/conqueror-soul-piercer.png"
+    },
+    {
+      "id": "conqueror-blazing-momentum",
+      "name": "Blazing Momentum",
+      "matched": "Blazing Momentum",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10543.png",
+      "file": "assets/sxs/skills/conqueror-blazing-momentum.png"
+    },
+    {
+      "id": "conqueror-piercing-assault",
+      "name": "Piercing Assault",
+      "matched": "Piercing Assault",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10568.png",
+      "file": "assets/sxs/skills/conqueror-piercing-assault.png"
+    },
+    {
+      "id": "conqueror-sharp-feathers",
+      "name": "Sharp Feathers",
+      "matched": "Sharp Feathers",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10595.png",
+      "file": "assets/sxs/skills/conqueror-sharp-feathers.png"
+    },
+    {
+      "id": "conqueror-soul-breaker",
+      "name": "Soul Breaker",
+      "matched": "Soul Breaker",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10594.png",
+      "file": "assets/sxs/skills/conqueror-soul-breaker.png"
+    },
+    {
+      "id": "conqueror-spirit-in-fire",
+      "name": "Spirit in Fire",
+      "matched": "Spirit in Fire",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10608.png",
+      "file": "assets/sxs/skills/conqueror-spirit-in-fire.png"
+    },
+    {
+      "id": "conqueror-tactical-adaptation",
+      "name": "Tactical Adaptation",
+      "matched": "Tactical Adaptation",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10609.png",
+      "file": "assets/sxs/skills/conqueror-tactical-adaptation.png"
+    },
+    {
+      "id": "knight-frostbite-blossom",
+      "name": "Frostbite Blossom",
+      "matched": "Frostbite Blossom",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10044.png",
+      "file": "assets/sxs/skills/knight-frostbite-blossom.png"
+    },
+    {
+      "id": "knight-guardian-ring",
+      "name": "Guardian Ring",
+      "matched": "Guardian Ring",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10046.png",
+      "file": "assets/sxs/skills/knight-guardian-ring.png"
+    },
+    {
+      "id": "knight-heart-of-challenge",
+      "name": "Heart of Challenge",
+      "matched": "Heart of Challenge",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10049.png",
+      "file": "assets/sxs/skills/knight-heart-of-challenge.png"
+    },
+    {
+      "id": "knight-ricocheting-shield",
+      "name": "Ricocheting Shield",
+      "matched": "Ricocheting Shield",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10048.png",
+      "file": "assets/sxs/skills/knight-ricocheting-shield.png"
+    },
+    {
+      "id": "knight-stunning-strike",
+      "name": "Stunning Strike",
+      "matched": "Stunning Strike",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10010.png",
+      "file": "assets/sxs/skills/knight-stunning-strike.png"
+    },
+    {
+      "id": "knight-valor-surge",
+      "name": "Valor Surge",
+      "matched": "Valor Surge",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10066.png",
+      "file": "assets/sxs/skills/knight-valor-surge.png"
+    },
+    {
+      "id": "knight-defensive-assault",
+      "name": "Defensive Assault",
+      "matched": "Defensive Assault",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10540.png",
+      "file": "assets/sxs/skills/knight-defensive-assault.png"
+    },
+    {
+      "id": "knight-eye-for-an-eye",
+      "name": "Eye for an Eye",
+      "matched": "Eye for an Eye",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10509.png",
+      "file": "assets/sxs/skills/knight-eye-for-an-eye.png"
+    },
+    {
+      "id": "knight-pursuit-of-victory",
+      "name": "Pursuit of Victory",
+      "matched": "Pursuit of Victory",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10516.png",
+      "file": "assets/sxs/skills/knight-pursuit-of-victory.png"
+    },
+    {
+      "id": "knight-rebound",
+      "name": "Rebound",
+      "matched": "Rebound",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10541.png",
+      "file": "assets/sxs/skills/knight-rebound.png"
+    },
+    {
+      "id": "knight-ripple-impact",
+      "name": "Ripple Impact",
+      "matched": "Ripple Impact",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10563.png",
+      "file": "assets/sxs/skills/knight-ripple-impact.png"
+    },
+    {
+      "id": "paladin-desperate-protection",
+      "name": "Desperate Protection",
+      "matched": "Desperate Protection",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10032.png",
+      "file": "assets/sxs/skills/paladin-desperate-protection.png"
+    },
+    {
+      "id": "paladin-forceful-charge",
+      "name": "Forceful Charge",
+      "matched": "Forceful Charge",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10073.png",
+      "file": "assets/sxs/skills/paladin-forceful-charge.png"
+    },
+    {
+      "id": "paladin-holy-purification",
+      "name": "Holy Purification",
+      "matched": "Holy Purification",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10079.png",
+      "file": "assets/sxs/skills/paladin-holy-purification.png"
+    },
+    {
+      "id": "paladin-lunarwater-threads",
+      "name": "Lunarwater Threads",
+      "matched": "Lunarwater Threads",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10017.png",
+      "file": "assets/sxs/skills/paladin-lunarwater-threads.png"
+    },
+    {
+      "id": "paladin-star-shattering-slash",
+      "name": "Star Shattering Slash",
+      "matched": "Star Shattering Slash",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10039.png",
+      "file": "assets/sxs/skills/paladin-star-shattering-slash.png"
+    },
+    {
+      "id": "paladin-block-mastery",
+      "name": "Block Mastery",
+      "matched": "Block Mastery",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10587.png",
+      "file": "assets/sxs/skills/paladin-block-mastery.png"
+    },
+    {
+      "id": "paladin-potential-rebirth",
+      "name": "Potential Rebirth",
+      "matched": "Potential Rebirth",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10581.png",
+      "file": "assets/sxs/skills/paladin-potential-rebirth.png"
+    },
+    {
+      "id": "paladin-reflective-armor",
+      "name": "Reflective Armor",
+      "matched": "Reflective Armor",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10567.png",
+      "file": "assets/sxs/skills/paladin-reflective-armor.png"
+    },
+    {
+      "id": "paladin-source-of-vitality",
+      "name": "Source of Vitality",
+      "matched": "Source of Vitality",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10572.png",
+      "file": "assets/sxs/skills/paladin-source-of-vitality.png"
+    },
+    {
+      "id": "paladin-stone-skin",
+      "name": "Stone Skin",
+      "matched": "Stone Skin",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10542.png",
+      "file": "assets/sxs/skills/paladin-stone-skin.png"
+    },
+    {
+      "id": "guardian-hamper-strike",
+      "name": "Hamper Strike",
+      "matched": "Hamper Strike",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10084.png",
+      "file": "assets/sxs/skills/guardian-hamper-strike.png"
+    },
+    {
+      "id": "guardian-light-sword-array",
+      "name": "Light Sword Array",
+      "matched": "Light Sword Array",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10083.png",
+      "file": "assets/sxs/skills/guardian-light-sword-array.png"
+    },
+    {
+      "id": "guardian-phantom-blade",
+      "name": "Phantom Blade",
+      "matched": "Phantom Blade",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10085.png",
+      "file": "assets/sxs/skills/guardian-phantom-blade.png"
+    },
+    {
+      "id": "guardian-raging-maelstrom",
+      "name": "Raging Maelstrom",
+      "matched": "Raging Maelstrom",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10099.png",
+      "file": "assets/sxs/skills/guardian-raging-maelstrom.png"
+    },
+    {
+      "id": "guardian-seismic-tide",
+      "name": "Seismic Tide",
+      "matched": "Seismic Tide",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10047.png",
+      "file": "assets/sxs/skills/guardian-seismic-tide.png"
+    },
+    {
+      "id": "guardian-swirling-blade",
+      "name": "Swirling Blade",
+      "matched": "Swirling Blade",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10082.png",
+      "file": "assets/sxs/skills/guardian-swirling-blade.png"
+    },
+    {
+      "id": "guardian-frigid-aura",
+      "name": "Frigid Aura",
+      "matched": "Frigid Aura",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10607.png",
+      "file": "assets/sxs/skills/guardian-frigid-aura.png"
+    },
+    {
+      "id": "guardian-frigid-glint",
+      "name": "Frigid Glint",
+      "matched": "Frigid Glint",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10606.png",
+      "file": "assets/sxs/skills/guardian-frigid-glint.png"
+    },
+    {
+      "id": "guardian-holy-aegis",
+      "name": "Holy Aegis",
+      "matched": "Holy Aegis",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10593.png",
+      "file": "assets/sxs/skills/guardian-holy-aegis.png"
+    },
+    {
+      "id": "guardian-iron-will",
+      "name": "Iron Will",
+      "matched": "Iron Will",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10592.png",
+      "file": "assets/sxs/skills/guardian-iron-will.png"
+    },
+    {
+      "id": "guardian-oath-of-vigil",
+      "name": "Oath of Vigil",
+      "matched": "Oath of Vigil",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10580.png",
+      "file": "assets/sxs/skills/guardian-oath-of-vigil.png"
+    },
+    {
+      "id": "guardian-soul-protection",
+      "name": "Soul Protection",
+      "matched": "Soul Protection",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10575.png",
+      "file": "assets/sxs/skills/guardian-soul-protection.png"
+    },
+    {
+      "id": "mage-blazing-fire-ring",
+      "name": "Blazing Fire Ring",
+      "matched": "Blazing Fire Ring",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10031.png",
+      "file": "assets/sxs/skills/mage-blazing-fire-ring.png"
+    },
+    {
+      "id": "mage-cyclone",
+      "name": "Cyclone",
+      "matched": "Cyclone",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10006.png",
+      "file": "assets/sxs/skills/mage-cyclone.png"
+    },
+    {
+      "id": "mage-fireball",
+      "name": "Fireball",
+      "matched": "Fireball",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10028.png",
+      "file": "assets/sxs/skills/mage-fireball.png"
+    },
+    {
+      "id": "mage-flame-jet",
+      "name": "Flame Jet",
+      "matched": "Flame Jet",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10072.png",
+      "file": "assets/sxs/skills/mage-flame-jet.png"
+    },
+    {
+      "id": "mage-healing-touch",
+      "name": "Healing Touch",
+      "matched": "Healing Touch",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10020.png",
+      "file": "assets/sxs/skills/mage-healing-touch.png"
+    },
+    {
+      "id": "mage-ice-spike",
+      "name": "Ice Spike",
+      "matched": "Ice Spike",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10035.png",
+      "file": "assets/sxs/skills/mage-ice-spike.png"
+    },
+    {
+      "id": "mage-iron-thorn",
+      "name": "Iron Thorn",
+      "matched": "Iron Thorn",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10005.png",
+      "file": "assets/sxs/skills/mage-iron-thorn.png"
+    },
+    {
+      "id": "mage-stonechief-summon",
+      "name": "Stonechief Summon",
+      "matched": "Stonechief Summon",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10019.png",
+      "file": "assets/sxs/skills/mage-stonechief-summon.png"
+    },
+    {
+      "id": "mage-tempest-sphere",
+      "name": "Tempest Sphere",
+      "matched": "Tempest Sphere",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10001.png",
+      "file": "assets/sxs/skills/mage-tempest-sphere.png"
+    },
+    {
+      "id": "mage-void-blessing",
+      "name": "Void Blessing",
+      "matched": "Void Blessing",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10060.png",
+      "file": "assets/sxs/skills/mage-void-blessing.png"
+    },
+    {
+      "id": "mage-water-assault",
+      "name": "Water Assault",
+      "matched": "Water Assault",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10003.png",
+      "file": "assets/sxs/skills/mage-water-assault.png"
+    },
+    {
+      "id": "mage-water-shot",
+      "name": "Water Shot",
+      "matched": "Water Shot",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10000.png",
+      "file": "assets/sxs/skills/mage-water-shot.png"
+    },
+    {
+      "id": "mage-curse-resonance",
+      "name": "Curse Resonance",
+      "matched": "Curse Resonance",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10578.png",
+      "file": "assets/sxs/skills/mage-curse-resonance.png"
+    },
+    {
+      "id": "mage-elemental-body",
+      "name": "Elemental Body",
+      "matched": "Elemental Body",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10583.png",
+      "file": "assets/sxs/skills/mage-elemental-body.png"
+    },
+    {
+      "id": "mage-elemental-mystery",
+      "name": "Elemental Mystery",
+      "matched": "Elemental Mystery",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10555.png",
+      "file": "assets/sxs/skills/mage-elemental-mystery.png"
+    },
+    {
+      "id": "mage-flaming-path",
+      "name": "Flaming Path",
+      "matched": "Flaming Path",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10561.png",
+      "file": "assets/sxs/skills/mage-flaming-path.png"
+    },
+    {
+      "id": "mage-gale-shield",
+      "name": "Gale Shield",
+      "matched": "Gale Shield",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10513.png",
+      "file": "assets/sxs/skills/mage-gale-shield.png"
+    },
+    {
+      "id": "mage-heart-of-flame",
+      "name": "Heart of Flame",
+      "matched": "Heart of Flame",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10520.png",
+      "file": "assets/sxs/skills/mage-heart-of-flame.png"
+    },
+    {
+      "id": "mage-insight",
+      "name": "Insight",
+      "matched": "Insight",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10559.png",
+      "file": "assets/sxs/skills/mage-insight.png"
+    },
+    {
+      "id": "mage-mana-surge",
+      "name": "Mana Surge",
+      "matched": "Mana Surge",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10554.png",
+      "file": "assets/sxs/skills/mage-mana-surge.png"
+    },
+    {
+      "id": "mage-tough-soul",
+      "name": "Tough Soul",
+      "matched": "Tough Soul",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10550.png",
+      "file": "assets/sxs/skills/mage-tough-soul.png"
+    },
+    {
+      "id": "mage-unstable-aura",
+      "name": "Unstable Aura",
+      "matched": "Unstable Aura",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10512.png",
+      "file": "assets/sxs/skills/mage-unstable-aura.png"
+    },
+    {
+      "id": "mage-water-to-ice",
+      "name": "Water to Ice",
+      "matched": "Water to Ice",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10560.png",
+      "file": "assets/sxs/skills/mage-water-to-ice.png"
+    },
+    {
+      "id": "sorcerer-energy-burst",
+      "name": "Energy Burst",
+      "matched": "Energy Burst",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10041.png",
+      "file": "assets/sxs/skills/sorcerer-energy-burst.png"
+    },
+    {
+      "id": "sorcerer-fiery-star-trail",
+      "name": "Fiery Star Trail",
+      "matched": "Fiery Star Trail",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10034.png",
+      "file": "assets/sxs/skills/sorcerer-fiery-star-trail.png"
+    },
+    {
+      "id": "sorcerer-flickering-stars",
+      "name": "Flickering Stars",
+      "matched": "Flickering Stars",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10004.png",
+      "file": "assets/sxs/skills/sorcerer-flickering-stars.png"
+    },
+    {
+      "id": "sorcerer-frosty-nova",
+      "name": "Frosty Nova",
+      "matched": "Frosty Nova",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10038.png",
+      "file": "assets/sxs/skills/sorcerer-frosty-nova.png"
+    },
+    {
+      "id": "sorcerer-light-of-dawn",
+      "name": "Light of Dawn",
+      "matched": "Light of Dawn",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10075.png",
+      "file": "assets/sxs/skills/sorcerer-light-of-dawn.png"
+    },
+    {
+      "id": "sorcerer-lightning-chain",
+      "name": "Lightning Chain",
+      "matched": "Lightning Chain",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10030.png",
+      "file": "assets/sxs/skills/sorcerer-lightning-chain.png"
+    },
+    {
+      "id": "sorcerer-elemental-harmony",
+      "name": "Elemental Harmony",
+      "matched": "Elemental Harmony",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10602.png",
+      "file": "assets/sxs/skills/sorcerer-elemental-harmony.png"
+    },
+    {
+      "id": "sorcerer-lightning-mystery",
+      "name": "Lightning Mystery",
+      "matched": "Lightning Mystery",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10502.png",
+      "file": "assets/sxs/skills/sorcerer-lightning-mystery.png"
+    },
+    {
+      "id": "sorcerer-raging-wildfire",
+      "name": "Raging Wildfire",
+      "matched": "Raging Wildfire",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10576.png",
+      "file": "assets/sxs/skills/sorcerer-raging-wildfire.png"
+    },
+    {
+      "id": "sorcerer-void-bubble",
+      "name": "Void Bubble",
+      "matched": "Void Bubble",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10556.png",
+      "file": "assets/sxs/skills/sorcerer-void-bubble.png"
+    },
+    {
+      "id": "archmage-aqua-vortex",
+      "name": "Aqua Vortex",
+      "matched": "Aqua Vortex",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10062.png",
+      "file": "assets/sxs/skills/archmage-aqua-vortex.png"
+    },
+    {
+      "id": "archmage-divine-wrath",
+      "name": "Divine Wrath",
+      "matched": "Divine Wrath",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10037.png",
+      "file": "assets/sxs/skills/archmage-divine-wrath.png"
+    },
+    {
+      "id": "archmage-fire-blast",
+      "name": "Fire Blast",
+      "matched": "Fire Blast",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10098.png",
+      "file": "assets/sxs/skills/archmage-fire-blast.png"
+    },
+    {
+      "id": "archmage-howling-hurricane",
+      "name": "Howling Hurricane",
+      "matched": "Howling Hurricane",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10057.png",
+      "file": "assets/sxs/skills/archmage-howling-hurricane.png"
+    },
+    {
+      "id": "archmage-meteoric-flames",
+      "name": "Meteoric Flames",
+      "matched": "Meteoric Flames",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10070.png",
+      "file": "assets/sxs/skills/archmage-meteoric-flames.png"
+    },
+    {
+      "id": "archmage-frost-guard",
+      "name": "Frost Guard",
+      "matched": "Frost Guard (凝霜守护)",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10165.png",
+      "file": "assets/sxs/skills/archmage-frost-guard.png"
+    },
+    {
+      "id": "archmage-incarnation-of-light",
+      "name": "Incarnation of Light",
+      "matched": "Incarnation of Light",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10525.png",
+      "file": "assets/sxs/skills/archmage-incarnation-of-light.png"
+    },
+    {
+      "id": "archmage-radiant-sear",
+      "name": "Radiant Sear",
+      "matched": "Radiant Sear",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10577.png",
+      "file": "assets/sxs/skills/archmage-radiant-sear.png"
+    },
+    {
+      "id": "archmage-rapid-cast",
+      "name": "Rapid Cast",
+      "matched": "Rapid Cast",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10604.png",
+      "file": "assets/sxs/skills/archmage-rapid-cast.png"
+    },
+    {
+      "id": "archmage-repelling-wind",
+      "name": "Repelling Wind",
+      "matched": "Repelling Wind",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10566.png",
+      "file": "assets/sxs/skills/archmage-repelling-wind.png"
+    },
+    {
+      "id": "destroyer-flowing-doom",
+      "name": "Flowing Doom",
+      "matched": "Flowing Doom",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10056.png",
+      "file": "assets/sxs/skills/destroyer-flowing-doom.png"
+    },
+    {
+      "id": "destroyer-formation-breaker",
+      "name": "Formation Breaker",
+      "matched": "Formation Breaker",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10092.png",
+      "file": "assets/sxs/skills/destroyer-formation-breaker.png"
+    },
+    {
+      "id": "destroyer-protective-rune",
+      "name": "Protective Rune",
+      "matched": "Protective Rune",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10102.png",
+      "file": "assets/sxs/skills/destroyer-protective-rune.png"
+    },
+    {
+      "id": "destroyer-starlight-burst",
+      "name": "Starlight Burst",
+      "matched": "Starlight Burst",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10002.png",
+      "file": "assets/sxs/skills/destroyer-starlight-burst.png"
+    },
+    {
+      "id": "destroyer-thunder-of-judgment",
+      "name": "Thunder of Judgment",
+      "matched": "Thunder of Judgment",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10093.png",
+      "file": "assets/sxs/skills/destroyer-thunder-of-judgment.png"
+    },
+    {
+      "id": "destroyer-wind-blade-spiral",
+      "name": "Wind Blade Spiral",
+      "matched": "Wind Blade Spiral",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10091.png",
+      "file": "assets/sxs/skills/destroyer-wind-blade-spiral.png"
+    },
+    {
+      "id": "destroyer-cyclone-lament",
+      "name": "Cyclone Lament",
+      "matched": "Cyclone Lament",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10598.png",
+      "file": "assets/sxs/skills/destroyer-cyclone-lament.png"
+    },
+    {
+      "id": "destroyer-explosive-spirit",
+      "name": "Explosive Spirit",
+      "matched": "Explosive Spirit",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10599.png",
+      "file": "assets/sxs/skills/destroyer-explosive-spirit.png"
+    },
+    {
+      "id": "destroyer-fiery-burst",
+      "name": "Fiery Burst",
+      "matched": "Fiery Burst",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10503.png",
+      "file": "assets/sxs/skills/destroyer-fiery-burst.png"
+    },
+    {
+      "id": "destroyer-fiery-rejuvenation",
+      "name": "Fiery Rejuvenation",
+      "matched": "Fiery Rejuvenation",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10597.png",
+      "file": "assets/sxs/skills/destroyer-fiery-rejuvenation.png"
+    },
+    {
+      "id": "destroyer-overload-protection",
+      "name": "Overload Protection",
+      "matched": "Overload Protection",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10573.png",
+      "file": "assets/sxs/skills/destroyer-overload-protection.png"
+    },
+    {
+      "id": "destroyer-shattering-ice",
+      "name": "Shattering Ice",
+      "matched": "Shattering Ice",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10557.png",
+      "file": "assets/sxs/skills/destroyer-shattering-ice.png"
+    },
+    {
+      "id": "sage-dark-bullet",
+      "name": "Dark Bullet",
+      "matched": "Dark Bullet",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10081.png",
+      "file": "assets/sxs/skills/sage-dark-bullet.png"
+    },
+    {
+      "id": "sage-flame-wolf-summon",
+      "name": "Flame Wolf Summon",
+      "matched": "Flame Wolf Summon",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10058.png",
+      "file": "assets/sxs/skills/sage-flame-wolf-summon.png"
+    },
+    {
+      "id": "sage-radiant-restoration",
+      "name": "Radiant Restoration",
+      "matched": "Radiant Restoration",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10021.png",
+      "file": "assets/sxs/skills/sage-radiant-restoration.png"
+    },
+    {
+      "id": "sage-shadow-impact",
+      "name": "Shadow Impact",
+      "matched": "Shadow Impact",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10076.png",
+      "file": "assets/sxs/skills/sage-shadow-impact.png"
+    },
+    {
+      "id": "sage-treantling-summon",
+      "name": "Treantling Summon",
+      "matched": "Treantling Summon",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10025.png",
+      "file": "assets/sxs/skills/sage-treantling-summon.png"
+    },
+    {
+      "id": "sage-weakening-hex",
+      "name": "Weakening Hex",
+      "matched": "Weakening Hex",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10029.png",
+      "file": "assets/sxs/skills/sage-weakening-hex.png"
+    },
+    {
+      "id": "sage-healing-mastery",
+      "name": "Healing Mastery",
+      "matched": "Healing Mastery",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10514.png",
+      "file": "assets/sxs/skills/sage-healing-mastery.png"
+    },
+    {
+      "id": "sage-resurrection",
+      "name": "Resurrection",
+      "matched": "Resurrection",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10531.png",
+      "file": "assets/sxs/skills/sage-resurrection.png"
+    },
+    {
+      "id": "sage-shadow-erosion",
+      "name": "Shadow Erosion",
+      "matched": "Shadow Erosion",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10565.png",
+      "file": "assets/sxs/skills/sage-shadow-erosion.png"
+    },
+    {
+      "id": "sage-soul-impact",
+      "name": "Soul Impact",
+      "matched": "Soul Impact",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10530.png",
+      "file": "assets/sxs/skills/sage-soul-impact.png"
+    },
+    {
+      "id": "sage-soul-spark",
+      "name": "Soul Spark",
+      "matched": "Soul Spark",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10603.png",
+      "file": "assets/sxs/skills/sage-soul-spark.png"
+    },
+    {
+      "id": "arcanist-abyssal-hand",
+      "name": "Abyssal Hand",
+      "matched": "Abyssal Hand",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10040.png",
+      "file": "assets/sxs/skills/arcanist-abyssal-hand.png"
+    },
+    {
+      "id": "arcanist-frenzy-totem",
+      "name": "Frenzy Totem",
+      "matched": "Frenzy Totem",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10080.png",
+      "file": "assets/sxs/skills/arcanist-frenzy-totem.png"
+    },
+    {
+      "id": "arcanist-mana-blast",
+      "name": "Mana Blast",
+      "matched": "Mana Blast",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10064.png",
+      "file": "assets/sxs/skills/arcanist-mana-blast.png"
+    },
+    {
+      "id": "arcanist-shadow-of-termination",
+      "name": "Shadow of Termination",
+      "matched": "Shadow of Termination",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10078.png",
+      "file": "assets/sxs/skills/arcanist-shadow-of-termination.png"
+    },
+    {
+      "id": "arcanist-waterling-summon",
+      "name": "Waterling Summon",
+      "matched": "Waterling Summon",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10071.png",
+      "file": "assets/sxs/skills/arcanist-waterling-summon.png"
+    },
+    {
+      "id": "arcanist-linked-misfortune",
+      "name": "Linked Misfortune",
+      "matched": "Linked Misfortune",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10585.png",
+      "file": "assets/sxs/skills/arcanist-linked-misfortune.png"
+    },
+    {
+      "id": "arcanist-overhealing",
+      "name": "Overhealing",
+      "matched": "Overhealing",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10570.png",
+      "file": "assets/sxs/skills/arcanist-overhealing.png"
+    },
+    {
+      "id": "arcanist-shadow-vengeance",
+      "name": "Shadow Vengeance",
+      "matched": "Shadow Vengeance",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10586.png",
+      "file": "assets/sxs/skills/arcanist-shadow-vengeance.png"
+    },
+    {
+      "id": "dominator-chaos-rune",
+      "name": "Chaos Rune",
+      "matched": "Chaos Rune",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10059.png",
+      "file": "assets/sxs/skills/dominator-chaos-rune.png"
+    },
+    {
+      "id": "dominator-dark-starburst",
+      "name": "Dark Starburst",
+      "matched": "Dark Starburst",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10103.png",
+      "file": "assets/sxs/skills/dominator-dark-starburst.png"
+    },
+    {
+      "id": "dominator-decoy-clone",
+      "name": "Decoy Clone",
+      "matched": "Decoy Clone",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10097.png",
+      "file": "assets/sxs/skills/dominator-decoy-clone.png"
+    },
+    {
+      "id": "dominator-rejuvenating-rain",
+      "name": "Rejuvenating Rain",
+      "matched": "Rejuvenating Rain",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10096.png",
+      "file": "assets/sxs/skills/dominator-rejuvenating-rain.png"
+    },
+    {
+      "id": "dominator-rock-rex-summon",
+      "name": "Rock Rex Summon",
+      "matched": "Rock Rex Summon",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10095.png",
+      "file": "assets/sxs/skills/dominator-rock-rex-summon.png"
+    },
+    {
+      "id": "dominator-spirit-aegis",
+      "name": "Spirit Aegis",
+      "matched": "Spirit Aegis",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10077.png",
+      "file": "assets/sxs/skills/dominator-spirit-aegis.png"
+    },
+    {
+      "id": "dominator-aberrancy",
+      "name": "Aberrancy",
+      "matched": "Aberrancy",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10579.png",
+      "file": "assets/sxs/skills/dominator-aberrancy.png"
+    },
+    {
+      "id": "dominator-falling-dark-star",
+      "name": "Falling Dark Star",
+      "matched": "Falling Dark Star",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10611.png",
+      "file": "assets/sxs/skills/dominator-falling-dark-star.png"
+    },
+    {
+      "id": "dominator-mantra-of-blessings",
+      "name": "Mantra of Blessings",
+      "matched": "Mantra of Blessings",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10610.png",
+      "file": "assets/sxs/skills/dominator-mantra-of-blessings.png"
+    },
+    {
+      "id": "dominator-phantom-light",
+      "name": "Phantom Light",
+      "matched": "Phantom Light",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10601.png",
+      "file": "assets/sxs/skills/dominator-phantom-light.png"
+    },
+    {
+      "id": "dominator-soul-pact-resonance",
+      "name": "Soul Pact Resonance",
+      "matched": "Soul Pact Resonance",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10591.png",
+      "file": "assets/sxs/skills/dominator-soul-pact-resonance.png"
+    },
+    {
+      "id": "dominator-soulbond-restoration",
+      "name": "Soulbond Restoration",
+      "matched": "Soulbond Restoration",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10600.png",
+      "file": "assets/sxs/skills/dominator-soulbond-restoration.png"
+    },
+    {
+      "id": "ravager-air-break",
+      "name": "Air Break",
+      "matched": "Air Break",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10087.png",
+      "file": "assets/sxs/skills/ravager-air-break.png"
+    },
+    {
+      "id": "ravager-glacial-song",
+      "name": "Glacial Song",
+      "matched": "Glacial Song",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10112.png",
+      "file": "assets/sxs/skills/ravager-glacial-song.png"
+    },
+    {
+      "id": "ravager-night-curse",
+      "name": "Night Curse",
+      "matched": "Night Curse",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10090.png",
+      "file": "assets/sxs/skills/ravager-night-curse.png"
+    },
+    {
+      "id": "ravager-shadow-end",
+      "name": "Shadow End",
+      "matched": "Shadow End",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10113.png",
+      "file": "assets/sxs/skills/ravager-shadow-end.png"
+    },
+    {
+      "id": "ravager-shattering-dance",
+      "name": "Shattering Dance",
+      "matched": "Shattering Dance",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10110.png",
+      "file": "assets/sxs/skills/ravager-shattering-dance.png"
+    },
+    {
+      "id": "ravager-solaris-storm",
+      "name": "Solaris Storm",
+      "matched": "Solaris Storm",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10111.png",
+      "file": "assets/sxs/skills/ravager-solaris-storm.png"
+    },
+    {
+      "id": "ravager-dominant-gaze",
+      "name": "Dominant Gaze",
+      "matched": "Dominant Gaze",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10620.png",
+      "file": "assets/sxs/skills/ravager-dominant-gaze.png"
+    },
+    {
+      "id": "ravager-flaming-heel",
+      "name": "Flaming Heel",
+      "matched": "Flaming Heel",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10622.png",
+      "file": "assets/sxs/skills/ravager-flaming-heel.png"
+    },
+    {
+      "id": "ravager-scarlet-zeal",
+      "name": "Scarlet Zeal",
+      "matched": "Scarlet Zeal",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10623.png",
+      "file": "assets/sxs/skills/ravager-scarlet-zeal.png"
+    },
+    {
+      "id": "ravager-shadowstep",
+      "name": "Shadowstep",
+      "matched": "Shadowstep",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10621.png",
+      "file": "assets/sxs/skills/ravager-shadowstep.png"
+    },
+    {
+      "id": "ravager-tempest-edge",
+      "name": "Tempest Edge",
+      "matched": "Tempest Edge",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10650.png",
+      "file": "assets/sxs/skills/ravager-tempest-edge.png"
+    },
+    {
+      "id": "ravager-zephyr-battle-zeal",
+      "name": "Zephyr Battle Zeal",
+      "matched": "Zephyr Battle Zeal",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10654.png",
+      "file": "assets/sxs/skills/ravager-zephyr-battle-zeal.png"
+    },
+    {
+      "id": "templar-dawnburst",
+      "name": "Dawnburst",
+      "matched": "Dawnburst",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10106.png",
+      "file": "assets/sxs/skills/templar-dawnburst.png"
+    },
+    {
+      "id": "templar-first-light",
+      "name": "First Light",
+      "matched": "First Light",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10105.png",
+      "file": "assets/sxs/skills/templar-first-light.png"
+    },
+    {
+      "id": "templar-iron-slashes",
+      "name": "Iron Slashes",
+      "matched": "Iron Slashes",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10109.png",
+      "file": "assets/sxs/skills/templar-iron-slashes.png"
+    },
+    {
+      "id": "templar-last-stand",
+      "name": "Last Stand",
+      "matched": "Last Stand",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10067.png",
+      "file": "assets/sxs/skills/templar-last-stand.png"
+    },
+    {
+      "id": "templar-sacred-shine",
+      "name": "Sacred Shine",
+      "matched": "Sacred Shine",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10107.png",
+      "file": "assets/sxs/skills/templar-sacred-shine.png"
+    },
+    {
+      "id": "templar-sanctified-soul",
+      "name": "Sanctified Soul",
+      "matched": "Sanctified Soul",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10108.png",
+      "file": "assets/sxs/skills/templar-sanctified-soul.png"
+    },
+    {
+      "id": "templar-healing-shift",
+      "name": "Healing Shift",
+      "matched": "Healing Shift",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10613.png",
+      "file": "assets/sxs/skills/templar-healing-shift.png"
+    },
+    {
+      "id": "templar-holy-bulwark",
+      "name": "Holy Bulwark",
+      "matched": "Holy Bulwark",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10612.png",
+      "file": "assets/sxs/skills/templar-holy-bulwark.png"
+    },
+    {
+      "id": "templar-holy-recuperation",
+      "name": "Holy Recuperation",
+      "matched": "Holy Recuperation",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10616.png",
+      "file": "assets/sxs/skills/templar-holy-recuperation.png"
+    },
+    {
+      "id": "templar-holy-restoration",
+      "name": "Holy Restoration",
+      "matched": "Holy Restoration",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10615.png",
+      "file": "assets/sxs/skills/templar-holy-restoration.png"
+    },
+    {
+      "id": "templar-sacred-rhythm",
+      "name": "Sacred Rhythm",
+      "matched": "Sacred Rhythm",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10617.png",
+      "file": "assets/sxs/skills/templar-sacred-rhythm.png"
+    },
+    {
+      "id": "templar-twin-radiance-shield",
+      "name": "Twin Radiance Shield",
+      "matched": "Twin Radiance Shield",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10140.png",
+      "file": "assets/sxs/skills/templar-twin-radiance-shield.png"
+    },
+    {
+      "id": "magister-blast-spirit",
+      "name": "Blast Spirit",
+      "matched": "Blast Spirit",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10094.png",
+      "file": "assets/sxs/skills/magister-blast-spirit.png"
+    },
+    {
+      "id": "magister-crimson-whirl",
+      "name": "Crimson Whirl",
+      "matched": "Crimson Whirl",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10115.png",
+      "file": "assets/sxs/skills/magister-crimson-whirl.png"
+    },
+    {
+      "id": "magister-frost-thorn",
+      "name": "Frost Thorn",
+      "matched": "Frost Thorn",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10114.png",
+      "file": "assets/sxs/skills/magister-frost-thorn.png"
+    },
+    {
+      "id": "magister-light-burst",
+      "name": "Light Burst",
+      "matched": "Light Burst",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10117.png",
+      "file": "assets/sxs/skills/magister-light-burst.png"
+    },
+    {
+      "id": "magister-storm-rhapsody",
+      "name": "Storm Rhapsody",
+      "matched": "Storm Rhapsody",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10116.png",
+      "file": "assets/sxs/skills/magister-storm-rhapsody.png"
+    },
+    {
+      "id": "magister-twin-gale",
+      "name": "Twin Gale",
+      "matched": "Twin Gale",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10118.png",
+      "file": "assets/sxs/skills/magister-twin-gale.png"
+    },
+    {
+      "id": "magister-ember-flare",
+      "name": "Ember Flare",
+      "matched": "Ember Flare",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10627.png",
+      "file": "assets/sxs/skills/magister-ember-flare.png"
+    },
+    {
+      "id": "magister-frostsoul-ward",
+      "name": "Frostsoul Ward",
+      "matched": "Frostsoul Ward",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10596.png",
+      "file": "assets/sxs/skills/magister-frostsoul-ward.png"
+    },
+    {
+      "id": "magister-thunder-judgment",
+      "name": "Thunder Judgment",
+      "matched": "Thunder Judgment",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10624.png",
+      "file": "assets/sxs/skills/magister-thunder-judgment.png"
+    },
+    {
+      "id": "magister-thunderbolt-mark",
+      "name": "Thunderbolt Mark",
+      "matched": "Thunderbolt Mark",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10625.png",
+      "file": "assets/sxs/skills/magister-thunderbolt-mark.png"
+    },
+    {
+      "id": "magister-vital-rhythm",
+      "name": "Vital Rhythm",
+      "matched": "Vital Rhythm",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10628.png",
+      "file": "assets/sxs/skills/magister-vital-rhythm.png"
+    },
+    {
+      "id": "magister-judgment-thunder",
+      "name": "Judgment Thunder",
+      "matched": "Judgment Thunder",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10152.png",
+      "file": "assets/sxs/skills/magister-judgment-thunder.png"
+    },
+    {
+      "id": "prophet-desperate-shadow",
+      "name": "Desperate Shadow",
+      "matched": "Desperate Shadow",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10122.png",
+      "file": "assets/sxs/skills/prophet-desperate-shadow.png"
+    },
+    {
+      "id": "prophet-hexed-blast",
+      "name": "Hexed Blast",
+      "matched": "Hexed Blast",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10121.png",
+      "file": "assets/sxs/skills/prophet-hexed-blast.png"
+    },
+    {
+      "id": "prophet-radiant-rhythm",
+      "name": "Radiant Rhythm",
+      "matched": "Radiant Rhythm",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10123.png",
+      "file": "assets/sxs/skills/prophet-radiant-rhythm.png"
+    },
+    {
+      "id": "prophet-soul-reap",
+      "name": "Soul Reap",
+      "matched": "Soul Reap",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10120.png",
+      "file": "assets/sxs/skills/prophet-soul-reap.png"
+    },
+    {
+      "id": "prophet-thalasson-summon",
+      "name": "Thalasson Summon",
+      "matched": "Thalasson Summon",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10119.png",
+      "file": "assets/sxs/skills/prophet-thalasson-summon.png"
+    },
+    {
+      "id": "prophet-void-chant",
+      "name": "Void Chant",
+      "matched": "Void Chant",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10124.png",
+      "file": "assets/sxs/skills/prophet-void-chant.png"
+    },
+    {
+      "id": "prophet-cursed-armor",
+      "name": "Cursed Armor",
+      "matched": "Cursed Armor",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10633.png",
+      "file": "assets/sxs/skills/prophet-cursed-armor.png"
+    },
+    {
+      "id": "prophet-rejuvenating-elixir",
+      "name": "Rejuvenating Elixir",
+      "matched": "Rejuvenating Elixir",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10632.png",
+      "file": "assets/sxs/skills/prophet-rejuvenating-elixir.png"
+    },
+    {
+      "id": "prophet-ring-of-omen",
+      "name": "Ring of Omen",
+      "matched": "Ring of Omen",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10631.png",
+      "file": "assets/sxs/skills/prophet-ring-of-omen.png"
+    },
+    {
+      "id": "prophet-shadowy-current",
+      "name": "Shadowy Current",
+      "matched": "Shadowy Current",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10630.png",
+      "file": "assets/sxs/skills/prophet-shadowy-current.png"
+    },
+    {
+      "id": "prophet-soulweave",
+      "name": "Soulweave",
+      "matched": "Soulweave",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10629.png",
+      "file": "assets/sxs/skills/prophet-soulweave.png"
+    },
+    {
+      "id": "prophet-summoning-pact",
+      "name": "Summoning Pact",
+      "matched": "Summoning Pact",
+      "url": "https://lootandwaifus.com/skills/swordxstaff/skill_10584.png",
+      "file": "assets/sxs/skills/prophet-summoning-pact.png"
+    }
+  ],
+  "missing": []
+}
