@@ -1,24 +1,25 @@
-Sword x Staff Icon/Database Script
-==================================
+Sword x Staff icon/database updater
 
-Run this from the website folder on your PC:
+Run from this website folder:
 
-1) Install Python packages:
-   pip install requests beautifulsoup4
+1) Install packages:
+   pip install requests playwright
 
-2) Run the updater:
-   python scripts/update_sxs_database.py
-
-If it says it parsed fewer than 200 skills, install Playwright and rerun:
-   pip install playwright
+2) Install the browser:
    python -m playwright install chromium
-   python scripts/update_sxs_database.py
 
-What it creates:
-- data/skills.json
-- js/skills.generated.js
-- assets/skills/<downloaded icons>
+3) Run the updater:
+   python scripts\update_sxs_database.py
 
-Then test locally by opening builds.html. If it looks good, upload/push the whole folder to GitHub.
+Expected result:
+- data\skills.json
+- js\skills.generated.js
+- assets\sxs\skills\*.webp/png/etc
+- assets\skills\*.webp/png/etc compatibility copy
+- logs\sxs_crawler_report.json
 
-Important: this downloads assets locally to your project. Make sure you have permission/rights to redistribute any official game/site artwork publicly.
+Then open builds.html locally or commit/push the full folder to GitHub Pages.
+
+If icons still do not download, send back:
+- logs\sxs_crawler_report.json
+- how many files are in assets\sxs\skills

@@ -1,337 +1,254 @@
 #!/usr/bin/env python3
 """
-Sword x Staff skill/icon updater for the Unreal Guild Build Lab.
+Sword x Staff icon updater using Loot & Waifus static skill database.
 
 Run from the website folder:
-    python scripts/update_sxs_database.py
+    pip install requests beautifulsoup4
+    python scripts\\update_sxs_database.py
 
-What it does:
-- pulls public skill data from Prydwen's Sword x Staff skills page
-- attempts to cross-check names against EOG's Sword x Staff database hub
-- downloads skill/class icons into assets/skills/
-- writes data/skills.json
-- writes js/skills.generated.js
-- patches builds.html to prefer the generated data when present
-
-Notes:
-- This script downloads assets to YOUR local project. Do not redistribute assets unless you have rights/permission.
-- If a site blocks normal requests, install Playwright and rerun:
-    pip install playwright bs4 requests
-    python -m playwright install chromium
+This downloads skill icons into:
+    assets/sxs/skills
+    assets/skills
+and writes:
+    js/skills.icons.js
+    logs/sxs_icon_report.json
+It also patches builds.html/js/app.js so the Build Lab uses local icons when they exist.
 """
 from __future__ import annotations
 
 import json
-import os
+import mimetypes
 import re
+import shutil
 import sys
-import time
-import hashlib
-from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import Optional
+from typing import Dict, List, Tuple
 from urllib.parse import urljoin, urlparse
 
 try:
     import requests
-    from bs4 import BeautifulSoup
 except ImportError:
-    print("Missing packages. Run: pip install requests beautifulsoup4")
+    print("Missing requests. Run: pip install requests beautifulsoup4")
     raise
 
-PRYDWEN = "https://www.prydwen.gg/sword-x-staff/skills"
-EOG = "https://eog.gg/games/sword-x-staff/#database"
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    print("Missing beautifulsoup4. Run: pip install beautifulsoup4")
+    raise
+
 ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-ICON_DIR = ROOT / "assets" / "skills"
-JS_DIR = ROOT / "js"
 BUILD_HTML = ROOT / "builds.html"
+APP_JS = ROOT / "js" / "app.js"
+ICON_DIR_PRIMARY = ROOT / "assets" / "sxs" / "skills"
+ICON_DIR_COMPAT = ROOT / "assets" / "skills"
+JS_ICON_MAP = ROOT / "js" / "skills.icons.js"
+LOG_DIR = ROOT / "logs"
+LOOT_URL = "https://lootandwaifus.com/sword-x-staff-skill-database/"
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+    "Referer": LOOT_URL,
 }
 
-TIER_ORDER = {
-    # Warrior lines
-    "Warrior": 1, "Duelist": 2, "Knight": 2, "Berserker": 3, "Paladin": 3,
-    "Conqueror": 4, "Guardian": 4,
-    # Mage lines
-    "Mage": 1, "Sorcerer": 2, "Sage": 2, "Archmage": 3, "Arcanist": 3,
-    "Destroyer": 4, "Dominator": 4,
-    # 5th tier names seen in current public databases/community mirrors
-    "Ravager": 5, "Templar": 5, "Magister": 5, "Prophet": 5,
-}
 
-CLASS_PATHS = {
-    "duelist": ["Warrior", "Duelist", "Berserker", "Conqueror", "Ravager"],
-    "knight": ["Warrior", "Knight", "Paladin", "Guardian", "Templar"],
-    "sorcerer": ["Mage", "Sorcerer", "Archmage", "Destroyer", "Magister"],
-    "sage": ["Mage", "Sage", "Arcanist", "Dominator", "Prophet"],
-}
-
-@dataclass
-class Skill:
-    id: str
-    name: str
-    type: str
-    tier: str
-    tierNumber: int
-    icon: str
-    iconSource: str
-    cooldown: str
-    description: str
-    source: str
+def slugify(text: str) -> str:
+    text = re.sub(r"\([^)]*\)", "", text)
+    text = text.lower().replace("&", " and ")
+    text = re.sub(r"[^a-z0-9]+", "-", text).strip("-")
+    return text or "skill"
 
 
-def slug(s: str) -> str:
-    s = s.strip().lower().replace("’", "'")
-    s = re.sub(r"[^a-z0-9]+", "-", s)
-    return s.strip("-") or "skill"
+def norm(text: str) -> str:
+    text = re.sub(r"^image:\s*", "", text.strip(), flags=re.I)
+    text = re.sub(r"\([^)]*\)", "", text)
+    text = text.replace("’", "'").replace("`", "'")
+    return re.sub(r"[^a-z0-9]+", "", text.lower())
 
 
-def get(url: str) -> str:
-    r = requests.get(url, headers=HEADERS, timeout=30)
-    r.raise_for_status()
-    return r.text
+def extension_from_response(url: str, response: requests.Response) -> str:
+    path_ext = Path(urlparse(url).path).suffix.lower()
+    if path_ext in {".png", ".webp", ".jpg", ".jpeg", ".gif", ".svg"}:
+        return path_ext
+    ctype = response.headers.get("content-type", "").split(";")[0].strip().lower()
+    guessed = mimetypes.guess_extension(ctype) or ".png"
+    return ".jpg" if guessed == ".jpe" else guessed
 
 
-def get_with_playwright(url: str) -> str:
-    try:
-        from playwright.sync_api import sync_playwright
-    except ImportError:
-        raise RuntimeError("Playwright not installed. Run: pip install playwright && python -m playwright install chromium")
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page(user_agent=HEADERS["User-Agent"])
-        page.goto(url, wait_until="networkidle", timeout=90000)
-        html = page.content()
-        browser.close()
-        return html
-
-
-def fetch_html(url: str) -> str:
-    html = get(url)
-    # Prydwen sometimes serves a static shell first. Use Playwright if needed.
-    if "Showing 232 skills" not in html and "Sword x Staff Skills" not in html:
-        try:
-            html = get_with_playwright(url)
-        except Exception as e:
-            print(f"Normal fetch looked thin and Playwright failed: {e}")
-    return html
-
-
-def image_url_for_card(card, skill_name: str, base_url: str) -> str:
-    wanted = skill_name.lower().strip()
-    best = ""
-    for img in card.find_all("img"):
-        alt = (img.get("alt") or img.get("title") or "").lower().strip()
-        src = img.get("src") or img.get("data-src") or ""
-        srcset = img.get("srcset") or ""
-        if not src and srcset:
-            src = srcset.split(",")[0].strip().split(" ")[0]
-        if not src:
-            continue
-        full = urljoin(base_url, src)
-        if alt == wanted or wanted in alt:
-            return full
-        if not best:
-            best = full
-    return best
-
-
-def parse_prydwen(html: str) -> list[Skill]:
-    soup = BeautifulSoup(html, "html.parser")
-    skills: list[Skill] = []
+def extract_local_skills() -> List[Dict[str, str]]:
+    if not BUILD_HTML.exists():
+        raise FileNotFoundError(f"Cannot find {BUILD_HTML}")
+    text = BUILD_HTML.read_text(encoding="utf-8", errors="ignore")
+    pattern = re.compile(r"\{\s*id:\s*'([^']+)'\s*,\s*name:\s*'((?:\\'|[^'])+)'", re.S)
+    skills = []
     seen = set()
-
-    # Strategy 1: parse card-like containers that have a heading and Technique/Charm text.
-    headings = soup.find_all(re.compile("^h[2-6]$"))
-    for h in headings:
-        name = h.get_text(" ", strip=True)
-        if not name or name.lower() in {"skills", "filters", "sword x staff skills"}:
-            continue
-        # Find a reasonable card/container around the heading.
-        card = h
-        for _ in range(5):
-            if card.parent:
-                card = card.parent
-                txt = card.get_text("\n", strip=True)
-                if re.search(r"\b(Technique|Charm)\b", txt) and len(txt) < 2500:
-                    break
-        txt = card.get_text("\n", strip=True)
-        m = re.search(r"\b(Technique|Charm)\s+([A-Za-z' -]+)", txt)
-        if not m:
-            continue
-        typ, tier = m.group(1).lower(), m.group(2).strip()
-        if tier not in TIER_ORDER:
-            # trim extra words if parser captured too much
-            tier = next((t for t in TIER_ORDER if re.search(rf"\b{re.escape(t)}\b", m.group(2))), tier)
-        lines = [x.strip() for x in txt.split("\n") if x.strip()]
-        desc_parts = []
-        cooldown = "—"
-        start = False
-        for line in lines:
-            if line == name:
-                start = True
-                continue
-            if not start:
-                continue
-            if re.match(r"^(Technique|Charm)\b", line):
-                continue
-            cm = re.match(r"Cooldown:\s*(.+)", line, re.I)
-            if cm:
-                cooldown = cm.group(1).strip()
-                continue
-            if line.lower() in {"keywords", "tags"}:
-                break
-            # Ignore tiny UI labels and image alts that equal a class name.
-            if line in TIER_ORDER or line == "Image":
-                continue
-            if len(line) > 8:
-                desc_parts.append(line)
-        description = " ".join(desc_parts).strip()
-        icon_url = image_url_for_card(card, name, PRYDWEN)
-        sid = slug(f"{tier}-{name}")
-        if sid in seen:
-            continue
-        seen.add(sid)
-        skills.append(Skill(sid, name, typ, tier, TIER_ORDER.get(tier, 0), "", icon_url, cooldown, description, PRYDWEN))
-
-    # Strategy 2: fallback parse from plain lines if DOM cards fail.
-    if len(skills) < 200:
-        text = soup.get_text("\n", strip=True)
-        lines = [l.strip() for l in text.split("\n") if l.strip()]
-        skills = []
-        seen.clear()
-        for i, line in enumerate(lines):
-            if i + 2 >= len(lines):
-                continue
-            name = line
-            next_line = lines[i + 1]
-            m = re.match(r"^(Technique|Charm)\s+([A-Za-z' -]+)$", next_line)
-            if not m:
-                continue
-            typ, tier = m.group(1).lower(), m.group(2).strip()
-            if tier not in TIER_ORDER:
-                continue
-            desc = []
-            cooldown = "—"
-            for j in range(i + 2, min(i + 10, len(lines))):
-                if re.match(r"^(Cooldown:)", lines[j], re.I):
-                    cooldown = re.sub(r"^Cooldown:\s*", "", lines[j], flags=re.I)
-                    continue
-                if lines[j].lower() == "keywords" or re.match(r"^(Technique|Charm)\s+", lines[j]):
-                    break
-                if len(lines[j]) > 8:
-                    desc.append(lines[j])
-            sid = slug(f"{tier}-{name}")
-            if sid not in seen:
-                seen.add(sid)
-                skills.append(Skill(sid, name, typ, tier, TIER_ORDER[tier], "", "", cooldown, " ".join(desc), PRYDWEN))
-
-    skills.sort(key=lambda s: (s.tierNumber, s.tier, s.type, s.name))
+    for skill_id, raw_name in pattern.findall(text):
+        name = raw_name.replace("\\'", "'")
+        if skill_id not in seen:
+            seen.add(skill_id)
+            skills.append({"id": skill_id, "name": name})
     return skills
 
 
-def ext_from_response(url: str, content_type: str) -> str:
-    path = urlparse(url).path.lower()
-    for ext in [".webp", ".png", ".jpg", ".jpeg", ".gif", ".svg"]:
-        if path.endswith(ext):
-            return ext
-    if "webp" in content_type: return ".webp"
-    if "png" in content_type: return ".png"
-    if "jpeg" in content_type or "jpg" in content_type: return ".jpg"
-    if "svg" in content_type: return ".svg"
-    return ".png"
+def extract_loot_icons() -> Dict[str, Dict[str, str]]:
+    print(f"Opening {LOOT_URL}")
+    html = requests.get(LOOT_URL, headers=HEADERS, timeout=30).text
+    soup = BeautifulSoup(html, "html.parser")
+    icons: Dict[str, Dict[str, str]] = {}
+
+    for img in soup.find_all("img"):
+        src = img.get("src") or img.get("data-src") or img.get("data-lazy-src") or ""
+        alt = img.get("alt") or img.get("title") or ""
+        if not src or not alt:
+            continue
+        if "swordxstaff" not in src.lower() and "/skills/" not in src.lower() and "skill_" not in src.lower():
+            continue
+        clean_name = re.sub(r"^image:\s*", "", alt.strip(), flags=re.I)
+        if not clean_name:
+            continue
+        url = urljoin(LOOT_URL, src)
+        icons[norm(clean_name)] = {"name": clean_name, "url": url}
+
+    # Some builds expose image URLs in <a href="/skills/swordxstaff/skill_123.png">Image: Name</a>.
+    for a in soup.find_all("a"):
+        href = a.get("href") or ""
+        label = a.get_text(" ", strip=True) or a.get("aria-label") or ""
+        if not href or not label:
+            continue
+        if "swordxstaff" not in href.lower() and "skill_" not in href.lower():
+            continue
+        clean_name = re.sub(r"^image:\s*", "", label.strip(), flags=re.I)
+        if not clean_name:
+            continue
+        icons.setdefault(norm(clean_name), {"name": clean_name, "url": urljoin(LOOT_URL, href)})
+
+    return icons
 
 
-def download_icons(skills: list[Skill]) -> None:
-    ICON_DIR.mkdir(parents=True, exist_ok=True)
+def best_match(skill_name: str, icons: Dict[str, Dict[str, str]]):
+    n = norm(skill_name)
+    if n in icons:
+        return icons[n]
+    # Secondary pass: match English names against bilingual names like "Burning Flash (灼炎闪袭)".
+    for key, val in icons.items():
+        if n and (n == key or n in key or key in n):
+            return val
+    return None
+
+
+def download_icons(skills: List[Dict[str, str]], icons: Dict[str, Dict[str, str]]) -> Tuple[Dict[str, str], List[dict], List[dict]]:
+    ICON_DIR_PRIMARY.mkdir(parents=True, exist_ok=True)
+    ICON_DIR_COMPAT.mkdir(parents=True, exist_ok=True)
+    icon_map: Dict[str, str] = {}
+    downloaded = []
+    missing = []
+
     session = requests.Session()
     session.headers.update(HEADERS)
-    for idx, s in enumerate(skills, 1):
-        if not s.iconSource:
+
+    for skill in skills:
+        match = best_match(skill["name"], icons)
+        if not match:
+            missing.append(skill)
             continue
+        url = match["url"]
         try:
-            r = session.get(s.iconSource, timeout=30)
+            r = session.get(url, timeout=30)
             r.raise_for_status()
-            ext = ext_from_response(s.iconSource, r.headers.get("content-type", ""))
-            filename = f"{s.id}{ext}"
-            path = ICON_DIR / filename
-            path.write_bytes(r.content)
-            s.icon = f"assets/skills/{filename}"
-            print(f"[{idx:03}/{len(skills)}] icon OK: {s.name}")
-            time.sleep(0.05)
+            ext = extension_from_response(url, r)
+            filename = f"{skill['id']}{ext}"
+            dest = ICON_DIR_PRIMARY / filename
+            dest.write_bytes(r.content)
+            shutil.copy2(dest, ICON_DIR_COMPAT / filename)
+            rel = f"assets/sxs/skills/{filename}".replace("\\", "/")
+            icon_map[skill["id"]] = rel
+            downloaded.append({"id": skill["id"], "name": skill["name"], "matched": match["name"], "url": url, "file": rel})
+            print(f"[{len(downloaded):3}] {skill['name']} -> {filename}")
         except Exception as e:
-            print(f"[{idx:03}/{len(skills)}] icon failed for {s.name}: {e}")
-            s.icon = ""
+            missing.append({**skill, "error": str(e), "url": url})
+            print(f"FAILED {skill['name']}: {e}")
+
+    return icon_map, downloaded, missing
 
 
-def cross_reference_eog(skills: list[Skill]) -> dict:
-    report = {"checked": False, "matched_names": 0, "notes": []}
-    try:
-        html = fetch_html(EOG)
-        text = BeautifulSoup(html, "html.parser").get_text(" ", strip=True).lower()
-        report["checked"] = True
-        for s in skills:
-            if s.name.lower() in text:
-                report["matched_names"] += 1
-        if report["matched_names"] == 0:
-            report["notes"].append("EOG database hub loaded, but skill rows were not present in static HTML. This is normal for JS-driven pages.")
-    except Exception as e:
-        report["notes"].append(f"EOG check failed: {e}")
-    return report
+def write_icon_js(icon_map: Dict[str, str]):
+    JS_ICON_MAP.parent.mkdir(parents=True, exist_ok=True)
+    JS_ICON_MAP.write_text(
+        "window.SXS_SKILL_ICONS = " + json.dumps(icon_map, indent=2, ensure_ascii=False) + ";\n",
+        encoding="utf-8",
+    )
 
 
-def write_outputs(skills: list[Skill], report: dict) -> None:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    JS_DIR.mkdir(parents=True, exist_ok=True)
-    payload = {
-        "updatedBy": "scripts/update_sxs_database.py",
-        "sources": [PRYDWEN, EOG],
-        "count": len(skills),
-        "classPaths": CLASS_PATHS,
-        "eogCrossReference": report,
-        "skills": [asdict(s) for s in skills],
-    }
-    (DATA_DIR / "skills.json").write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    js = "window.SXS_SKILL_DATABASE = " + json.dumps(payload, ensure_ascii=False) + ";\n"
-    (JS_DIR / "skills.generated.js").write_text(js, encoding="utf-8")
-
-
-def patch_builds_html() -> None:
+def patch_builds_html():
     if not BUILD_HTML.exists():
         return
-    html = BUILD_HTML.read_text(encoding="utf-8")
-    if "js/skills.generated.js" not in html:
-        html = html.replace("</head>", '<script src="js/skills.generated.js"></script>\n</head>')
-    # Replace the first `const skills = [` with generated-data support, but keep fallback array.
-    html = html.replace("const skills = [", "const skills = (window.SXS_SKILL_DATABASE && window.SXS_SKILL_DATABASE.skills) ? window.SXS_SKILL_DATABASE.skills : [", 1)
-    BUILD_HTML.write_text(html, encoding="utf-8")
+    text = BUILD_HTML.read_text(encoding="utf-8", errors="ignore")
+    if 'src="js/skills.icons.js"' not in text:
+        text = text.replace("<script>\nconst iconByTier", '<script src="js/skills.icons.js"></script>\n<script>\nconst iconByTier')
+
+    helper = "function skillIcon(s){return (window.SXS_SKILL_ICONS&&window.SXS_SKILL_ICONS[s.id])||classIcon(s.tier)}\n"
+    if "function skillIcon(s)" not in text:
+        text = text.replace("function classIcon(tier){return iconByTier[tier]||''}\n", "function classIcon(tier){return iconByTier[tier]||''}\n" + helper)
+    text = re.sub(
+        r"function miniHTML\(s\)\{return `([^`]*?)<img src=\"\$\{classIcon\(s\.tier\)\}\" alt=\"\$\{s\.tier\}\"([^`]*?)`\}",
+        "function miniHTML(s){return `<div class=\"mini\" style=\"--skillColor:${skillColor(s)}\"><img src=\"${skillIcon(s)}\" alt=\"${s.name}\" onerror=\"this.src=classIcon('${s.tier}')\"></div>`}",
+        text,
+        count=1,
+    )
+    text = text.replace('detailIcon.innerHTML=`<img src="${classIcon(s.tier)}" alt="${s.tier}">`;', 'detailIcon.innerHTML=`<img src="${skillIcon(s)}" alt="${s.name}" onerror="this.src=classIcon(\'${s.tier}\')">`;')
+    BUILD_HTML.write_text(text, encoding="utf-8")
 
 
-def main() -> int:
-    print("Fetching Prydwen skills...")
-    html = fetch_html(PRYDWEN)
-    skills = parse_prydwen(html)
-    print(f"Parsed {len(skills)} skills from Prydwen")
-    if len(skills) < 200:
-        print("WARNING: Parsed fewer than 200 skills. The site may have changed or blocked the request.")
-        print("Try: pip install playwright && python -m playwright install chromium")
-    print("Cross-referencing EOG hub...")
-    report = cross_reference_eog(skills)
-    print("Downloading icons...")
-    download_icons(skills)
-    write_outputs(skills, report)
+def patch_app_js():
+    if not APP_JS.exists():
+        return
+    text = APP_JS.read_text(encoding="utf-8", errors="ignore")
+    helper = """
+function localSkillIcon(skill) {
+  return (window.SXS_SKILL_ICONS && window.SXS_SKILL_ICONS[skill.id]) || null;
+}
+"""
+    if "function localSkillIcon(skill)" not in text:
+        text = text.replace("function generatedSkillIcon(skill) {", helper + "\nfunction generatedSkillIcon(skill) {")
+    text = text.replace("skills.forEach((skill) => { skill.icon = generatedSkillIcon(skill); });", "skills.forEach((skill) => { skill.icon = localSkillIcon(skill) || generatedSkillIcon(skill); });")
+    APP_JS.write_text(text, encoding="utf-8")
+
+
+def main():
+    LOG_DIR.mkdir(exist_ok=True)
+    skills = extract_local_skills()
+    print(f"Local Build Lab skills found: {len(skills)}")
+    icons = extract_loot_icons()
+    print(f"Loot & Waifus icon records found: {len(icons)}")
+
+    icon_map, downloaded, missing = download_icons(skills, icons)
+    write_icon_js(icon_map)
     patch_builds_html()
+    patch_app_js()
+
+    report = {
+        "source": LOOT_URL,
+        "local_skill_count": len(skills),
+        "loot_icon_record_count": len(icons),
+        "downloaded_count": len(downloaded),
+        "missing_count": len(missing),
+        "downloaded": downloaded,
+        "missing": missing,
+    }
+    (LOG_DIR / "sxs_icon_report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+
     print("\nDone.")
-    print(f"Wrote: {DATA_DIR / 'skills.json'}")
-    print(f"Wrote: {JS_DIR / 'skills.generated.js'}")
-    print(f"Icons: {ICON_DIR}")
-    print(f"Skill count: {len(skills)}")
-    print("Now open builds.html locally or commit/push the folder to GitHub Pages.")
-    return 0
+    print(f"Downloaded icons: {len(downloaded)}")
+    print(f"Missing icons:    {len(missing)}")
+    print(f"Icon map:         {JS_ICON_MAP}")
+    print(f"Icons folder:     {ICON_DIR_PRIMARY}")
+    print(f"Report:           {LOG_DIR / 'sxs_icon_report.json'}")
+    if missing:
+        print("\nFirst missing skills:")
+        for m in missing[:20]:
+            print(" - " + m.get("name", m.get("id", "unknown")))
+
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

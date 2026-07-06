@@ -338,6 +338,11 @@ const skills = [
   { id: 'prophet-summoning-pact', name: 'Summoning Pact', type: 'charm', tier: 'Prophet', icon: iconByTier.Prophet, cooldown: '—', description: 'Summoning consumes 2% of the caster\'s max HP to increase the summon\'s HP. Restores all HP consumed by this Charm if the caster survives until victory.' }
 ];
 
+
+function localSkillIcon(skill) {
+  return (window.SXS_SKILL_ICONS && window.SXS_SKILL_ICONS[skill.id]) || null;
+}
+
 function generatedSkillIcon(skill) {
   const tierColors = {
     Warrior: ['#ff3e57','#3d050c'], Duelist: ['#ff2b4f','#42040b'], Berserker: ['#ff4b32','#501006'], Conqueror: ['#ff163a','#430004'], Ravager: ['#ff5a2b','#451100'],
@@ -351,7 +356,7 @@ function generatedSkillIcon(skill) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><radialGradient id="g" cx="50%" cy="38%" r="68%"><stop stop-color="${a}"/><stop offset="0.55" stop-color="${b}"/><stop offset="1" stop-color="#02070c"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect x="3" y="3" width="94" height="94" rx="18" fill="url(#g)" stroke="${a}" stroke-width="3"/><path d="${shape}" fill="none" stroke="#fff6df" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" opacity=".95"/><circle cx="50" cy="50" r="43" fill="none" stroke="#ffffff" stroke-opacity=".20" stroke-width="2"/><text x="50" y="88" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="13" fill="#fff">${letters}</text></svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
-skills.forEach((skill) => { skill.icon = generatedSkillIcon(skill); });
+skills.forEach((skill) => { skill.icon = localSkillIcon(skill) || generatedSkillIcon(skill); });
 
 function initBuildLab() {
   const treePicker = document.getElementById("classTreePicker");
