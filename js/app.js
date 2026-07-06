@@ -56,28 +56,28 @@ const classTrees = {
     colorName: "Red Path",
     theme: "red",
     icon: "assets/beserker-icon.jpg",
-    tiers: ["Warrior", "Duelist", "Berserker", "Conqueror", "Ravager"]
+    tiers: ["Warrior", "Duelist", "Berserker", "Conqueror"]
   },
   "knight-line": {
     name: "Knight Line",
     colorName: "Orange Path",
     theme: "orange",
     icon: "assets/paladin-icon.jpg",
-    tiers: ["Warrior", "Knight", "Paladin", "Guardian", "Templar"]
+    tiers: ["Warrior", "Knight", "Paladin", "Guardian"]
   },
   "sorcerer-line": {
     name: "Sorcerer Line",
     colorName: "Blue Path",
     theme: "blue",
     icon: "assets/archmage-icon.jpg",
-    tiers: ["Mage", "Sorcerer", "Archmage", "Destroyer", "Magister"]
+    tiers: ["Mage", "Sorcerer", "Archmage", "Destroyer"]
   },
   "sage-line": {
     name: "Sage Line",
     colorName: "Mint Path",
     theme: "mint",
     icon: "assets/arcanist-icon.jpg",
-    tiers: ["Mage", "Sage", "Arcanist", "Dominator", "Prophet"]
+    tiers: ["Mage", "Sage", "Arcanist", "Dominator"]
   }
 };
 
@@ -383,14 +383,15 @@ function initBuildLab() {
     document.getElementById("currentPathLabel").textContent = tree.colorName;
     document.getElementById("currentTierPill").textContent = currentTier;
     document.getElementById("tierPanelTitle").textContent = tree.tiers.join(" → ");
-    document.getElementById("libraryTitle").textContent = `${currentTier} Available Skills`;
+    const libraryTitle = document.getElementById("libraryTitle");
+    if (libraryTitle) libraryTitle.textContent = `${currentTier} Available Skills`;
   }
 
   function emptySlotMarkup(type, index) {
     const options = available(type).map((item) => `<option value="${item.id}">${item.tier} — ${item.name}</option>`).join("");
     return `<button class="skill-slot empty" data-type="${type}" data-index="${index}" type="button">
+      <span class="slot-num">${index + 1}</span>
       <span class="skill-orb empty-orb">+</span>
-      <strong>Choose ${type === "technique" ? "Technique" : "Charm"}</strong>
       <select aria-label="Choose ${type} ${index + 1}"><option value="">Select skill...</option>${options}</select>
     </button>`;
   }
@@ -400,9 +401,9 @@ function initBuildLab() {
     if (!skill) return emptySlotMarkup(type, index);
     const options = available(type).map((item) => `<option value="${item.id}" ${item.id === id ? "selected" : ""}>${item.tier} — ${item.name}</option>`).join("");
     return `<button class="skill-slot" data-type="${type}" data-index="${index}" type="button">
+      <span class="slot-num">${index + 1}</span>
       <span class="skill-orb"><img src="${skill.icon}" alt="${skill.name}" /></span>
       <strong>${skill.name}</strong>
-      <small>${skill.tier}</small>
       <select aria-label="Choose ${type} ${index + 1}"><option value="">Clear slot</option>${options}</select>
     </button>`;
   }
@@ -468,7 +469,9 @@ function initBuildLab() {
       const index = Number(slot.dataset.index);
       slot.addEventListener("mouseenter", () => showSkill(type, currentBuild[type][index], index));
       slot.addEventListener("click", () => showSkill(type, currentBuild[type][index], index));
-      slot.querySelector("select").addEventListener("change", (event) => {
+      const select = slot.querySelector("select");
+      slot.addEventListener("dblclick", () => select && select.focus());
+      select.addEventListener("change", (event) => {
         currentBuild[type][index] = event.target.value || null;
         renderSlots();
         showSkill(type, currentBuild[type][index], index);
@@ -480,7 +483,7 @@ function initBuildLab() {
   function renderLibrary(type = document.querySelector(".library-tabs button.active")?.dataset.library || "technique") {
     const library = document.getElementById("skillLibrary");
     const list = available(type);
-    library.innerHTML = list.length ? list.map((skill) => `<button class="library-skill" type="button" data-id="${skill.id}" data-type="${type}"><img src="${skill.icon}" alt="" /><span><strong>${skill.name}</strong><small>${skill.tier} ${type}</small></span></button>`).join("") : `<p class="empty-library">No ${type}s entered for this tier yet.</p>`;
+    library.innerHTML = list.length ? list.map((skill) => `<button class="library-skill" type="button" data-id="${skill.id}" data-type="${type}" title="${skill.name}"><img src="${skill.icon}" alt="" /><span><strong>${skill.name}</strong><small>${skill.tier} ${type}</small></span></button>`).join("") : `<p class="empty-library">No ${type}s entered for this tier yet.</p>`;
     library.querySelectorAll(".library-skill").forEach((button) => button.addEventListener("click", () => showSkill(button.dataset.type, button.dataset.id, 0)));
   }
 

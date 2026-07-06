@@ -11,26 +11,24 @@
   <div class="ambient-glow glow-one"></div>
   <div class="ambient-glow glow-two"></div>
 
-<header class="site-header forge-header">
+<header class="site-header forge-header build-lab-topbar">
   <a class="brand forge-brand" href="index.html">
     <img src="assets/unreal-banner.jpg" alt="Unreal guild banner" />
-    <span><em>Class Forge</em>Build Lab</span>
+    <span><em>Class Forge</em>Build Lab<small>Create. Plan. Conquer.</small></span>
   </a>
+  <div class="top-rule"></div>
+  <div class="forge-actions top-actions">
+    <button class="top-action" type="button">▦ My Builds</button>
+    <button class="top-action" type="button">⇩ Import / Export⌄</button>
+    <button class="top-action" type="button">↗ Share Build</button>
+    <button class="top-action danger" type="button" onclick="location.reload()">♲ Clear All</button>
+    <button id="saveBuild" class="save-build-top" type="button">Save Build</button>
+  </div>
   <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
-  <nav class="site-nav" id="siteNav">
-    <a href="index.html">Home</a>
-    <a href="events.html">Events</a>
-    <a href="roster.html">Roster</a>
-    <a class="active" href="builds.html">Build Lab</a>
-    <a href="food-guide.html">Food Guide</a>
-    <a href="guides.html">Guides</a>
-    <a href="recruitment.html">Recruitment</a>
-    <a class="discord-link" href="https://discord.gg/xWHdMsVxKG" target="_blank">Discord</a>
-  </nav>
 </header>
 
 <main class="forge-shell">
-  <aside class="forge-sidebar">
+  <aside class="forge-sidebar"><nav class="side-nav">
     <a href="index.html">⌂ <span>Home</span></a>
     <a href="events.html">▣ <span>Events</span></a>
     <a href="roster.html">♜ <span>Roster</span></a>
@@ -38,23 +36,15 @@
     <a href="#skill-codex">◈ <span>Skill Codex</span><b>232</b></a>
     <a href="guides.html">✦ <span>Guides</span></a>
     <a href="recruitment.html">☻ <span>Recruitment</span></a>
-    <div class="discord-card">💬<strong>Join our Discord</strong><small>Connect with the guild!</small></div>
+    <div class="discord-card">💬<strong>Join our Discord</strong><small>Connect with the guild!</small></div></nav>
   </aside>
 
   <section class="forge-main">
-    <section class="forge-hero">
+    <section class="forge-hero intro-strip">
       <div>
-        <p class="kicker">Class Forge</p>
-        <h1>Build Lab</h1>
-        <p>Choose a class path, pick your current tier, then fill 4 Techniques and 4 Charms. Higher tiers include every earlier tier in the same path.</p>
+        <p>Choose a class path, pick your current tier, then fill 4 Techniques and 4 Charms.<br>Higher tiers include every earlier tier in the same path.</p>
       </div>
-      <div class="forge-actions">
-        <span class="total-skills-badge">✴ 232 Total Skills</span>
-        <button class="ghost-top" type="button">My Builds</button>
-        <button class="ghost-top" type="button">Import / Export</button>
-        <button class="ghost-top" type="button">Clear All</button>
-        <button id="saveBuild" class="save-build-top" type="button">Save Build</button>
-      </div>
+
     </section>
 
     <div class="forge-grid">
@@ -70,7 +60,7 @@
         <div class="tier-picker" id="tierPicker"></div>
       </section>
 
-      <section class="forge-card save-panel build-save-panel">
+      <section class="forge-card save-panel build-save-panel hidden-save-panel">
         <div class="save-row">
           <label for="buildName">Build Name</label>
           <input id="buildName" type="text" placeholder="Name this build" />
@@ -100,9 +90,7 @@
       </section>
 
       <section class="forge-card browser-card skill-library-panel">
-        <div class="step-title"><span>4</span><h2>Browse All Skills in This Path</h2></div>
-        <h3 id="libraryTitle" class="library-title">Available Skills</h3>
-        <div class="library-tools"><input id="skillSearch" placeholder="Search skills..." disabled><select disabled><option>All Tiers</option></select><select disabled><option>All Types</option></select></div>
+        <div class="step-title"><span>4</span><h2>Browse All Skills</h2></div><h3 id="libraryTitle" class="library-title">Available Skills</h3>
         <div class="library-tabs">
           <button class="active" data-library="technique" type="button">Techniques</button>
           <button data-library="charm" type="button">Charms</button>
@@ -131,8 +119,8 @@
     </div>
 
     <section class="forge-card all-skills-panel" id="skill-codex">
-      <div class="step-title"><span>5</span><h2>Skill Codex — All Skills by Class Tree</h2></div>
-      <p class="codex-note">All 232 imported skills are included here. Class paths include the current 4-tier lines plus the next tier cards: Ravager, Templar, Magister, and Prophet.</p>
+      <div class="step-title"><span>5</span><h2>Skill Codex — All Skills by Class Path</h2></div>
+      <p class="codex-note">All imported skills are grouped by class path and tier. Pick a path above, then assign four Techniques and four Charms.</p>
       <div class="codex-actions" id="codexActions"></div>
       <div class="all-class-skills" id="allClassSkills"></div>
     </section>
