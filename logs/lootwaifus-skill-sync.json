@@ -1,15 +1,15 @@
 {
   "source": "https://lootandwaifus.com/sword-x-staff-skill-database/",
-  "started": "2026-07-08 17:54:28",
+  "started": "2026-07-06 18:30:22",
   "api_hits": [],
   "asset_hits": [],
   "errors": [],
-  "finished": "2026-07-08 17:58:00",
+  "finished": "2026-07-06 18:34:07",
   "raw_objects_found": 2766,
-  "skills_written": 232,
-  "icons_downloaded": 230,
-  "descriptions_present": 232,
-  "cooldowns_present": 97,
+  "skills_written": 473,
+  "icons_downloaded": 394,
+  "descriptions_present": 446,
+  "cooldowns_present": 162,
   "output": {
     "skills_json": "C:\\Users\\TIMMY\\Documents\\Unreal Website\\unreal-guild\\data\\skills.json",
     "builds_html": "C:\\Users\\TIMMY\\Documents\\Unreal Website\\unreal-guild\\builds.html"

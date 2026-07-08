@@ -105,3 +105,36 @@ export async function requireUser(request, env) {
   if (!user) return { error: json({ ok: false, error: 'You need to sign in first.' }, 401) };
   return { user };
 }
+
+export async function getUserPermissions(env, user) {
+  if (!user || user.account_type !== 'guild_member' || !user.rank_id || !user.rank_verified) {
+    return [];
+  }
+  const rows = await env.DB.prepare(`
+    SELECT p.permission_key, p.label, p.description
+    FROM rank_permissions rp
+    JOIN permissions p ON p.permission_key = rp.permission_key
+    WHERE rp.rank_id = ?
+    ORDER BY p.label
+  `).bind(user.rank_id).all();
+  return rows.results || [];
+}
+
+export async function userHasPermission(env, user, permissionKey) {
+  if (!user || user.account_type !== 'guild_member' || !user.rank_verified) return false;
+  const row = await env.DB.prepare(`
+    SELECT 1 AS allowed
+    FROM rank_permissions
+    WHERE rank_id = ? AND permission_key = ?
+    LIMIT 1
+  `).bind(user.rank_id, permissionKey).first();
+  return !!row;
+}
+
+export async function requirePermission(request, env, permissionKey) {
+  const auth = await requireUser(request, env);
+  if (auth.error) return auth;
+  const allowed = await userHasPermission(env, auth.user, permissionKey);
+  if (!allowed) return { error: json({ ok: false, error: 'You do not have permission to do that.' }, 403) };
+  return auth;
+}
