@@ -106,35 +106,36 @@ export async function requireUser(request, env) {
   return { user };
 }
 
-export async function getUserPermissions(env, user) {
-  if (!user || user.account_type !== 'guild_member' || !user.rank_id || !user.rank_verified) {
-    return [];
-  }
+export async function getUserPermissions(env, userId) {
+  if (!userId) return [];
   const rows = await env.DB.prepare(`
-    SELECT p.permission_key, p.label, p.description
-    FROM rank_permissions rp
-    JOIN permissions p ON p.permission_key = rp.permission_key
-    WHERE rp.rank_id = ?
-    ORDER BY p.label
-  `).bind(user.rank_id).all();
-  return rows.results || [];
+    SELECT p.slug
+    FROM users u
+    JOIN guild_members gm ON gm.user_id = u.id
+    JOIN rank_permissions rp ON rp.rank_id = gm.rank_id
+    JOIN permissions p ON p.id = rp.permission_id
+    WHERE u.id = ? AND u.status = 'active'
+  `).bind(userId).all();
+  return (rows.results || []).map(r => r.slug);
 }
 
-export async function userHasPermission(env, user, permissionKey) {
-  if (!user || user.account_type !== 'guild_member' || !user.rank_verified) return false;
-  const row = await env.DB.prepare(`
-    SELECT 1 AS allowed
-    FROM rank_permissions
-    WHERE rank_id = ? AND permission_key = ?
-    LIMIT 1
-  `).bind(user.rank_id, permissionKey).first();
-  return !!row;
-}
-
-export async function requirePermission(request, env, permissionKey) {
+export async function requirePermission(request, env, permissionSlug) {
   const auth = await requireUser(request, env);
   if (auth.error) return auth;
-  const allowed = await userHasPermission(env, auth.user, permissionKey);
-  if (!allowed) return { error: json({ ok: false, error: 'You do not have permission to do that.' }, 403) };
-  return auth;
+  const permissions = await getUserPermissions(env, auth.user.id);
+  if (!permissions.includes(permissionSlug)) {
+    return { error: json({ ok: false, error: 'You do not have permission to do that.' }, 403) };
+  }
+  return { user: auth.user, permissions };
+}
+
+export async function audit(env, actorUserId, action, targetType = '', targetId = '', details = '') {
+  try {
+    await env.DB.prepare(`
+      INSERT INTO audit_log (id, actor_user_id, action, target_type, target_id, details)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).bind(randomId('audit_'), actorUserId || null, action, targetType, targetId, details || '').run();
+  } catch (_) {
+    // Audit logging should never break the user's action.
+  }
 }

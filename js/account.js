@@ -69,7 +69,7 @@ async function login(event) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  try { await loadOptions(); } catch (err) { setMessage('Database setup needs the latest db/schema.sql. Details: ' + err.message, 'error'); }
+  try { await loadOptions(); } catch (err) { setMessage('Database is not ready yet. Run db/schema.sql in D1 first.', 'error'); }
   document.querySelectorAll('input[name="accountType"], #rankSlug').forEach(el => el.addEventListener('change', syncForm));
   $('#registerForm')?.addEventListener('submit', register);
   $('#loginForm')?.addEventListener('submit', login);

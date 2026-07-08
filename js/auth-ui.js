@@ -42,6 +42,14 @@ async function sxsUpdateAccountNav() {
       const name = data.user?.ingame_name || data.user?.username || 'Profile';
       link.innerHTML = `<span ${sxsClassStyle(data.user?.class_color)}>${name}</span>`;
       link.title = 'Profile';
+      if ((data.permissions || []).includes('admin_dashboard') && !nav.querySelector('.admin-nav-link')) {
+        const admin = document.createElement('a');
+        admin.className = 'admin-nav-link';
+        admin.href = 'admin.html';
+        admin.textContent = 'Admin';
+        const discord = nav.querySelector('.discord-link, .discord-pill');
+        nav.insertBefore(admin, discord || null);
+      }
     } else {
       link.href = 'account.html';
       link.textContent = 'Sign In';

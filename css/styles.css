@@ -986,3 +986,14 @@ html, body {
 
 /* Account link injected on every page */
 .site-nav .account-nav-link{font-weight:800}
+
+/* Version 3 admin/content editor */
+.admin-layout { max-width: 1180px; margin: 0 auto; padding: 32px 18px 70px; }
+.admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 20px; }
+.admin-panel, .content-card { background: rgba(10, 13, 22, .82); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.admin-edit-box { border: 1px solid rgba(255,255,255,.1); border-radius: 14px; padding: 14px; margin: 12px 0; background: rgba(255,255,255,.04); }
+.admin-edit-box label, .admin-panel label { display: grid; gap: 7px; margin: 12px 0; color: rgba(255,255,255,.82); font-weight: 700; }
+.admin-edit-box input, .admin-edit-box textarea, .admin-panel input, .admin-panel textarea, .admin-panel select { width: 100%; box-sizing: border-box; border: 1px solid rgba(255,255,255,.15); border-radius: 10px; background: rgba(0,0,0,.35); color: #fff; padding: 10px 12px; }
+.admin-panel textarea { min-height: 220px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.admin-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.admin-button { border: 1px solid rgba(245,197,66,.5); background: linear-gradient(135deg, rgba(245,197,66,.22), rgba(255,255,255,.05)); color: #fff; border-radius: 999px; padding: 10px 16px; font-weight: 800; cursor: pointer; }
