@@ -1,4 +1,4 @@
-const adminState = { me: null, bubbles: [], currentPageKey: 'guides' };
+const adminState = { me: null, bubbles: [], currentPageKey: 'guides', media: [] };
 const qs = (s) => document.querySelector(s);
 
 async function adminFetchJson(url, options = {}) {
@@ -37,6 +37,7 @@ async function loadMe() {
   qs('#adminRank').textContent = data.user?.rank_name || 'Leadership';
   qs('#bubblePanel').hidden = !can('edit_home');
   qs('#guidePanel').hidden = !can('edit_guides');
+  qs('#mediaPanel').hidden = !can('admin_dashboard');
 }
 
 async function loadBubbles() {
@@ -93,6 +94,69 @@ async function savePage() {
   setAdminMessage('Guide content saved.', 'success');
 }
 
+
+async function loadMedia() {
+  if (!can('admin_dashboard')) return;
+  const data = await adminFetchJson('/api/media/list');
+  adminState.media = data.assets || [];
+  renderMedia();
+}
+
+function renderMedia() {
+  const wrap = qs('#mediaLibrary');
+  if (!wrap) return;
+  if (!adminState.media.length) {
+    wrap.innerHTML = '<p class="muted">No media uploaded yet.</p>';
+    return;
+  }
+  wrap.innerHTML = adminState.media.map(asset => `
+    <div class="media-card" data-id="${escapeAttr(asset.id)}">
+      <img src="${escapeAttr(asset.url)}" alt="${escapeAttr(asset.filename)}" loading="lazy">
+      <div class="media-card-body">
+        <strong>${escapeHtml(asset.filename)}</strong>
+        <small>${escapeHtml(asset.uploaded_by_name || 'Leadership')} • ${escapeHtml(asset.created_at || '')}</small>
+        <input readonly value="${escapeAttr(asset.url)}" aria-label="Media URL">
+        <div class="media-actions">
+          <button type="button" class="admin-button small" data-copy="${escapeAttr(asset.url)}">Copy URL</button>
+          <button type="button" class="admin-button small danger" data-delete="${escapeAttr(asset.id)}">Delete</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function uploadMedia(event) {
+  event.preventDefault();
+  const fileInput = qs('#mediaFile');
+  if (!fileInput?.files?.length) throw new Error('Choose an image first.');
+  const form = new FormData();
+  form.append('file', fileInput.files[0]);
+  const res = await fetch('/api/media/upload', { method: 'POST', body: form });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.ok === false) throw new Error(data.error || 'Upload failed.');
+  fileInput.value = '';
+  setAdminMessage('Image uploaded to R2.', 'success');
+  await loadMedia();
+}
+
+async function deleteMedia(id) {
+  if (!confirm('Delete this media item?')) return;
+  await adminFetchJson('/api/media/delete', { method: 'POST', body: JSON.stringify({ id }) });
+  setAdminMessage('Media item deleted.', 'success');
+  await loadMedia();
+}
+
+function handleMediaClick(event) {
+  const copy = event.target.closest('[data-copy]');
+  if (copy) {
+    navigator.clipboard?.writeText(copy.dataset.copy);
+    setAdminMessage('Media URL copied.', 'success');
+    return;
+  }
+  const del = event.target.closest('[data-delete]');
+  if (del) deleteMedia(del.dataset.delete).catch(err => setAdminMessage(err.message, 'error'));
+}
+
 function escapeHtml(value) { return String(value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function escapeAttr(value) { return escapeHtml(value).replace(/'/g, '&#39;'); }
 
@@ -101,10 +165,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadMe();
     await loadBubbles();
     await loadPage();
+    await loadMedia();
   } catch (err) {
     setAdminMessage(err.message, 'error');
   }
   qs('#saveBubbles')?.addEventListener('click', () => saveBubbles().catch(err => setAdminMessage(err.message, 'error')));
   qs('#pageKey')?.addEventListener('change', () => loadPage().catch(err => setAdminMessage(err.message, 'error')));
   qs('#savePage')?.addEventListener('click', () => savePage().catch(err => setAdminMessage(err.message, 'error')));
+  qs('#mediaUploadForm')?.addEventListener('submit', (event) => uploadMedia(event).catch(err => setAdminMessage(err.message, 'error')));
+  qs('#mediaLibrary')?.addEventListener('click', handleMediaClick);
 });

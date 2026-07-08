@@ -68,7 +68,7 @@
     <section class="admin-panel" id="guidePanel">
       <p class="kicker">Guides</p>
       <h2>Edit Guide Content</h2>
-      <p>Use simple HTML for now. Screenshot uploads will use Cloudflare R2 in the next step.</p>
+      <p>Use simple HTML for now. Paste image URLs from the Media Library into the content editor.</p>
       <label>Guide Page
         <select id="pageKey">
           <option value="guides">Guides Main</option>
@@ -81,6 +81,17 @@
       <label>Title <input id="pageTitle" /></label>
       <label>Content HTML <textarea id="pageContent"></textarea></label>
       <div class="admin-actions"><button class="admin-button" id="savePage">Save Guide Content</button></div>
+    </section>
+
+    <section class="admin-panel" id="mediaPanel">
+      <p class="kicker">Media Library</p>
+      <h2>Upload Screenshots & Images</h2>
+      <p>Upload PNG, JPG, WEBP, or GIF images to Cloudflare R2. Use the copied URL inside guide content or homepage bubbles.</p>
+      <form id="mediaUploadForm" class="media-upload-form">
+        <label>Image File <input id="mediaFile" name="file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /></label>
+        <div class="admin-actions"><button class="admin-button" type="submit">Upload Image</button></div>
+      </form>
+      <div id="mediaLibrary" class="media-library"></div>
     </section>
   </div>
 
