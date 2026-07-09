@@ -1,5 +1,7 @@
 import { json, readJson, requireUser, cleanText, slugify, randomId } from '../../_lib.js';
 const ALLOWED = new Set(['conqueror','guardian','destroyer','dominator']);
+const PATH_MAP = { duelist:'conqueror', knight:'guardian', sorcerer:'destroyer', sage:'dominator', conqueror:'conqueror', guardian:'guardian', destroyer:'destroyer', dominator:'dominator' };
+function normalizeBuildPath(value){ const key = slugify(value || ''); return PATH_MAP[key] || key; }
 async function ensureBuildTable(env) {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS member_builds (
     id TEXT PRIMARY KEY,
@@ -25,7 +27,7 @@ export async function onRequestPost({ request, env }) {
   if (!env.DB) return json({ ok:false, error:'D1 binding DB is missing. Expected binding name: DB.' },500);
   const auth = await requireUser(request, env); if (auth.error) return auth.error;
   const body = await readJson(request);
-  const path = slugify(body?.path || '');
+  const path = normalizeBuildPath(body?.path || '');
   if (!ALLOWED.has(path)) return json({ ok:false, error:'Unknown build page.' },400);
   const title = cleanText(body?.title).slice(0,120);
   if (!title) return json({ ok:false, error:'Build title is required.' },400);

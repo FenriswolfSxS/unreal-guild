@@ -187,6 +187,9 @@
     catch(e){ list.innerHTML = '<p class="error">'+esc(e.message)+'</p>'; }
   }
 
+  function canEditReply(reply){ return !!me.signedIn && ((reply.author_id === me.user?.id && has('edit_own_posts')) || has('moderate_posts')); }
+  function canDeleteReply(reply){ return !!me.signedIn && ((reply.author_id === me.user?.id && has('delete_own_posts')) || has('moderate_posts')); }
+
   function renderThreads(){
     const list = $('threadList');
     if(!threads.length){ list.innerHTML = '<p class="muted">No posts yet. Be the first to start a discussion.</p>'; return; }
@@ -194,22 +197,51 @@
     threads.forEach(thread => {
       const item = document.createElement('div');
       item.className = 'thread-item';
-      item.innerHTML = `<strong>${esc(thread.title)}</strong><small>by ${esc(thread.author_name)} • ${esc(thread.created_at)}</small><p>${esc(thread.body).replace(/\n/g,'<br>')}</p>`;
+      const replies = Array.isArray(thread.replies) ? thread.replies : [];
+      item.innerHTML = `
+        <strong>${esc(thread.title)}</strong>
+        <small>by ${esc(thread.author_name)} • ${esc(thread.created_at)}</small>
+        <p>${esc(thread.body).replace(/\n/g,'<br>')}</p>
+        <div class="reply-list">
+          ${replies.length ? replies.map(reply => `
+            <div class="reply-item" data-reply-id="${esc(reply.id)}">
+              <small><strong>${esc(reply.author_name)}</strong> • ${esc(reply.created_at)}</small>
+              <p>${esc(reply.body).replace(/\n/g,'<br>')}</p>
+            </div>`).join('') : '<p class="muted reply-empty">No replies yet.</p>'}
+        </div>
+        ${canPost() ? `
+          <div class="reply-composer">
+            <textarea data-reply-body="${esc(thread.id)}" placeholder="Write a reply..."></textarea>
+            <button class="secondary-btn" type="button" data-reply-thread="${esc(thread.id)}">Reply</button>
+          </div>` : ''}`;
       if(canEdit(thread) || canDelete(thread)){
         const actions = document.createElement('div');
         actions.className = 'forum-actions';
         if(canEdit(thread)){
-          const edit = document.createElement('button'); edit.className='secondary-btn'; edit.type='button'; edit.textContent='Edit';
+          const edit = document.createElement('button'); edit.className='secondary-btn'; edit.type='button'; edit.textContent='Edit Post';
           edit.addEventListener('click', () => editThread(thread)); actions.appendChild(edit);
         }
         if(canDelete(thread)){
-          const del = document.createElement('button'); del.className='secondary-btn'; del.type='button'; del.textContent='Delete';
+          const del = document.createElement('button'); del.className='secondary-btn'; del.type='button'; del.textContent='Delete Post';
           del.addEventListener('click', () => deleteThread(thread)); actions.appendChild(del);
         }
         item.appendChild(actions);
       }
+      item.querySelectorAll('[data-reply-thread]').forEach(btn => btn.addEventListener('click', () => createReply(btn.dataset.replyThread)));
       list.appendChild(item);
     });
+  }
+
+  async function createReply(threadId){
+    if(!canPost()) return;
+    const box = document.querySelector(`[data-reply-body="${CSS.escape(threadId)}"]`);
+    const body = box?.value.trim();
+    if(!body){ alert('Write a reply first.'); return; }
+    try{
+      await jsonFetch('/api/forums/threads',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({thread_id:threadId,body})});
+      box.value='';
+      await loadForums(); await loadThreads(activeForumId);
+    } catch(e){ alert(e.message || 'Could not save reply.'); }
   }
 
   async function createThread(){

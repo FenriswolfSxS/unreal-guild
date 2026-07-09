@@ -19,6 +19,18 @@
   const $ = (id) => document.getElementById(id);
   const byId = new Map(DATA.skills.map(s => [s.id, s]));
 
+  const BUILD_PAGE_PATHS = {
+    duelist: "conqueror",
+    knight: "guardian",
+    sorcerer: "destroyer",
+    sage: "dominator",
+    conqueror: "conqueror",
+    guardian: "guardian",
+    destroyer: "destroyer",
+    dominator: "dominator"
+  };
+  function buildPagePath(){ return BUILD_PAGE_PATHS[state.path] || state.path; }
+
   function colorForPath(pid){
     return (DATA.paths[pid] && DATA.paths[pid].accent) || "#8eefff";
   }
@@ -337,7 +349,7 @@
   function buildPayload(visibility, title, notes=""){
     const snap = buildSnapshot();
     return {
-      path: state.path,
+      path: buildPagePath(),
       class_name: snap.className,
       title,
       tags: [snap.pathName, snap.className].filter(Boolean).join(", "),
@@ -365,7 +377,7 @@
     try{
       const d = await apiJson('/api/builds/save',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(buildPayload('public', name, notes))});
       alert("Published to the class build page.");
-      const page = `${state.path}-builds.html`;
+      const page = `${buildPagePath()}-builds.html`;
       if(confirm("Open the class build page now?")) location.href = page;
     }catch(err){
       alert(err.message || "Could not publish build. Make sure you are signed in.");
@@ -377,7 +389,7 @@
     list.innerHTML = `<p class="muted">Loading your D1 saved builds...</p>`;
     dialog.showModal();
     try{
-      const d = await apiJson('/api/builds/list?path='+encodeURIComponent(state.path)+'&mine=1');
+      const d = await apiJson('/api/builds/list?path='+encodeURIComponent(buildPagePath())+'&mine=1');
       const saved = d.builds || [];
       list.innerHTML = saved.length ? saved.map((b,i)=>`<div class="saved-row"><div><strong>${escapeHtml(b.title)}</strong><br><span class="muted">${escapeHtml(b.visibility || 'private')} • ${escapeHtml(b.updated_at || b.created_at || '')}</span></div><button type="button" data-load-build="${i}">Load</button></div>`).join("") : `<p class="muted">No saved builds yet.</p>`;
       list.querySelectorAll("[data-load-build]").forEach(btn => btn.addEventListener("click", () => {

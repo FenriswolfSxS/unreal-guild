@@ -1,5 +1,7 @@
 import { json, slugify, getCurrentUser } from '../../_lib.js';
 const ALLOWED = new Set(['conqueror','guardian','destroyer','dominator']);
+const PATH_MAP = { duelist:'conqueror', knight:'guardian', sorcerer:'destroyer', sage:'dominator', conqueror:'conqueror', guardian:'guardian', destroyer:'destroyer', dominator:'dominator' };
+function normalizeBuildPath(value){ const key = slugify(value || ''); return PATH_MAP[key] || key; }
 async function ensureBuildTable(env) {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS member_builds (
     id TEXT PRIMARY KEY,
@@ -24,7 +26,7 @@ async function ensureBuildTable(env) {
 export async function onRequestGet({ request, env }) {
   if (!env.DB) return json({ ok:false, error:'D1 binding DB is missing. Expected binding name: DB.' },500);
   const url = new URL(request.url);
-  const path = slugify(url.searchParams.get('path') || '');
+  const path = normalizeBuildPath(url.searchParams.get('path') || '');
   const mine = url.searchParams.get('mine') === '1';
   if (!ALLOWED.has(path)) return json({ ok:false, error:'Unknown build page.' },400);
   await ensureBuildTable(env);

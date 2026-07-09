@@ -1207,13 +1207,14 @@ html, body {
 .quick-clicks button:hover { transform: translateY(-1px); box-shadow: 0 0 24px rgba(149,232,255,.22); }
 .home-stage {
   width: min(1120px, calc(100vw - 40px));
-  min-height: 330px;
+  min-height: 620px;
   margin: 34px auto 0;
   position: relative;
+  overflow: hidden;
 }
 .home-stage .home-info-grid {
   position: relative;
-  min-height: 330px;
+  min-height: 620px;
   display: block;
 }
 .rune-bubble {
@@ -1295,3 +1296,11 @@ html, body {
 .published-skill-card strong { display: block; font-size: 1rem; }
 .published-skill-card span, .published-skill-card small { display: block; color: rgba(234,241,255,.72); margin-top: 2px; }
 .published-skill-card p { margin: 8px 0 0; color: rgba(255,255,255,.88); }
+
+/* Forum replies */
+.reply-list { margin-top: 16px; display: grid; gap: 10px; }
+.reply-item { margin-left: 18px; padding: 12px 14px; border-left: 3px solid rgba(149,232,255,.55); background: rgba(5,8,18,.28); border-radius: 12px; }
+.reply-item p { margin: 6px 0 0; }
+.reply-empty { margin: 10px 0 0; }
+.reply-composer { margin-top: 14px; display: grid; gap: 10px; }
+.reply-composer textarea { min-height: 78px; resize: vertical; }

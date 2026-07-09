@@ -76,9 +76,11 @@
       const savedPlaced = Number(b.pos_x || 0) || Number(b.pos_y || 0);
       const defaultX = (idx % 4) * 280;
       const defaultY = Math.floor(idx / 4) * 220;
-      const x = savedPlaced ? Number(b.pos_x || 0) : defaultX;
-      const y = savedPlaced ? Number(b.pos_y || 0) : defaultY;
+      let x = savedPlaced ? Number(b.pos_x || 0) : defaultX;
+      let y = savedPlaced ? Number(b.pos_y || 0) : defaultY;
       const w = Number(b.width || 260), h = Number(b.height || 190);
+      x = Math.max(0, Math.min(x, 1120 - Math.min(w, 1120)));
+      y = Math.max(0, Math.min(y, 620 - Math.min(h, 620)));
       const placed = true;
       return `<article class="notice-card editable-bubble rune-bubble" data-bubble-id="${b.id}" style="${placed ? `left:${x}px;top:${y}px;width:${w}px;min-height:${h}px;` : ''}">
         <span class="edit-chip">Drag • Resize • Type</span>
@@ -132,12 +134,19 @@
   function moveBubblePointer(event) {
     if (!dragState) return;
     const dx = event.clientX - dragState.startX, dy = event.clientY - dragState.startY;
+    const stage = document.querySelector('[data-home-stage]');
+    const maxLeft = Math.max(0, (stage?.clientWidth || 1120) - dragState.card.getBoundingClientRect().width - 4);
+    const maxTop = Math.max(0, (stage?.clientHeight || 620) - dragState.card.getBoundingClientRect().height - 4);
     if (dragState.mode === 'move') {
-      dragState.card.style.left = Math.max(0, dragState.left + dx) + 'px';
-      dragState.card.style.top = Math.max(0, dragState.top + dy) + 'px';
+      const nextLeft = Math.min(maxLeft, Math.max(0, dragState.left + dx));
+      const nextTop = Math.min(maxTop, Math.max(0, dragState.top + dy));
+      dragState.card.style.left = nextLeft + 'px';
+      dragState.card.style.top = nextTop + 'px';
     } else {
-      dragState.card.style.width = Math.max(180, dragState.width + dx) + 'px';
-      dragState.card.style.minHeight = Math.max(140, dragState.height + dy) + 'px';
+      const maxWidth = Math.max(180, (stage?.clientWidth || 1120) - dragState.left - 4);
+      const maxHeight = Math.max(140, (stage?.clientHeight || 620) - dragState.top - 4);
+      dragState.card.style.width = Math.min(maxWidth, Math.max(180, dragState.width + dx)) + 'px';
+      dragState.card.style.minHeight = Math.min(maxHeight, Math.max(140, dragState.height + dy)) + 'px';
     }
     updateBubbleFromDom();
   }
