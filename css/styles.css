@@ -1517,3 +1517,38 @@ html, body {
     min-height: 190px !important;
   }
 }
+
+/* v18 class build page cleanup: Build Lab is the only publisher; pages show compact member cards */
+.member-build-section { margin-top: 28px; }
+.member-build-list { width: min(980px, calc(100vw - 38px)); margin: 0 auto; display: grid; gap: 22px; }
+.empty-build-card,
+.guild-build-card {
+  border: 1px solid rgba(142,239,255,.22);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(33,41,68,.92), rgba(12,18,34,.94));
+  box-shadow: 0 18px 50px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.07);
+  padding: clamp(18px, 2.4vw, 28px);
+}
+.empty-build-card h2 { margin-top: 0; }
+.empty-build-card p { color: rgba(234,241,255,.76); }
+.published-build-list { display: grid; gap: 22px; }
+.guild-build-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.12); }
+.guild-build-head h3 { margin: 5px 0 0; font-size: clamp(1.35rem, 2vw, 1.9rem); line-height: 1.05; }
+.creator-label { margin: 0; color: rgba(207,249,255,.78); text-transform: uppercase; letter-spacing: .16em; font-size: .78rem; font-weight: 900; }
+.creator-label strong { text-shadow: 0 0 14px currentColor; }
+.class-pill { flex: 0 0 auto; border: 1px solid; border-radius: 999px; padding: 8px 12px; background: rgba(255,255,255,.05); font-weight: 900; text-transform: uppercase; letter-spacing: .06em; font-size: .75rem; }
+.build-description { margin: 16px 0 18px; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 14px 16px; background: rgba(5,8,18,.30); color: rgba(255,255,255,.9); line-height: 1.55; }
+.build-description p { margin: 0; }
+.build-mini-loadout { border: 1px solid rgba(255,255,255,.12); border-radius: 16px; overflow: hidden; background: rgba(5,8,18,.26); }
+.loadout-row-title { text-align: center; text-transform: uppercase; letter-spacing: .16em; font-weight: 900; font-size: .78rem; color: rgba(255,255,255,.64); padding: 10px; border-bottom: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.15); }
+.loadout-row-title:nth-of-type(2) { border-top: 1px solid rgba(255,255,255,.1); }
+.loadout-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 10px; padding: 14px 16px; }
+.loadout-skill { min-width: 0; text-align: center; display: grid; justify-items: center; align-content: start; gap: 8px; }
+.loadout-orb { width: 72px !important; height: 72px !important; max-width: 72px !important; max-height: 72px !important; border-radius: 999px; display: grid; place-items: center; overflow: hidden; border: 1px solid rgba(255,255,255,.22); background: radial-gradient(circle at 35% 25%, rgba(255,255,255,.22), rgba(142,239,255,.10) 42%, rgba(0,0,0,.28)); box-shadow: 0 0 18px rgba(142,239,255,.14); }
+.loadout-orb img { width: 100% !important; height: 100% !important; max-width: 100% !important; max-height: 100% !important; object-fit: cover !important; display: block; border-radius: 999px; }
+.loadout-skill strong { display: block; max-width: 130px; color: #fff; font-size: .86rem; line-height: 1.15; overflow-wrap: anywhere; text-shadow: 0 1px 0 rgba(0,0,0,.6); }
+.loadout-skill.empty { opacity: .32; }
+@media (max-width: 720px) {
+  .guild-build-head { flex-direction: column; }
+  .loadout-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}

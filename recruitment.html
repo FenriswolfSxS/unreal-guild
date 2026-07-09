@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Guild Forums | Unreal Guild</title>
-  <link rel="stylesheet" href="css/styles.css?v=forumv14" />
+  <link rel="stylesheet" href="css/styles.css?v=forumv17" />
 </head>
 <body class="forums-page">
   <div class="particles"></div>
@@ -218,8 +218,8 @@
             </div>`).join('') : '<p class="muted reply-empty">No replies yet.</p>'}
         </div>
         ${canPost() ? `
-          <div class="reply-composer modern-reply-composer">
-            <textarea data-reply-body="${esc(thread.id)}" placeholder="Write a reply..."></textarea>
+          <div class="reply-composer modern-reply-composer" data-reply-box="${esc(thread.id)}">
+            <textarea data-reply-body="${esc(thread.id)}" placeholder="Write a reply... Press Enter to send, Shift+Enter for a new line."></textarea>
             <button class="secondary-btn reply-send" type="button" data-reply-thread="${esc(thread.id)}">Reply</button>
           </div>` : ''}`;
       if(canEdit(thread) || canDelete(thread)){
@@ -236,6 +236,12 @@
         item.appendChild(actions);
       }
       item.querySelectorAll('[data-reply-thread]').forEach(btn => btn.addEventListener('click', () => createReply(btn.dataset.replyThread)));
+      item.querySelectorAll('[data-reply-body]').forEach(box => box.addEventListener('keydown', (ev) => {
+        if(ev.key === 'Enter' && !ev.shiftKey){
+          ev.preventDefault();
+          createReply(box.dataset.replyBody);
+        }
+      }));
       list.appendChild(item);
     });
   }
@@ -244,12 +250,26 @@
     if(!canPost()) return;
     const box = document.querySelector(`[data-reply-body="${CSS.escape(threadId)}"]`);
     const body = box?.value.trim();
-    if(!body){ alert('Write a reply first.'); return; }
+    if(!body){ return; }
+    const btn = document.querySelector(`[data-reply-thread="${CSS.escape(threadId)}"]`);
+    if(btn) btn.disabled = true;
     try{
-      await jsonFetch('/api/forums/threads?reply_to=' + encodeURIComponent(threadId),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({thread_id:threadId, body:body, message:body})});
+      const result = await jsonFetch('/api/forums/reply',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({thread_id:threadId, body})});
       box.value='';
-      await loadForums(); await loadThreads(activeForumId);
-    } catch(e){ alert(e.message || 'Could not save reply.'); }
+      const thread = threads.find(t => String(t.id) === String(threadId));
+      if(thread){
+        thread.replies = Array.isArray(thread.replies) ? thread.replies : [];
+        thread.replies.push(result.reply || { id:'local_'+Date.now(), thread_id:threadId, body, author_name:(me.user?.ingame_name || me.user?.username || 'Member'), author_id:me.user?.id, created_at:'just now' });
+        renderThreads();
+      } else if(activeForumId){
+        await loadThreads(activeForumId);
+      }
+    } catch(e){
+      console.error('Reply failed', e);
+      alert(e.message || 'Could not save reply.');
+    } finally {
+      if(btn) btn.disabled = false;
+    }
   }
 
   async function createThread(){
