@@ -1,6 +1,3 @@
--- SxS The Unreal Version 3 schema
--- Member system + leadership permissions + editable guide/home content for Cloudflare D1
-
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS classes (
@@ -175,17 +172,24 @@ INSERT OR IGNORE INTO permissions (slug, name, description) VALUES
   ('manage_site_settings', 'Manage Site Settings', 'Can change site settings.'),
   ('view_audit_log', 'View Audit Log', 'Can view administrative activity history.');
 
--- Member permissions
 INSERT OR IGNORE INTO rank_permissions (rank_id, permission_id)
-SELECT r.id, p.id FROM guild_ranks r, permissions p
-WHERE r.slug = 'member' AND p.slug IN (
-  'view_roster','edit_own_profile','create_posts','edit_own_posts','delete_own_posts',
-  'create_builds','edit_own_builds','delete_own_builds'
+SELECT r.id, p.id
+FROM guild_ranks r, permissions p
+WHERE r.slug = 'member'
+AND p.slug IN (
+  'view_roster',
+  'edit_own_profile',
+  'create_posts',
+  'edit_own_posts',
+  'delete_own_posts',
+  'create_builds',
+  'edit_own_builds',
+  'delete_own_builds'
 );
 
--- Leadership permissions: Leader, Deputy, Officer all have the same permissions.
 INSERT OR IGNORE INTO rank_permissions (rank_id, permission_id)
-SELECT r.id, p.id FROM guild_ranks r, permissions p
+SELECT r.id, p.id
+FROM guild_ranks r, permissions p
 WHERE r.slug IN ('leader','deputy','officer');
 
 INSERT OR IGNORE INTO home_bubbles (id, title, body, button_label, button_link) VALUES

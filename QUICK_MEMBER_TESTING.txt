@@ -1,0 +1,35 @@
+SxS The Unreal - 1 Hour Member Testing Checklist
+
+Do not change Cloudflare routing now that it deploys.
+Keep _routes.json exactly as:
+{
+  "version": 1,
+  "include": ["/api/*"],
+  "exclude": []
+}
+
+Before inviting members:
+1. Deploy this ZIP.
+2. Open /member-test.html.
+3. API + D1 Health must PASS.
+4. Class/Rank Options must PASS.
+5. Public Roster must PASS.
+6. Create one test Guild Member account from /account.html.
+7. Confirm /profile.html opens after registration.
+8. Confirm /roster.html shows the account.
+
+Cloudflare settings that must stay:
+- D1 binding variable: DB
+- Secret: RANK_VERIFICATION_PASSWORD
+- R2 binding variable: R2_ASSETS, not ASSETS
+
+For member testing:
+- Give members /account.html.
+- Guild Member is selected by default.
+- Member rank does not need the verification password.
+- Leader, Deputy, and Officer require the rank verification password.
+
+If something fails:
+- /api/health tells you whether the problem is API, DB binding, schema, or secret.
+- If schema=false, run db/schema.sql in Cloudflare D1.
+- Do not add exclude ["/*"] back to _routes.json.
