@@ -373,10 +373,10 @@
   async function publishBuild(){
     const name = prompt("Build name to publish:", `${currentPath()?.name || "Unreal"} ${currentClass()} Build`);
     if(!name) return;
-    const notes = prompt("Optional notes for the class build page:", "") || "";
+    const notes = prompt("Build description for the class build page:", "") || "";
     try{
       const d = await apiJson('/api/builds/save',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(buildPayload('public', name, notes))});
-      alert("Published to the class build page.");
+      alert("Published to the matching class build page.");
       const page = `${buildPagePath()}-builds.html`;
       if(confirm("Open the class build page now?")) location.href = page;
     }catch(err){

@@ -21,10 +21,25 @@
     const snap = parseBuildJson(b);
     const skills = Array.isArray(snap.skills) ? snap.skills : [];
     if(!skills.length) return '';
-    return `<section class="published-skill-setup"><h4>Skill Setup</h4><div class="published-skill-grid">${skills.map(s=>`<article class="published-skill-card">
-      <img src="${esc(s.icon)}" alt="${esc(s.name)}" onerror="this.onerror=null;this.src='${esc(s.fallbackIcon || '')}'">
-      <div><strong>${esc(s.name)}</strong><span>${esc(s.slot)} • ${esc(s.tier)} • ${esc(s.type)}</span>${s.cooldown?`<small>Cooldown: ${esc(s.cooldown)}</small>`:''}<p>${esc(s.description)}</p></div>
-    </article>`).join('')}</div></section>`;
+    const techniques = skills.filter(s => String(s.slot || s.type || '').toLowerCase().includes('technique')).slice(0,4);
+    const charms = skills.filter(s => String(s.slot || s.type || '').toLowerCase().includes('charm')).slice(0,4);
+    const ordered = techniques.concat(charms).slice(0,8);
+    return `<section class="published-skill-setup compact-build-skills">
+      <div class="skill-row-title">Techniques</div>
+      <div class="published-skill-grid circle-skill-grid first-row">${techniques.map(skillCircle).join('')}${emptySkillSlots(4-techniques.length).join('')}</div>
+      <div class="skill-row-title">Charms</div>
+      <div class="published-skill-grid circle-skill-grid second-row">${charms.map(skillCircle).join('')}${emptySkillSlots(4-charms.length).join('')}</div>
+    </section>`;
+  }
+  function skillCircle(s){
+    const desc = esc(s.description || '');
+    return `<article class="published-skill-circle" title="${desc}">
+      <span class="skill-orb"><img src="${esc(s.icon)}" alt="${esc(s.name)}" onerror="this.onerror=null;this.src='${esc(s.fallbackIcon || '')}'"></span>
+      <strong>${esc(s.name)}</strong>
+    </article>`;
+  }
+  function emptySkillSlots(n){
+    return Array.from({length: Math.max(0,n)}, () => `<article class="published-skill-circle empty"><span class="skill-orb"></span><strong>Empty</strong></article>`);
   }
   function mount(){
     const path=pathKey(); if(!path) return;
@@ -72,8 +87,21 @@
   }
   async function loadBuilds(){
     const wrap=document.querySelector('#memberBuildList'); if(!wrap) return;
-    try{ const d=await jsonFetch('/api/builds/list?path='+encodeURIComponent(pathKey())); const builds=d.builds||[]; if(!builds.length){wrap.innerHTML='<article class="guide-article"><h2>Member Builds</h2><p class="muted">No member builds saved yet.</p></article>'; return;} wrap.innerHTML='<article class="guide-article"><h2>Member Builds</h2></article>'+builds.map(b=>`<article class="build-card saved-build"><div class="build-card-header"><h3>${esc(b.title)}</h3><span>${esc(b.class_name)}</span></div><p class="muted">By ${esc(b.ingame_name||b.username||'Member')} • ${esc(b.tags)} • ${esc(b.updated_at||b.created_at||'')}</p>${b.image_url?`<img class="saved-build-image" src="${esc(b.image_url)}" alt="${esc(b.title)} screenshot">`:''}${skillSetupHtml(b)}${b.import_code?`<h4>Import Code</h4><pre>${esc(b.import_code)}</pre>`:''}${b.notes?`<h4>Notes</h4><p>${esc(b.notes).replace(/\n/g,'<br>')}</p>`:''}</article>`).join(''); }
-    catch(err){ wrap.innerHTML=`<article class="guide-article"><h2>Member Builds</h2><p class="error">${esc(err.message)}</p></article>`; }
+    try{
+      const d=await jsonFetch('/api/builds/list?path='+encodeURIComponent(pathKey()));
+      const builds=d.builds||[];
+      if(!builds.length){
+        wrap.innerHTML='<article class="guide-article"><h2>Member Builds</h2><p class="muted">No member builds saved yet.</p></article>';
+        return;
+      }
+      wrap.innerHTML='<article class="guide-article"><h2>Member Builds</h2></article>'+builds.map(b=>`<article class="build-card saved-build published-build-card">
+        <div class="published-build-head"><div><p class="kicker">Created by ${esc(b.ingame_name||b.username||'Member')}</p><h3>${esc(b.title)}</h3></div><span>${esc(b.class_name)}</span></div>
+        ${b.notes?`<p class="published-build-desc">${esc(b.notes).replace(/\n/g,'<br>')}</p>`:''}
+        ${skillSetupHtml(b)}
+      </article>`).join('');
+    } catch(err){
+      wrap.innerHTML=`<article class="guide-article"><h2>Member Builds</h2><p class="error">${esc(err.message)}</p></article>`;
+    }
   }
   document.addEventListener('DOMContentLoaded', mount);
 })();
