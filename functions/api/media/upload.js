@@ -13,10 +13,10 @@ async function ensureMediaTable(env) {
   )`).run();
 }
 export async function onRequestPost({ request, env }) {
-  if (!env.DB) return json({ ok:false, error:'D1 binding DB is missing.' },500);
+  if (!env.DB) return json({ ok:false, error:'D1 binding DB is missing. Expected binding name: DB.' },500);
   await ensureMediaTable(env);
   const bucket = getAssetsBucket(env);
-  if (!bucket) return json({ ok:false, error:'R2 bucket binding is missing. Add an R2 bucket binding named ASSETS. This version also checks R2_ASSETS, Assets, Assests, ASSESTS, and assets.' },500);
+  if (!bucket) return json({ ok:false, error:'R2 bucket binding is missing. Expected binding name: ASSETS. This version also checks R2_ASSETS, Assets, Assests, ASSESTS, and assets.' },500);
   const auth = await requireUser(request, env); if (auth.error) return auth.error;
   // Any signed-in member may upload images for their saved builds. Leadership still uses the same endpoint for guide/home images.
   const form = await request.formData();
@@ -29,6 +29,6 @@ export async function onRequestPost({ request, env }) {
   const key = `media/${id}/${filename}`;
   await bucket.put(key, file.stream(), { httpMetadata: { contentType: file.type } });
   const url = `/api/media/file?id=${encodeURIComponent(id)}`;
-  await env.DB.prepare('INSERT INTO media_assets (id, filename, url, uploaded_by) VALUES (?, ?, ?, ?)').bind(id, filename, url, auth.user.id).run();
-  return json({ ok:true, asset:{ id, filename, url } },201);
+  await env.DB.prepare('INSERT INTO media_assets (id, filename, url, uploaded_by) VALUES (?, ?, ?, ?)').bind(id, key, url, auth.user.id).run();
+  return json({ ok:true, asset:{ id, filename, key, url } },201);
 }
