@@ -83,8 +83,26 @@
     const pageKey = target.dataset.inlineGuidePage || target.dataset.editablePage || pageKeyFromPath();
     try {
       const data = await fetchJson('/api/content/page?page_key=' + encodeURIComponent(pageKey));
-      if (data.page?.content_html) target.innerHTML = data.page.content_html;
+      const html = data.page?.content_html || '';
+      // Do NOT let old database placeholders wipe out newer built-in starter content.
+      // Member-edited content still wins once it has real page HTML saved in D1.
+      if (html && !isLegacyPlaceholder(pageKey, html)) target.innerHTML = html;
     } catch (_) {}
+  }
+
+  function isLegacyPlaceholder(pageKey, html) {
+    const normalized = String(html || '').trim().replace(/\s+/g, ' ');
+    const placeholders = new Set([
+      '<p>Guild knowledge, guides, and strategy pages.</p>',
+      '<p>Phee\'s full Sword X Staff food system guide with recipes and screenshots.</p>',
+      '<p>Phee&#39;s full Sword X Staff food system guide with recipes and screenshots.</p>',
+      '<p>Routes, resources, farming tips, and material locations.</p>',
+      '<p>Fantamon info, recommendations, and upgrade tips.</p>',
+      '<p>Stat priorities, explanations, and class-specific stat notes.</p>'
+    ]);
+    if (placeholders.has(normalized)) return true;
+    if (pageKey && !normalized) return true;
+    return false;
   }
 
   function addInlineToolbar() {

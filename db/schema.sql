@@ -111,6 +111,17 @@ CREATE TABLE IF NOT EXISTS home_bubbles (
   FOREIGN KEY (updated_by) REFERENCES users(id)
 );
 
+
+CREATE TABLE IF NOT EXISTS site_page_revisions (
+  id TEXT PRIMARY KEY,
+  page_key TEXT NOT NULL,
+  title TEXT NOT NULL,
+  content_html TEXT NOT NULL DEFAULT '',
+  edited_by TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (edited_by) REFERENCES users(id)
+);
+
 CREATE TABLE IF NOT EXISTS media_assets (
   id TEXT PRIMARY KEY,
   filename TEXT NOT NULL,
