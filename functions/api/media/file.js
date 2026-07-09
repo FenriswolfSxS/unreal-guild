@@ -1,3 +1,4 @@
+import { getAssetsBucket } from '../_r2.js';
 import { json, cleanText } from '../_lib.js';
 
 async function ensureMediaTable(env) {
@@ -12,7 +13,7 @@ async function ensureMediaTable(env) {
 export async function onRequestGet({ request, env }) {
   if (!env.DB) return json({ ok:false, error:'D1 binding DB is missing.' },500);
   await ensureMediaTable(env);
-  const bucket = env.ASSETS || env.R2_ASSETS || env.Assests || env.ASSESTS;
+  const bucket = getAssetsBucket(env);
   if (!bucket) return json({ ok:false, error:'R2 bucket binding is missing.' },500);
   const url = new URL(request.url);
   const id = cleanText(url.searchParams.get('id'));

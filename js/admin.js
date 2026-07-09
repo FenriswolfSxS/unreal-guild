@@ -1,185 +1,81 @@
-const adminState = { me: null, bubbles: [], currentPageKey: 'guides', media: [], focusBubble: null };
-const params = new URLSearchParams(location.search);
+const adminState = { me: null, members: [], ranks: [], classes: [], query: '' };
 const qs = (s) => document.querySelector(s);
-
 async function adminFetchJson(url, options = {}) {
-  const res = await fetch(url, {
-    headers: { 'content-type': 'application/json', ...(options.headers || {}) },
-    ...options,
-  });
+  const res = await fetch(url, { headers: { 'content-type': 'application/json', ...(options.headers || {}) }, ...options });
   const data = await res.json().catch(() => ({}));
   if (!res.ok || data.ok === false) throw new Error(data.error || 'Something went wrong.');
   return data;
 }
-
-function setAdminMessage(text, type = '') {
-  const el = qs('#adminMessage');
-  if (!el) return;
-  el.textContent = text || '';
-  el.className = `form-message ${type}`.trim();
-}
-
-function can(permission) {
-  return (adminState.me?.permissions || []).includes(permission);
-}
-
+function setAdminMessage(text, type = '') { const el = qs('#adminMessage'); if (!el) return; el.textContent = text || ''; el.className = `form-message ${type}`.trim(); }
+function can(permission) { const p = adminState.me?.permissions || []; return p.includes(permission) || p.includes('admin_dashboard') || p.includes('change_ranks'); }
 async function loadMe() {
   const data = await adminFetchJson('/api/me');
-  if (!data.signedIn) {
-    location.href = 'account.html';
-    return;
-  }
+  if (!data.signedIn) { location.href = 'account.html'; return; }
   adminState.me = data;
-  if (!can('admin_dashboard')) {
-    qs('#adminRoot').innerHTML = '<section class="content-card"><h1>Admin</h1><p>You do not have permission to access the admin dashboard.</p></section>';
-    return;
-  }
+  if (!can('manage_members')) { qs('#adminRoot').innerHTML = '<section class="content-card"><h1>Admin</h1><p>You do not have permission to manage members.</p></section>'; return; }
   qs('#adminName').textContent = data.user?.ingame_name || data.user?.username || 'Admin';
   qs('#adminRank').textContent = data.user?.rank_name || 'Leadership';
-  qs('#bubblePanel').hidden = !can('edit_home');
-  qs('#guidePanel').hidden = !can('edit_guides');
-  qs('#mediaPanel').hidden = !can('admin_dashboard');
 }
-
-async function loadBubbles() {
-  if (!can('edit_home')) return;
-  adminState.focusBubble = params.get('bubble');
-  const data = await adminFetchJson('/api/content/home-bubbles');
-  adminState.bubbles = data.bubbles || [];
-  const wrap = qs('#bubbleEditor');
-  wrap.innerHTML = adminState.bubbles.map(b => `
-    <div class="admin-edit-box" data-id="${b.id}">
-      <h3>Bubble ${b.id}: ${escapeHtml(b.title || 'Untitled')}</h3>
-      <label>Title<input name="title" value="${escapeAttr(b.title || '')}"></label>
-      <label>Text<textarea name="body" rows="4">${escapeHtml(b.body || '')}</textarea></label>
-      <label>Button Label<input name="button_label" value="${escapeAttr(b.button_label || '')}" placeholder="Optional"></label>
-      <label>Button Link<input name="button_link" value="${escapeAttr(b.button_link || '')}" placeholder="Optional"></label>
+async function loadMembers() {
+  const data = await adminFetchJson('/api/members/list');
+  adminState.members = data.members || []; adminState.ranks = data.ranks || []; adminState.classes = data.classes || [];
+  renderMembers();
+}
+function renderMembers() {
+  const wrap = qs('#memberManager'); if (!wrap) return;
+  const q = adminState.query.toLowerCase();
+  const rows = adminState.members.filter(m => !q || [m.ingame_name,m.username,m.email,m.rank_name,m.class_name,m.status,m.account_type].some(v => String(v||'').toLowerCase().includes(q)));
+  if (!rows.length) { wrap.innerHTML = '<p class="muted">No members found.</p>'; return; }
+  wrap.innerHTML = rows.map(m => memberCard(m)).join('');
+}
+function memberCard(m) {
+  const rankOptions = adminState.ranks.map(r => `<option value="${r.id}" ${Number(m.rank_id)===Number(r.id)?'selected':''}>${escapeHtml(r.name)}</option>`).join('');
+  const classOptions = adminState.classes.map(c => `<option value="${c.id}" ${Number(m.class_id)===Number(c.id)?'selected':''}>${escapeHtml(c.name)}</option>`).join('');
+  const community = m.account_type === 'user';
+  return `<div class="member-admin-card ${m.status==='suspended'?'is-suspended':''}" data-user-id="${escapeAttr(m.id)}">
+    <div class="member-admin-head"><div><h3>${escapeHtml(m.ingame_name || m.username)}</h3><p>${escapeHtml(m.email || '')}</p></div><span class="status-pill">${escapeHtml(m.status || 'active')}</span></div>
+    <div class="member-admin-grid">
+      <label>Account Type<select name="account_type"><option value="guild_member" ${!community?'selected':''}>Guild Member</option><option value="user" ${community?'selected':''}>Community User</option></select></label>
+      <label>Status<select name="status"><option value="active" ${m.status==='active'?'selected':''}>Active</option><option value="suspended" ${m.status==='suspended'?'selected':''}>Suspended / Remove Access</option></select></label>
+      <label>Rank<select name="rank_id" ${community?'disabled':''}>${rankOptions}</select></label>
+      <label>Class<select name="class_id" ${community?'disabled':''}>${classOptions}</select></label>
     </div>
-  `).join('');
-  if (adminState.focusBubble) {
-    const box = wrap.querySelector(`[data-id="${CSS.escape(adminState.focusBubble)}"]`);
-    if (box) { box.scrollIntoView({ behavior: 'smooth', block: 'center' }); box.querySelector('input, textarea')?.focus(); }
+    <div class="member-admin-actions"><button class="admin-button small" data-save-member>Save Member</button>${m.status==='active'?'<button class="admin-button small danger" data-suspend-member>Remove Access</button>':'<button class="admin-button small" data-reactivate-member>Reactivate</button>'}</div>
+  </div>`;
+}
+async function saveMember(card, override = {}) {
+  const body = {
+    user_id: card.dataset.userId,
+    account_type: card.querySelector('[name="account_type"]').value,
+    status: card.querySelector('[name="status"]').value,
+    rank_id: card.querySelector('[name="rank_id"]').value,
+    class_id: card.querySelector('[name="class_id"]').value,
+    ...override
+  };
+  await adminFetchJson('/api/members/update', { method:'POST', body: JSON.stringify(body) });
+  setAdminMessage('Member updated.', 'success');
+  await loadMembers();
+}
+function handleClick(event) {
+  const card = event.target.closest('.member-admin-card'); if (!card) return;
+  if (event.target.closest('[data-save-member]')) saveMember(card).catch(err => setAdminMessage(err.message, 'error'));
+  if (event.target.closest('[data-suspend-member]')) { if (confirm('Remove this member\'s access? They will be signed out and hidden from active roster.')) saveMember(card, { status:'suspended' }).catch(err => setAdminMessage(err.message, 'error')); }
+  if (event.target.closest('[data-reactivate-member]')) saveMember(card, { status:'active' }).catch(err => setAdminMessage(err.message, 'error'));
+}
+function handleChange(event) {
+  const card = event.target.closest('.member-admin-card'); if (!card) return;
+  if (event.target.name === 'account_type') {
+    const off = event.target.value === 'user';
+    card.querySelector('[name="rank_id"]').disabled = off;
+    card.querySelector('[name="class_id"]').disabled = off;
   }
 }
-
-async function saveBubbles() {
-  const bubbles = Array.from(document.querySelectorAll('.admin-edit-box')).map(box => ({
-    id: Number(box.dataset.id),
-    title: box.querySelector('[name="title"]').value,
-    body: box.querySelector('[name="body"]').value,
-    button_label: box.querySelector('[name="button_label"]').value,
-    button_link: box.querySelector('[name="button_link"]').value,
-  }));
-  await adminFetchJson('/api/content/home-bubbles', { method: 'PUT', body: JSON.stringify({ bubbles }) });
-  setAdminMessage('Homepage bubbles saved.', 'success');
-}
-
-async function loadPage() {
-  if (!can('edit_guides')) return;
-  const pageKey = params.get('page') || qs('#pageKey').value;
-  if (qs('#pageKey').value !== pageKey) qs('#pageKey').value = pageKey;
-  adminState.currentPageKey = pageKey;
-  try {
-    const data = await adminFetchJson('/api/content/page?page_key=' + encodeURIComponent(pageKey));
-    qs('#pageTitle').value = data.page.title || '';
-    qs('#pageContent').value = data.page.content_html || '';
-    if (params.get('page')) qs('#guidePanel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  } catch (err) {
-    qs('#pageTitle').value = pageKey;
-    qs('#pageContent').value = '';
-  }
-}
-
-async function savePage() {
-  await adminFetchJson('/api/content/page', {
-    method: 'PUT',
-    body: JSON.stringify({
-      page_key: qs('#pageKey').value,
-      title: qs('#pageTitle').value,
-      content_html: qs('#pageContent').value,
-    }),
-  });
-  setAdminMessage('Guide content saved.', 'success');
-}
-
-
-async function loadMedia() {
-  if (!can('admin_dashboard')) return;
-  const data = await adminFetchJson('/api/media/list');
-  adminState.media = data.assets || [];
-  renderMedia();
-}
-
-function renderMedia() {
-  const wrap = qs('#mediaLibrary');
-  if (!wrap) return;
-  if (!adminState.media.length) {
-    wrap.innerHTML = '<p class="muted">No media uploaded yet.</p>';
-    return;
-  }
-  wrap.innerHTML = adminState.media.map(asset => `
-    <div class="media-card" data-id="${escapeAttr(asset.id)}">
-      <img src="${escapeAttr(asset.url)}" alt="${escapeAttr(asset.filename)}" loading="lazy">
-      <div class="media-card-body">
-        <strong>${escapeHtml(asset.filename)}</strong>
-        <small>${escapeHtml(asset.uploaded_by_name || 'Leadership')} • ${escapeHtml(asset.created_at || '')}</small>
-        <input readonly value="${escapeAttr(asset.url)}" aria-label="Media URL">
-        <div class="media-actions">
-          <button type="button" class="admin-button small" data-copy="${escapeAttr(asset.url)}">Copy URL</button>
-          <button type="button" class="admin-button small danger" data-delete="${escapeAttr(asset.id)}">Delete</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-async function uploadMedia(event) {
-  event.preventDefault();
-  const fileInput = qs('#mediaFile');
-  if (!fileInput?.files?.length) throw new Error('Choose an image first.');
-  const form = new FormData();
-  form.append('file', fileInput.files[0]);
-  const res = await fetch('/api/media/upload', { method: 'POST', body: form });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok || data.ok === false) throw new Error(data.error || 'Upload failed.');
-  fileInput.value = '';
-  setAdminMessage('Image uploaded to R2.', 'success');
-  await loadMedia();
-}
-
-async function deleteMedia(id) {
-  if (!confirm('Delete this media item?')) return;
-  await adminFetchJson('/api/media/delete', { method: 'POST', body: JSON.stringify({ id }) });
-  setAdminMessage('Media item deleted.', 'success');
-  await loadMedia();
-}
-
-function handleMediaClick(event) {
-  const copy = event.target.closest('[data-copy]');
-  if (copy) {
-    navigator.clipboard?.writeText(copy.dataset.copy);
-    setAdminMessage('Media URL copied.', 'success');
-    return;
-  }
-  const del = event.target.closest('[data-delete]');
-  if (del) deleteMedia(del.dataset.delete).catch(err => setAdminMessage(err.message, 'error'));
-}
-
-function escapeHtml(value) { return String(value).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function escapeHtml(value) { return String(value).replace(/[&<>\"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
 function escapeAttr(value) { return escapeHtml(value).replace(/'/g, '&#39;'); }
-
 document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    await loadMe();
-    await loadBubbles();
-    await loadPage();
-    await loadMedia();
-  } catch (err) {
-    setAdminMessage(err.message, 'error');
-  }
-  qs('#saveBubbles')?.addEventListener('click', () => saveBubbles().catch(err => setAdminMessage(err.message, 'error')));
-  qs('#pageKey')?.addEventListener('change', () => { params.delete('page'); loadPage().catch(err => setAdminMessage(err.message, 'error')); });
-  qs('#savePage')?.addEventListener('click', () => savePage().catch(err => setAdminMessage(err.message, 'error')));
-  qs('#mediaUploadForm')?.addEventListener('submit', (event) => uploadMedia(event).catch(err => setAdminMessage(err.message, 'error')));
-  qs('#mediaLibrary')?.addEventListener('click', handleMediaClick);
+  try { await loadMe(); await loadMembers(); } catch (err) { setAdminMessage(err.message, 'error'); }
+  qs('#memberManager')?.addEventListener('click', handleClick);
+  qs('#memberManager')?.addEventListener('change', handleChange);
+  qs('#refreshMembers')?.addEventListener('click', () => loadMembers().catch(err => setAdminMessage(err.message, 'error')));
+  qs('#memberSearch')?.addEventListener('input', (e) => { adminState.query = e.target.value; renderMembers(); });
 });

@@ -106,6 +106,11 @@ CREATE TABLE IF NOT EXISTS home_bubbles (
   body TEXT NOT NULL,
   button_label TEXT NOT NULL DEFAULT '',
   button_link TEXT NOT NULL DEFAULT '',
+  quick_label TEXT NOT NULL DEFAULT '',
+  pos_x INTEGER NOT NULL DEFAULT 0,
+  pos_y INTEGER NOT NULL DEFAULT 0,
+  width INTEGER NOT NULL DEFAULT 260,
+  height INTEGER NOT NULL DEFAULT 190,
   updated_by TEXT,
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
   FOREIGN KEY (updated_by) REFERENCES users(id)
@@ -215,3 +220,39 @@ INSERT OR IGNORE INTO site_pages (page_key, title, content_html) VALUES
   ('farming', 'Farming Guides', '<p>Routes, resources, farming tips, and material locations.</p>'),
   ('fantamon', 'Fantamon Guides', '<p>Fantamon info, recommendations, and upgrade tips.</p>'),
   ('stats', 'Stat Guide', '<p>Stat priorities, explanations, and class-specific stat notes.</p>');
+
+-- Safe forum tables. These do not erase existing member data.
+CREATE TABLE IF NOT EXISTS forum_categories (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  type TEXT NOT NULL DEFAULT 'general',
+  icon TEXT NOT NULL DEFAULT '💬',
+  description TEXT NOT NULL DEFAULT '',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_by TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS forum_threads (
+  id TEXT PRIMARY KEY,
+  forum_id TEXT NOT NULL,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL DEFAULT '',
+  author_id TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (forum_id) REFERENCES forum_categories(id) ON DELETE CASCADE,
+  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_forum_threads_forum ON forum_threads(forum_id);
+CREATE INDEX IF NOT EXISTS idx_forum_threads_author ON forum_threads(author_id);
+
+INSERT OR IGNORE INTO forum_categories (id,title,type,icon,description,sort_order) VALUES
+  ('conqueror','Conqueror','class','<img src="assets/class-icons/conqueror.png" alt="Conqueror">','Warrior damage builds, Conqueror / Ravager rotations, PvP pressure, and weapon choices.',1),
+  ('guardian','Guardian','class','<img src="assets/class-icons/guardian.png" alt="Guardian">','Tank builds, Guardian / Templar questions, survivability, threat, and group support.',2),
+  ('destroyer','Destroyer','class','<img src="assets/class-icons/destroyer.png" alt="Destroyer">','Mage damage, Destroyer / Magister theorycrafting, cooldowns, burst, and utility.',3),
+  ('dominator','Dominator','class','<img src="assets/class-icons/dominator.png" alt="Dominator">','Sage builds, Dominator / Prophet setups, healing, summons, support, and control.',4),
+  ('game','The Game','game','🎮','General Sword X Staff discussion, questions, guides, updates, and progression help.',5),
+  ('away','Away / Unable to Attend','away','📅','Post when you will be away, late, or unable to attend guild events.',6);

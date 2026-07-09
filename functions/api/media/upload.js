@@ -1,3 +1,4 @@
+import { getAssetsBucket } from '../_r2.js';
 import { json, requireUser, getUserPermissions, randomId, cleanText } from '../_lib.js';
 const ALLOWED = new Set(['image/png','image/jpeg','image/webp','image/gif']);
 function safeFilename(name) { return cleanText(name).replace(/[^a-zA-Z0-9._-]/g, '-').replace(/-+/g, '-').slice(0,120) || 'image.png'; }
@@ -14,8 +15,8 @@ async function ensureMediaTable(env) {
 export async function onRequestPost({ request, env }) {
   if (!env.DB) return json({ ok:false, error:'D1 binding DB is missing.' },500);
   await ensureMediaTable(env);
-  const bucket = env.ASSETS || env.R2_ASSETS || env.Assests || env.ASSESTS;
-  if (!bucket) return json({ ok:false, error:'R2 bucket binding is missing. Add an R2 bucket binding named ASSETS, or keep R2_ASSETS; both are supported now.' },500);
+  const bucket = getAssetsBucket(env);
+  if (!bucket) return json({ ok:false, error:'R2 bucket binding is missing. Add an R2 bucket binding named ASSETS. This version also checks R2_ASSETS, Assets, Assests, ASSESTS, and assets.' },500);
   const auth = await requireUser(request, env); if (auth.error) return auth.error;
   // Any signed-in member may upload images for their saved builds. Leadership still uses the same endpoint for guide/home images.
   const form = await request.formData();

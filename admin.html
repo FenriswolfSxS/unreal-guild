@@ -3,113 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin | SxS The Unreal</title>
-  <link rel="stylesheet" href="css/styles.css?v=buildfix5" />
+  <title>Member Management | SxS The Unreal</title>
+  <link rel="stylesheet" href="css/styles.css?v=homefix7" />
 </head>
 <body>
   <div class="particles"></div>
   <div class="ambient-glow glow-one"></div>
   <div class="ambient-glow glow-two"></div>
-
 <header class="site-header">
-  <a class="brand" href="index.html">
-    <img src="assets/unreal-banner.jpg" alt="Unreal guild banner" />
-    <span>Unreal</span>
-  </a>
-
+  <a class="brand" href="index.html"><img src="assets/unreal-banner.jpg" alt="Unreal guild banner" /><span>Unreal</span></a>
   <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
-
   <nav class="site-nav" id="siteNav">
-    <a href="index.html">Home</a>
-    <a href="events.html">Events</a>
-    <a href="roster.html">Roster</a>
-    <div class="nav-group">
-      <a href="builds.html">Builds ▾</a>
-      <div class="dropdown">
-        <a href="builds.html">Build Lab</a>
-        <a class="spec-nav-link" href="conqueror-builds.html"><img src="assets/class-icons/conqueror.png" alt="">Conqueror</a>
-        <a class="spec-nav-link" href="guardian-builds.html"><img src="assets/class-icons/guardian.png" alt="">Guardian</a>
-        <a class="spec-nav-link" href="destroyer-builds.html"><img src="assets/class-icons/destroyer.png" alt="">Destroyer</a>
-        <a class="spec-nav-link" href="dominator-builds.html"><img src="assets/class-icons/dominator.png" alt="">Dominator</a>
-      </div>
-    </div>
-    <div class="nav-group">
-      <a href="guides.html">Guides ▾</a>
-      <div class="dropdown">
-        <a href="food-guide.html">Food Guide</a>
-        <a href="farming-guide.html">Farming Guide</a>
-        <a href="fantamon-guide.html">Fantamon Guide</a>
-        <a href="stat-guide.html">Stat Guide</a>
-      </div>
-    </div>
-    <a href="recruitment.html">Guild Forums</a>
-    <a class="active" href="admin.html">Admin</a>
-    <a class="discord-link" href="https://discord.gg/xWHdMsVxKG" target="_blank" rel="noopener">Discord</a>
+    <a href="index.html">Home</a><a href="events.html">Events</a><a href="roster.html">Roster</a>
+    <div class="nav-group"><a href="builds.html">Builds ▾</a><div class="dropdown"><a href="builds.html">Build Lab</a><a class="spec-nav-link" href="conqueror-builds.html"><img src="assets/class-icons/conqueror.png" alt="">Conqueror</a><a class="spec-nav-link" href="guardian-builds.html"><img src="assets/class-icons/guardian.png" alt="">Guardian</a><a class="spec-nav-link" href="destroyer-builds.html"><img src="assets/class-icons/destroyer.png" alt="">Destroyer</a><a class="spec-nav-link" href="dominator-builds.html"><img src="assets/class-icons/dominator.png" alt="">Dominator</a></div></div>
+    <div class="nav-group"><a href="guides.html">Guides ▾</a><div class="dropdown"><a href="food-guide.html">Food Guide</a><a href="farming-guide.html">Farming Guide</a><a href="fantamon-guide.html">Fantamon Guide</a><a href="stat-guide.html">Stat Guide</a></div></div>
+    <a href="recruitment.html">Guild Forums</a><a class="active" href="admin.html">Admin</a><a class="discord-link" href="https://discord.gg/xWHdMsVxKG" target="_blank" rel="noopener">Discord</a>
   </nav>
 </header>
-
 <main class="admin-layout" id="adminRoot">
   <section class="page-hero compact">
     <p class="kicker">Leadership Tools</p>
-    <h1>Admin Dashboard</h1>
+    <h1>Member Management</h1>
     <p>Signed in as <strong id="adminName">...</strong> <span id="adminRank"></span></p>
   </section>
-
   <p id="adminMessage" class="form-message"></p>
-
-  <div class="admin-grid">
-    <section class="admin-panel" id="bubblePanel">
-      <p class="kicker">Homepage</p>
-      <h2>Edit the 4 Home Bubbles</h2>
-      <p>These cards appear on the home page. Leadership can update them without touching GitHub.</p>
-      <div id="bubbleEditor"></div>
-      <div class="admin-actions"><button class="admin-button" id="saveBubbles">Save Home Bubbles</button></div>
-    </section>
-
-    <section class="admin-panel" id="guidePanel">
-      <p class="kicker">Guides</p>
-      <h2>Edit Guide Content</h2>
-      <p>Use simple HTML for now. Paste image URLs from the Media Library into the content editor.</p>
-      <label>Guide Page
-        <select id="pageKey">
-          <option value="guides">Guides Main</option>
-          <option value="food-guide">Food Guide</option>
-          <option value="farming">Farming</option>
-          <option value="fantamon">Fantamon</option>
-          <option value="stats">Stats</option>
-        </select>
-      </label>
-      <label>Title <input id="pageTitle" /></label>
-      <label>Content HTML <textarea id="pageContent"></textarea></label>
-      <div class="admin-actions"><button class="admin-button" id="savePage">Save Guide Content</button></div>
-    </section>
-
-    <section class="admin-panel" id="mediaPanel">
-      <p class="kicker">Media Library</p>
-      <h2>Upload Screenshots & Images</h2>
-      <p>Upload PNG, JPG, WEBP, or GIF images to Cloudflare R2. Use the copied URL inside guide content or homepage bubbles.</p>
-      <form id="mediaUploadForm" class="media-upload-form">
-        <label>Image File <input id="mediaFile" name="file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /></label>
-        <div class="admin-actions"><button class="admin-button" type="submit">Upload Image</button></div>
-      </form>
-      <div id="mediaLibrary" class="media-library"></div>
-    </section>
-  </div>
-
-  <section class="admin-panel" style="margin-top:20px">
-    <p class="kicker">Permissions</p>
-    <h2>Current Role Rules</h2>
-    <p><strong>Leader, Deputy, and Officer</strong> share the same leadership permissions. The guild works as a team.</p>
-    <p><strong>Members</strong> can edit their own profile, create posts, delete their own posts, and later create/edit/delete their own builds.</p>
+  <section class="admin-panel member-management-panel">
+    <p class="kicker">Members</p>
+    <h2>Roster Access & Rank Control</h2>
+    <p>Change a member's rank, move them to Community User, suspend access if they leave the guild, or reactivate them later.</p>
+    <div class="member-toolbar"><input id="memberSearch" placeholder="Search members..." /><button class="admin-button small" id="refreshMembers">Refresh</button></div>
+    <div id="memberManager" class="member-manager"></div>
   </section>
 </main>
-
-<footer class="site-footer">
-  <img src="assets/unreal-banner.jpg" alt="Unreal banner" />
-  <p>© SxS The Unreal • Sword and Staff</p>
-</footer>
+<footer class="site-footer"><img src="assets/unreal-banner.jpg" alt="Unreal banner" /><p>© SxS The Unreal • Sword and Staff</p></footer>
 <script src="js/app.js"></script>
 <script src="js/auth-ui.js"></script>
-<script src="js/admin.js"></script>
+<script src="js/admin.js?v=homefix7"></script>
 </body>
 </html>
