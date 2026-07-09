@@ -27,8 +27,9 @@ export async function onRequestPost({ request, env }){
   const perms=await getUserPermissions(env,auth.user.id);
   if(!can(perms,'create_posts')) return json({ok:false,error:'Your rank cannot create forum posts.'},403);
   const body=await readJson(request);
-  const threadId=cleanText(body?.thread_id);
-  const text=String(body?.body||'').trim().slice(0,30000);
+  const url=new URL(request.url);
+  const threadId=cleanText(body?.thread_id || body?.reply_to || url.searchParams.get('thread_id') || url.searchParams.get('reply_to'));
+  const text=String(body?.body || body?.message || body?.text || body?.reply || '').trim().slice(0,30000);
   if(threadId){
     if(!text) return json({ok:false,error:'Reply message is required.'},400);
     const thread=await env.DB.prepare('SELECT id FROM forum_threads WHERE id=?').bind(threadId).first();
@@ -40,7 +41,7 @@ export async function onRequestPost({ request, env }){
   }
   const forumId=cleanText(body?.forum_id);
   const title=cleanText(body?.title).slice(0,160);
-  if(!forumId||!title||!text) return json({ok:false,error:'Forum, title, and message are required.'},400);
+  if(!forumId||!title||!text) return json({ok:false,error:'Add a post title and message.'},400);
   const forum=await env.DB.prepare('SELECT id FROM forum_categories WHERE id=?').bind(forumId).first();
   if(!forum) return json({ok:false,error:'Forum not found.'},404);
   const id=randomId('thread_');

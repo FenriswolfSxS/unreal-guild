@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Guild Forums | Unreal Guild</title>
-  <link rel="stylesheet" href="css/styles.css?v=forumfix6" />
+  <link rel="stylesheet" href="css/styles.css?v=forumv14" />
 </head>
 <body class="forums-page">
   <div class="particles"></div>
@@ -56,8 +56,8 @@
 
   <section class="section forum-control-panel">
     <article class="notice-card forum-login-card">
-      <h2>Forum Access</h2>
-      <p class="muted">Forums now use the real guild account you signed up with. Posting and editing are controlled by your rank permissions.</p>
+      <h2>Forum Status</h2>
+      <p class="muted">Signed-in members can start discussions and reply. Your guild rank controls edit and moderation access.</p>
       <p id="forumLoginStatus" class="forum-status">Checking account...</p>
       <p id="forumSigninHelp" class="muted" hidden><a href="account.html">Sign in</a> to post in the forums.</p>
     </article>
@@ -192,27 +192,35 @@
 
   function renderThreads(){
     const list = $('threadList');
-    if(!threads.length){ list.innerHTML = '<p class="muted">No posts yet. Be the first to start a discussion.</p>'; return; }
+    if(!threads.length){
+      list.innerHTML = '<div class="empty-forum-card"><h3>No posts yet.</h3><p>Start the first conversation for this forum.</p></div>';
+      return;
+    }
     list.innerHTML = '';
     threads.forEach(thread => {
-      const item = document.createElement('div');
-      item.className = 'thread-item';
+      const item = document.createElement('article');
+      item.className = 'thread-item modern-thread';
       const replies = Array.isArray(thread.replies) ? thread.replies : [];
       item.innerHTML = `
-        <strong>${esc(thread.title)}</strong>
-        <small>by ${esc(thread.author_name)} • ${esc(thread.created_at)}</small>
-        <p>${esc(thread.body).replace(/\n/g,'<br>')}</p>
+        <div class="thread-topline">
+          <div>
+            <h3>${esc(thread.title)}</h3>
+            <small>by <strong>${esc(thread.author_name)}</strong> • ${esc(thread.created_at)}</small>
+          </div>
+          <span class="reply-count">${replies.length} ${replies.length === 1 ? 'reply' : 'replies'}</span>
+        </div>
+        <div class="thread-body">${esc(thread.body).replace(/\n/g,'<br>')}</div>
         <div class="reply-list">
           ${replies.length ? replies.map(reply => `
             <div class="reply-item" data-reply-id="${esc(reply.id)}">
-              <small><strong>${esc(reply.author_name)}</strong> • ${esc(reply.created_at)}</small>
-              <p>${esc(reply.body).replace(/\n/g,'<br>')}</p>
+              <div class="reply-meta"><strong>${esc(reply.author_name)}</strong><span>${esc(reply.created_at)}</span></div>
+              <div class="reply-body">${esc(reply.body).replace(/\n/g,'<br>')}</div>
             </div>`).join('') : '<p class="muted reply-empty">No replies yet.</p>'}
         </div>
         ${canPost() ? `
-          <div class="reply-composer">
+          <div class="reply-composer modern-reply-composer">
             <textarea data-reply-body="${esc(thread.id)}" placeholder="Write a reply..."></textarea>
-            <button class="secondary-btn" type="button" data-reply-thread="${esc(thread.id)}">Reply</button>
+            <button class="secondary-btn reply-send" type="button" data-reply-thread="${esc(thread.id)}">Reply</button>
           </div>` : ''}`;
       if(canEdit(thread) || canDelete(thread)){
         const actions = document.createElement('div');
@@ -238,7 +246,7 @@
     const body = box?.value.trim();
     if(!body){ alert('Write a reply first.'); return; }
     try{
-      await jsonFetch('/api/forums/threads',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({thread_id:threadId,body})});
+      await jsonFetch('/api/forums/threads?reply_to=' + encodeURIComponent(threadId),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({thread_id:threadId, body:body, message:body})});
       box.value='';
       await loadForums(); await loadThreads(activeForumId);
     } catch(e){ alert(e.message || 'Could not save reply.'); }

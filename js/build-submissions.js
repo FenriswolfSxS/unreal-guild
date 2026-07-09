@@ -15,7 +15,15 @@
   let uploadedImageUrl = '';
   function esc(v){return String(v||'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
   async function jsonFetch(url, opts){ const r=await fetch(url,opts); const d=await r.json().catch(()=>({})); if(!r.ok||d.ok===false) throw new Error(d.error||'Request failed.'); return d; }
-  function pathKey(){ return PATHS[(location.pathname.split('/').pop()||'')]; }
+  function pathKey(){
+    let page=(location.pathname.split('/').pop()||'').toLowerCase();
+    if(!page) page='conqueror-builds';
+    const htmlPage = page.endsWith('.html') ? page : page + '.html';
+    if(PATHS[htmlPage]) return PATHS[htmlPage];
+    page = page.replace(/\.html?$/,'').replace(/-builds$/,'');
+    const aliases = { conqueror:'conqueror', guardian:'guardian', destroyer:'destroyer', dominator:'dominator' };
+    return aliases[page] || '';
+  }
   function parseBuildJson(b){ try { return JSON.parse(b.build_json || '{}'); } catch { return {}; } }
   function skillSetupHtml(b){
     const snap = parseBuildJson(b);

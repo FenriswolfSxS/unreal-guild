@@ -4,6 +4,7 @@
   let activeUploadImage = null;
   let homeBubbles = [];
   let dragState = null;
+  let activeHomeText = null;
 
   async function fetchJson(url, options) {
     const res = await fetch(url, options);
@@ -83,10 +84,10 @@
       y = Math.max(0, Math.min(y, 620 - Math.min(h, 620)));
       const placed = true;
       return `<article class="notice-card editable-bubble rune-bubble" data-bubble-id="${b.id}" style="${placed ? `left:${x}px;top:${y}px;width:${w}px;min-height:${h}px;` : ''}">
-        <span class="edit-chip">Drag • Resize • Type</span>
-        <span class="bubble-move-handle" title="Drag to move">✦</span>
-        <h2 contenteditable="false">${escapeHtml(b.title || '')}</h2>
-        <p contenteditable="false">${escapeHtml(b.body || '')}</p>
+        <span class="edit-chip">Move • Resize • Style</span>
+        <span class="bubble-move-handle" title="Drag this to move">✦</span>
+        <h2 contenteditable="false" style="${escapeAttr(b.title_style || '')}">${escapeHtml(b.title || '')}</h2>
+        <p contenteditable="false" style="${escapeAttr(b.body_style || '')}">${escapeHtml(b.body || '')}</p>
         ${b.button_label && b.button_link ? `<a class="bubble-link" href="${escapeAttr(b.button_link)}">${escapeHtml(b.button_label)} →</a>` : ''}
         <span class="bubble-resize-handle" title="Drag to resize"></span>
       </article>`;
@@ -97,7 +98,7 @@
 
   function setHomeEditing(on) {
     if (!document.querySelector('[data-home-bubbles]')) return;
-    document.querySelectorAll('.editable-bubble h2,.editable-bubble p').forEach(el => el.contentEditable = on ? 'true' : 'false');
+    document.querySelectorAll('.editable-bubble h2,.editable-bubble p').forEach(el => { el.contentEditable = on ? 'true' : 'false'; if (on) { el.addEventListener('focus', rememberHomeTextTarget); el.addEventListener('click', rememberHomeTextTarget); } });
     if (on) addHomeToolbar(); else removeHomeToolbar();
   }
 
@@ -107,13 +108,50 @@
     const bar = document.createElement('div');
     bar.id = 'homeEditToolbar';
     bar.className = 'inline-edit-toolbar home-edit-toolbar';
-    bar.innerHTML = `<button type="button" data-home-action="save">Save Home</button><span class="inline-edit-hint">Drag the ✦ to move. Drag the corner to resize. Click text to edit.</span>`;
+    bar.innerHTML = `<button type="button" data-home-action="save">Save Home</button><button type="button" data-home-action="reset">Reset Layout</button><label>Size <select data-home-style="font-size"><option value="">Default</option><option value="0.9rem">Small</option><option value="1rem">Normal</option><option value="1.25rem">Large</option><option value="1.5rem">XL</option><option value="2rem">XXL</option><option value="2.5rem">Hero</option></select></label><label>Color <input data-home-style="color" type="color" value="#ffffff"></label><button type="button" data-home-style="font-weight" data-value="900">Bold</button><button type="button" data-home-style="font-style" data-value="italic">Italic</button><span class="inline-edit-hint">Drag ✦ to move. Resize from corner. Click title/body then style it.</span>`;
     document.body.appendChild(bar);
     bar.addEventListener('click', (event) => {
       if (event.target.closest('[data-home-action="save"]')) saveHomeBubbles().catch(err => alert(err.message));
+      if (event.target.closest('[data-home-action="reset"]')) resetHomeLayout();
+      const styleBtn = event.target.closest('button[data-home-style]');
+      if (styleBtn) applyHomeStyle(styleBtn.dataset.homeStyle, styleBtn.dataset.value || '');
+    });
+    bar.addEventListener('input', (event) => {
+      const control = event.target.closest('[data-home-style]');
+      if (!control || control.tagName === 'BUTTON') return;
+      applyHomeStyle(control.dataset.homeStyle, control.value);
     });
   }
   function removeHomeToolbar() { document.querySelector('#homeEditToolbar')?.remove(); }
+
+  function rememberHomeTextTarget(event) {
+    const el = event.target.closest('.editable-bubble h2,.editable-bubble p');
+    if (!el) return;
+    activeHomeText = el;
+    document.querySelectorAll('.home-active-text').forEach(x => x.classList.remove('home-active-text'));
+    el.classList.add('home-active-text');
+  }
+
+  function resetHomeLayout() {
+    const defaults = [
+      { x:0, y:0, w:260, h:190 }, { x:285, y:0, w:260, h:190 },
+      { x:570, y:0, w:260, h:190 }, { x:855, y:0, w:260, h:190 }
+    ];
+    document.querySelectorAll('.editable-bubble').forEach((card, idx) => {
+      const d = defaults[idx] || { x:(idx%4)*285, y:Math.floor(idx/4)*220, w:260, h:190 };
+      card.style.left = d.x + 'px'; card.style.top = d.y + 'px'; card.style.width = d.w + 'px'; card.style.minHeight = d.h + 'px';
+    });
+    updateBubbleFromDom();
+  }
+
+  function applyHomeStyle(prop, value) {
+    if (!activeHomeText) return;
+    if (prop === 'font-size') activeHomeText.style.fontSize = value || '';
+    if (prop === 'color') activeHomeText.style.color = value || '';
+    if (prop === 'font-weight') activeHomeText.style.fontWeight = activeHomeText.style.fontWeight === value ? '' : value;
+    if (prop === 'font-style') activeHomeText.style.fontStyle = activeHomeText.style.fontStyle === value ? '' : value;
+    updateBubbleFromDom();
+  }
 
   function startBubblePointer(event) {
     if (!document.body.classList.contains('leadership-edit-on')) return;
@@ -126,7 +164,8 @@
     const stage = document.querySelector('[data-home-stage]');
     const cr = card.getBoundingClientRect();
     const sr = stage.getBoundingClientRect();
-    dragState = { card, mode: resize ? 'resize' : 'move', startX:event.clientX, startY:event.clientY, left: cr.left - sr.left + stage.scrollLeft, top: cr.top - sr.top + stage.scrollTop, width: cr.width, height: cr.height };
+    dragState = { card, mode: resize ? 'resize' : 'move', startX:event.clientX, startY:event.clientY, grabX: event.clientX - cr.left, grabY: event.clientY - cr.top, left: cr.left - sr.left, top: cr.top - sr.top, width: cr.width, height: cr.height };
+    card.classList.add('is-dragging');
     card.setPointerCapture?.(event.pointerId);
     window.addEventListener('pointermove', moveBubblePointer);
     window.addEventListener('pointerup', endBubblePointer, { once:true });
@@ -138,8 +177,9 @@
     const maxLeft = Math.max(0, (stage?.clientWidth || 1120) - dragState.card.getBoundingClientRect().width - 4);
     const maxTop = Math.max(0, (stage?.clientHeight || 620) - dragState.card.getBoundingClientRect().height - 4);
     if (dragState.mode === 'move') {
-      const nextLeft = Math.min(maxLeft, Math.max(0, dragState.left + dx));
-      const nextTop = Math.min(maxTop, Math.max(0, dragState.top + dy));
+      const sr = stage.getBoundingClientRect();
+      const nextLeft = Math.min(maxLeft, Math.max(0, event.clientX - sr.left - dragState.grabX));
+      const nextTop = Math.min(maxTop, Math.max(0, event.clientY - sr.top - dragState.grabY));
       dragState.card.style.left = nextLeft + 'px';
       dragState.card.style.top = nextTop + 'px';
     } else {
@@ -152,6 +192,7 @@
   }
   function endBubblePointer() {
     window.removeEventListener('pointermove', moveBubblePointer);
+    dragState?.card?.classList.remove('is-dragging');
     dragState = null;
   }
 
@@ -166,8 +207,27 @@
       b.pos_y = parseInt(card.style.top || '0', 10) || 0;
       b.width = Math.round(card.getBoundingClientRect().width) || 260;
       b.height = Math.round(card.getBoundingClientRect().height) || 190;
+      const h2 = card.querySelector('h2'), p = card.querySelector('p');
+      b.title_style = h2 ? styleToSave(h2) : '';
+      b.body_style = p ? styleToSave(p) : '';
     });
     renderQuickClicks();
+  }
+
+  function styleToSave(el) {
+    const parts = [];
+    if (el.style.color) parts.push('color:' + rgbToHex(el.style.color));
+    if (el.style.fontSize) parts.push('font-size:' + el.style.fontSize);
+    if (el.style.fontWeight) parts.push('font-weight:' + el.style.fontWeight);
+    if (el.style.fontStyle) parts.push('font-style:' + el.style.fontStyle);
+    if (el.style.textAlign) parts.push('text-align:' + el.style.textAlign);
+    return parts.join(';');
+  }
+  function rgbToHex(color) {
+    if (!color || color.startsWith('#')) return color;
+    const m = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (!m) return color;
+    return '#' + [m[1],m[2],m[3]].map(n => Math.max(0, Math.min(255, Number(n))).toString(16).padStart(2,'0')).join('');
   }
 
   async function saveHomeBubbles() {

@@ -1,7 +1,13 @@
 import { json, slugify, getCurrentUser } from '../../_lib.js';
 const ALLOWED = new Set(['conqueror','guardian','destroyer','dominator']);
 const PATH_MAP = { duelist:'conqueror', knight:'guardian', sorcerer:'destroyer', sage:'dominator', conqueror:'conqueror', guardian:'guardian', destroyer:'destroyer', dominator:'dominator' };
-function normalizeBuildPath(value){ const key = slugify(value || ''); return PATH_MAP[key] || key; }
+function normalizeBuildPath(value){
+  let raw = String(value || '').trim().toLowerCase();
+  raw = raw.split('?')[0].split('#')[0].replace(/^\/+/, '').replace(/\/+$/, '');
+  raw = raw.replace(/\.html?$/, '').replace(/-builds$/, '');
+  const key = slugify(raw || value || '');
+  return PATH_MAP[key] || key;
+}
 async function ensureBuildTable(env) {
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS member_builds (
     id TEXT PRIMARY KEY,
