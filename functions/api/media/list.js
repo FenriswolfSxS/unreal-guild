@@ -1,6 +1,17 @@
 import { json, requireUser, getUserPermissions } from '../_lib.js';
+
+async function ensureMediaTable(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS media_assets (
+    id TEXT PRIMARY KEY,
+    filename TEXT NOT NULL,
+    url TEXT NOT NULL,
+    uploaded_by TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )`).run();
+}
 export async function onRequestGet({ request, env }) {
   if (!env.DB) return json({ ok:false, error:'D1 binding DB is missing.' },500);
+  await ensureMediaTable(env);
   const auth = await requireUser(request, env); if (auth.error) return auth.error;
   const perms = await getUserPermissions(env, auth.user.id);
   if (!perms.includes('admin_dashboard')) return json({ ok:false, error:'You do not have permission to view the media library.' },403);
