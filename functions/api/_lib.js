@@ -217,3 +217,15 @@ export async function profile(request, env) {
   return json({ ok: true, message: 'Profile updated.' });
 }
 
+
+export async function requireLeadership(request, env) {
+  const auth = await requireUser(request, env);
+  if (auth.error) return auth;
+  const user = auth.user;
+  const permissions = await getUserPermissions(env, user.id);
+  const rankSlug = String(user.rank_slug || '').toLowerCase();
+  const rankName = String(user.rank_name || '').toLowerCase();
+  const isLeadership = permissions.includes('admin_dashboard') || permissions.includes('manage_content') || permissions.includes('manage_guides') || permissions.includes('manage_media') || ['leader','deputy','officer','admin'].includes(rankSlug) || ['leader','deputy','officer','admin'].includes(rankName);
+  if (!isLeadership) return { error: json({ ok: false, error: 'Leadership access required.' }, 403) };
+  return { user, permissions };
+}
