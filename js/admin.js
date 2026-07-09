@@ -1,4 +1,5 @@
-const adminState = { me: null, bubbles: [], currentPageKey: 'guides', media: [] };
+const adminState = { me: null, bubbles: [], currentPageKey: 'guides', media: [], focusBubble: null };
+const params = new URLSearchParams(location.search);
 const qs = (s) => document.querySelector(s);
 
 async function adminFetchJson(url, options = {}) {
@@ -42,18 +43,23 @@ async function loadMe() {
 
 async function loadBubbles() {
   if (!can('edit_home')) return;
+  adminState.focusBubble = params.get('bubble');
   const data = await adminFetchJson('/api/content/home-bubbles');
   adminState.bubbles = data.bubbles || [];
   const wrap = qs('#bubbleEditor');
   wrap.innerHTML = adminState.bubbles.map(b => `
     <div class="admin-edit-box" data-id="${b.id}">
-      <h3>Bubble ${b.id}</h3>
+      <h3>Bubble ${b.id}: ${escapeHtml(b.title || 'Untitled')}</h3>
       <label>Title<input name="title" value="${escapeAttr(b.title || '')}"></label>
       <label>Text<textarea name="body" rows="4">${escapeHtml(b.body || '')}</textarea></label>
       <label>Button Label<input name="button_label" value="${escapeAttr(b.button_label || '')}" placeholder="Optional"></label>
       <label>Button Link<input name="button_link" value="${escapeAttr(b.button_link || '')}" placeholder="Optional"></label>
     </div>
   `).join('');
+  if (adminState.focusBubble) {
+    const box = wrap.querySelector(`[data-id="${CSS.escape(adminState.focusBubble)}"]`);
+    if (box) { box.scrollIntoView({ behavior: 'smooth', block: 'center' }); box.querySelector('input, textarea')?.focus(); }
+  }
 }
 
 async function saveBubbles() {
@@ -70,12 +76,14 @@ async function saveBubbles() {
 
 async function loadPage() {
   if (!can('edit_guides')) return;
-  const pageKey = qs('#pageKey').value;
+  const pageKey = params.get('page') || qs('#pageKey').value;
+  if (qs('#pageKey').value !== pageKey) qs('#pageKey').value = pageKey;
   adminState.currentPageKey = pageKey;
   try {
     const data = await adminFetchJson('/api/content/page?page_key=' + encodeURIComponent(pageKey));
     qs('#pageTitle').value = data.page.title || '';
     qs('#pageContent').value = data.page.content_html || '';
+    if (params.get('page')) qs('#guidePanel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (err) {
     qs('#pageTitle').value = pageKey;
     qs('#pageContent').value = '';
@@ -170,7 +178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setAdminMessage(err.message, 'error');
   }
   qs('#saveBubbles')?.addEventListener('click', () => saveBubbles().catch(err => setAdminMessage(err.message, 'error')));
-  qs('#pageKey')?.addEventListener('change', () => loadPage().catch(err => setAdminMessage(err.message, 'error')));
+  qs('#pageKey')?.addEventListener('change', () => { params.delete('page'); loadPage().catch(err => setAdminMessage(err.message, 'error')); });
   qs('#savePage')?.addEventListener('click', () => savePage().catch(err => setAdminMessage(err.message, 'error')));
   qs('#mediaUploadForm')?.addEventListener('submit', (event) => uploadMedia(event).catch(err => setAdminMessage(err.message, 'error')));
   qs('#mediaLibrary')?.addEventListener('click', handleMediaClick);
