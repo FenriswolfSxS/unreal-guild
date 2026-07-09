@@ -24,16 +24,27 @@ async function loadMembers() {
 function renderMembers() {
   const wrap = qs('#memberManager'); if (!wrap) return;
   const q = adminState.query.toLowerCase();
-  const rows = adminState.members.filter(m => !q || [m.ingame_name,m.username,m.email,m.rank_name,m.class_name,m.status,m.account_type].some(v => String(v||'').toLowerCase().includes(q)));
+  const rows = adminState.members.filter(m => !q || [m.ingame_name,m.username,m.rank_name,m.class_name,m.status,m.account_type].some(v => String(v||'').toLowerCase().includes(q)));
   if (!rows.length) { wrap.innerHTML = '<p class="muted">No members found.</p>'; return; }
   wrap.innerHTML = rows.map(m => memberCard(m)).join('');
 }
+function isLeadershipMember(m) {
+  return ['leader','deputy','officer','admin'].includes(String(m.rank_slug || '').toLowerCase());
+}
 function memberCard(m) {
+  const leadership = isLeadershipMember(m);
   const rankOptions = adminState.ranks.map(r => `<option value="${r.id}" ${Number(m.rank_id)===Number(r.id)?'selected':''}>${escapeHtml(r.name)}</option>`).join('');
   const classOptions = adminState.classes.map(c => `<option value="${c.id}" ${Number(m.class_id)===Number(c.id)?'selected':''}>${escapeHtml(c.name)}</option>`).join('');
   const community = m.account_type === 'user';
+  const displayName = escapeHtml(m.ingame_name || m.username || 'Member');
+  if (leadership) {
+    return `<div class="member-admin-card leadership-locked" data-user-id="${escapeAttr(m.id)}">
+      <div class="member-admin-head"><div><h3>${displayName}</h3><p>${escapeHtml(m.rank_name || 'Leadership')}</p></div><span class="status-pill">Protected</span></div>
+      <p class="muted">Leadership accounts are visible for reference only. Leaders, Deputies, and Officers cannot remove or change each other here.</p>
+    </div>`;
+  }
   return `<div class="member-admin-card ${m.status==='suspended'?'is-suspended':''}" data-user-id="${escapeAttr(m.id)}">
-    <div class="member-admin-head"><div><h3>${escapeHtml(m.ingame_name || m.username)}</h3><p>${escapeHtml(m.email || '')}</p></div><span class="status-pill">${escapeHtml(m.status || 'active')}</span></div>
+    <div class="member-admin-head"><div><h3>${displayName}</h3><p>${escapeHtml(m.username || '')}</p></div><span class="status-pill">${escapeHtml(m.status || 'active')}</span></div>
     <div class="member-admin-grid">
       <label>Account Type<select name="account_type"><option value="guild_member" ${!community?'selected':''}>Guild Member</option><option value="user" ${community?'selected':''}>Community User</option></select></label>
       <label>Status<select name="status"><option value="active" ${m.status==='active'?'selected':''}>Active</option><option value="suspended" ${m.status==='suspended'?'selected':''}>Suspended / Remove Access</option></select></label>
@@ -44,6 +55,7 @@ function memberCard(m) {
   </div>`;
 }
 async function saveMember(card, override = {}) {
+  if (card.classList.contains('leadership-locked')) { setAdminMessage('Leadership accounts cannot be changed here.', 'error'); return; }
   const body = {
     user_id: card.dataset.userId,
     account_type: card.querySelector('[name="account_type"]').value,
