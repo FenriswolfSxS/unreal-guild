@@ -1552,3 +1552,12 @@ html, body {
   .guild-build-head { flex-direction: column; }
   .loadout-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 }
+
+
+/* v20 hard stop for class build pages: no manual save form; compact published cards only */
+body .build-page-main .guide-article,
+body .build-page-main .save-build-panel,
+body .build-page-main #saveBuildForm,
+body .build-page-main .manual-build-form { display:none!important; }
+body .compact-build-card img { max-width:72px!important; max-height:72px!important; }
+body .member-build-section { margin-top: 8px!important; }
