@@ -1180,3 +1180,399 @@ html, body {
 .saved-build-image { max-width: 100%; border-radius: 16px; border: 1px solid rgba(255,255,255,.18); margin: 12px 0; }
 @media (max-width: 760px) { .member-build-form .form-row.two { grid-template-columns: 1fr; } }
 .forum-actions{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap}.forum-status a{color:#bffcff}.error{color:#ff8aa0}
+
+/* Home page v7: draggable/resizable editable rune bubbles */
+.home-heading-flare h2 {
+  text-shadow: 0 0 18px rgba(149,232,255,.28), 0 0 34px rgba(255,79,94,.18);
+  letter-spacing: .08em;
+}
+.home-subtitle { color: rgba(255,255,255,.78); margin-top: 8px; }
+.quick-clicks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px auto 0;
+}
+.quick-clicks button {
+  border: 1px solid rgba(149,232,255,.42);
+  background: linear-gradient(135deg, rgba(149,232,255,.16), rgba(255,79,94,.12));
+  color: #d8fbff;
+  border-radius: 999px;
+  padding: 10px 15px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(149,232,255,.08);
+}
+.quick-clicks button:hover { transform: translateY(-1px); box-shadow: 0 0 24px rgba(149,232,255,.22); }
+.home-stage {
+  width: min(1120px, calc(100vw - 40px));
+  min-height: 620px;
+  margin: 34px auto 0;
+  position: relative;
+  overflow: hidden;
+}
+.home-stage .home-info-grid {
+  position: relative;
+  min-height: 620px;
+  display: block;
+}
+.rune-bubble {
+  position: absolute;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(36,43,67,.92), rgba(23,29,49,.92));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 20px 52px rgba(0,0,0,.18);
+}
+.rune-bubble::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: radial-gradient(circle at 18% 8%, rgba(255,115,92,.24), transparent 22%), radial-gradient(circle at 80% 18%, rgba(149,232,255,.18), transparent 28%);
+  pointer-events: none;
+}
+.rune-bubble > * { position: relative; z-index: 1; }
+.bubble-move-handle, .bubble-resize-handle { display: none; }
+.leadership-edit-on .bubble-move-handle {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  right: 12px;
+  top: 44px;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(245,197,66,.2);
+  border: 1px solid rgba(245,197,66,.6);
+  color: #ffe58a;
+  cursor: move;
+  z-index: 4;
+}
+.leadership-edit-on .bubble-resize-handle {
+  display: block;
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 24px;
+  height: 24px;
+  border-right: 3px solid rgba(149,232,255,.8);
+  border-bottom: 3px solid rgba(149,232,255,.8);
+  cursor: nwse-resize;
+  z-index: 4;
+}
+.leadership-edit-on .editable-bubble h2,
+.leadership-edit-on .editable-bubble p { cursor: text; }
+.bubble-pulse { animation: bubblePulse 1s ease; }
+@keyframes bubblePulse { 0%,100%{box-shadow:0 20px 52px rgba(0,0,0,.18)} 35%{box-shadow:0 0 0 5px rgba(149,232,255,.18),0 0 42px rgba(149,232,255,.32)} }
+.home-edit-toolbar { bottom: 78px; }
+@media (max-width: 900px) {
+  .home-stage .home-info-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .rune-bubble { position: relative !important; left: auto !important; top: auto !important; width: auto !important; min-height: 160px !important; }
+}
+
+/* Member management admin */
+.member-toolbar { display:flex; gap:12px; align-items:center; margin: 18px 0; }
+.member-toolbar input { flex:1; padding: 13px 15px; border-radius: 13px; border:1px solid rgba(255,255,255,.18); background:rgba(5,8,18,.62); color:#fff; font:inherit; }
+.member-manager { display:grid; gap:16px; }
+.member-admin-card { border:1px solid rgba(255,255,255,.16); background:rgba(20,26,45,.84); border-radius:18px; padding:18px; }
+.member-admin-card.is-suspended { opacity:.68; border-color: rgba(255,112,112,.35); }
+.member-admin-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:14px; }
+.member-admin-head h3 { margin:0; }
+.member-admin-head p { margin:.25rem 0 0; color:rgba(255,255,255,.66); }
+.status-pill { border:1px solid rgba(149,232,255,.32); border-radius:999px; padding:6px 10px; color:#c8fbff; font-weight:900; text-transform:uppercase; font-size:.75rem; }
+.member-admin-card.is-suspended .status-pill { color:#ffb2be; border-color:rgba(255,112,112,.4); }
+.member-admin-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; }
+.member-admin-grid label { font-weight:900; color:rgba(255,255,255,.86); }
+.member-admin-grid select { width:100%; margin-top:7px; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background:rgba(5,8,18,.62); color:#fff; }
+.member-admin-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+.admin-button.danger { border-color: rgba(255,112,112,.75); background: rgba(255,79,94,.18); color:#ffd6de; }
+@media (max-width: 980px) { .member-admin-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 620px) { .member-admin-grid, .member-toolbar { grid-template-columns:1fr; display:grid; } }
+
+/* v8 published Build Lab skill cards */
+.published-skill-setup { margin: 18px 0; }
+.published-skill-grid { display: grid; gap: 12px; }
+.published-skill-card { display: grid; grid-template-columns: 58px 1fr; gap: 12px; align-items: start; padding: 12px; border: 1px solid rgba(255,255,255,.14); border-radius: 14px; background: rgba(255,255,255,.045); }
+.published-skill-card img { width: 58px; height: 58px; object-fit: cover; border-radius: 12px; border: 1px solid rgba(255,255,255,.18); }
+.published-skill-card strong { display: block; font-size: 1rem; }
+.published-skill-card span, .published-skill-card small { display: block; color: rgba(234,241,255,.72); margin-top: 2px; }
+.published-skill-card p { margin: 8px 0 0; color: rgba(255,255,255,.88); }
+
+/* Forum replies */
+.reply-list { margin-top: 16px; display: grid; gap: 10px; }
+.reply-item { margin-left: 18px; padding: 12px 14px; border-left: 3px solid rgba(149,232,255,.55); background: rgba(5,8,18,.28); border-radius: 12px; }
+.reply-item p { margin: 6px 0 0; }
+.reply-empty { margin: 10px 0 0; }
+.reply-composer { margin-top: 14px; display: grid; gap: 10px; }
+.reply-composer textarea { min-height: 78px; resize: vertical; }
+
+
+/* v13 published build cards: creator, title, description, 2 x 4 skill circles */
+.published-build-card { padding: 26px; border: 1px solid rgba(142,239,255,.24); border-radius: 22px; background: linear-gradient(135deg, rgba(31,39,66,.94), rgba(16,22,39,.92)); box-shadow: 0 18px 55px rgba(0,0,0,.24); }
+.published-build-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 10px; }
+.published-build-head h3 { margin: 3px 0 0; font-size: clamp(1.4rem, 2.5vw, 2.15rem); }
+.published-build-head .kicker { margin: 0; color: #fff18a; letter-spacing: .09em; }
+.published-build-head span { border: 1px solid rgba(142,239,255,.35); border-radius: 999px; padding: 7px 12px; color: #c9fbff; background: rgba(142,239,255,.08); white-space: nowrap; }
+.published-build-desc { margin: 16px 0 20px; color: rgba(255,255,255,.9); font-size: 1.02rem; line-height: 1.65; }
+.compact-build-skills { margin-top: 18px; }
+.skill-row-title { margin: 16px 0 10px; color: #fff18a; text-transform: uppercase; letter-spacing: .16em; font-size: .82rem; font-weight: 900; }
+.circle-skill-grid { display: grid; grid-template-columns: repeat(4, minmax(92px, 1fr)); gap: 18px; }
+.published-skill-circle { text-align: center; min-width: 0; }
+.published-skill-circle .skill-orb { width: 76px; height: 76px; margin: 0 auto 10px; display: grid; place-items: center; border-radius: 999px; border: 2px solid rgba(142,239,255,.45); background: radial-gradient(circle at 35% 25%, rgba(255,255,255,.25), rgba(142,239,255,.08) 45%, rgba(0,0,0,.22)); box-shadow: 0 0 24px rgba(142,239,255,.16); overflow: hidden; }
+.published-skill-circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.published-skill-circle strong { display: block; font-size: .9rem; line-height: 1.2; overflow-wrap: anywhere; }
+.published-skill-circle.empty { opacity: .35; }
+@media (max-width: 720px){ .circle-skill-grid { grid-template-columns: repeat(2, minmax(100px, 1fr)); } .published-build-head { flex-direction: column; } }
+
+
+/* v14 forum polish + working replies */
+.forums-page .forum-login-card {
+  border-color: rgba(142,239,255,.22);
+  background: linear-gradient(135deg, rgba(26,35,60,.92), rgba(9,14,27,.88));
+}
+.forums-page .forum-reader-card {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(22px, 4vw, 38px);
+  border-radius: 28px;
+  border: 1px solid rgba(149,232,255,.22);
+  background: linear-gradient(135deg, rgba(34,42,68,.9), rgba(14,19,36,.94));
+  box-shadow: 0 28px 80px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.forums-page .forum-close {
+  background: linear-gradient(135deg, rgba(80,132,255,.92), rgba(104,217,255,.86));
+  border: 1px solid rgba(255,255,255,.28);
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(80,132,255,.24);
+}
+.thread-list { gap: 22px; }
+.thread-item.modern-thread {
+  border: 1px solid rgba(149,232,255,.22);
+  background: linear-gradient(135deg, rgba(37,47,77,.86), rgba(20,27,48,.9));
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 18px 48px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.thread-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+.thread-topline h3 {
+  margin: 0 0 6px;
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+}
+.thread-topline small { color: rgba(255,245,154,.92); font-weight: 800; }
+.reply-count {
+  border: 1px solid rgba(149,232,255,.32);
+  border-radius: 999px;
+  padding: 7px 11px;
+  color: #c8fbff;
+  background: rgba(149,232,255,.08);
+  font-weight: 900;
+  white-space: nowrap;
+}
+.thread-body {
+  color: rgba(255,255,255,.92);
+  line-height: 1.65;
+  white-space: pre-wrap;
+  margin-bottom: 18px;
+}
+.reply-list {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+}
+.reply-item {
+  margin-left: clamp(0px, 3vw, 28px);
+  padding: 14px 16px;
+  border: 1px solid rgba(149,232,255,.16);
+  border-left: 4px solid rgba(149,232,255,.7);
+  background: rgba(5,8,18,.32);
+  border-radius: 16px;
+}
+.reply-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: rgba(255,245,154,.9);
+  font-size: .9rem;
+}
+.reply-meta span { color: rgba(255,255,255,.55); }
+.reply-body { margin-top: 8px; color: rgba(255,255,255,.9); line-height: 1.55; }
+.modern-reply-composer {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: stretch;
+}
+.modern-reply-composer textarea {
+  min-height: 58px;
+  border-radius: 16px;
+  background: rgba(5,8,18,.72);
+  border: 1px solid rgba(149,232,255,.28);
+  color: #fff;
+  padding: 13px 14px;
+}
+.modern-reply-composer .reply-send {
+  min-width: 120px;
+  background: linear-gradient(135deg, #4b80ff, #69dcff);
+  color: #fff;
+  border-color: rgba(255,255,255,.24);
+  box-shadow: 0 12px 34px rgba(78,130,255,.22);
+}
+.empty-forum-card {
+  border: 1px dashed rgba(149,232,255,.28);
+  border-radius: 20px;
+  padding: 24px;
+  background: rgba(5,8,18,.26);
+  color: rgba(255,255,255,.78);
+}
+.thread-composer {
+  margin-top: 28px;
+  border: 1px solid rgba(149,232,255,.18);
+  border-radius: 22px;
+  padding: 20px;
+  background: rgba(5,8,18,.28);
+}
+.thread-composer h3 { margin-top: 0; }
+.thread-composer .primary-btn {
+  background: linear-gradient(135deg, #ff2828, #ffa96f);
+  border-color: rgba(255,255,255,.18);
+  box-shadow: 0 12px 34px rgba(255,75,55,.25);
+}
+@media (max-width: 680px) {
+  .thread-topline, .modern-reply-composer { grid-template-columns: 1fr; display: grid; }
+  .modern-reply-composer .reply-send { width: 100%; }
+}
+
+/* v15 homepage editor fixes */
+.home-stage {
+  overflow: visible;
+  padding-bottom: 34px;
+}
+.home-stage .home-info-grid {
+  min-height: 620px;
+}
+.leadership-edit-on .editable-bubble {
+  touch-action: none;
+}
+.leadership-edit-on .editable-bubble.is-dragging {
+  user-select: none;
+  transition: none !important;
+  z-index: 50;
+}
+.leadership-edit-on .editable-bubble h2.home-active-text,
+.leadership-edit-on .editable-bubble p.home-active-text {
+  outline: 2px solid rgba(149,232,255,.75);
+  outline-offset: 4px;
+  border-radius: 8px;
+  background: rgba(149,232,255,.08);
+}
+.home-edit-toolbar {
+  flex-wrap: wrap;
+  border-radius: 22px;
+  justify-content: center;
+}
+.home-edit-toolbar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,.78);
+  font-weight: 800;
+  font-size: .86rem;
+}
+.home-edit-toolbar select,
+.home-edit-toolbar input[type="color"] {
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(149,232,255,.32);
+  background: rgba(5,8,18,.78);
+  color: #fff;
+  padding: 0 8px;
+}
+.home-edit-toolbar input[type="color"] {
+  width: 46px;
+  padding: 3px;
+}
+@media (min-width: 901px) {
+  body:not(.leadership-edit-on) .home-stage {
+    min-height: auto;
+  }
+  body:not(.leadership-edit-on) .home-stage .home-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+    min-height: 0;
+  }
+  body:not(.leadership-edit-on) .home-stage .rune-bubble {
+    position: relative;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
+    min-height: 190px !important;
+  }
+}
+
+/* v18 class build page cleanup: Build Lab is the only publisher; pages show compact member cards */
+.member-build-section { margin-top: 28px; }
+.member-build-list { width: min(980px, calc(100vw - 38px)); margin: 0 auto; display: grid; gap: 22px; }
+.empty-build-card,
+.guild-build-card {
+  border: 1px solid rgba(142,239,255,.22);
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(33,41,68,.92), rgba(12,18,34,.94));
+  box-shadow: 0 18px 50px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.07);
+  padding: clamp(18px, 2.4vw, 28px);
+}
+.empty-build-card h2 { margin-top: 0; }
+.empty-build-card p { color: rgba(234,241,255,.76); }
+.published-build-list { display: grid; gap: 22px; }
+.guild-build-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.12); }
+.guild-build-head h3 { margin: 5px 0 0; font-size: clamp(1.35rem, 2vw, 1.9rem); line-height: 1.05; }
+.creator-label { margin: 0; color: rgba(207,249,255,.78); text-transform: uppercase; letter-spacing: .16em; font-size: .78rem; font-weight: 900; }
+.creator-label strong { text-shadow: 0 0 14px currentColor; }
+.class-pill { flex: 0 0 auto; border: 1px solid; border-radius: 999px; padding: 8px 12px; background: rgba(255,255,255,.05); font-weight: 900; text-transform: uppercase; letter-spacing: .06em; font-size: .75rem; }
+.build-description { margin: 16px 0 18px; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 14px 16px; background: rgba(5,8,18,.30); color: rgba(255,255,255,.9); line-height: 1.55; }
+.build-description p { margin: 0; }
+.build-mini-loadout { border: 1px solid rgba(255,255,255,.12); border-radius: 16px; overflow: hidden; background: rgba(5,8,18,.26); }
+.loadout-row-title { text-align: center; text-transform: uppercase; letter-spacing: .16em; font-weight: 900; font-size: .78rem; color: rgba(255,255,255,.64); padding: 10px; border-bottom: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.15); }
+.loadout-row-title:nth-of-type(2) { border-top: 1px solid rgba(255,255,255,.1); }
+.loadout-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 10px; padding: 14px 16px; }
+.loadout-skill { min-width: 0; text-align: center; display: grid; justify-items: center; align-content: start; gap: 8px; }
+.loadout-orb { width: 72px !important; height: 72px !important; max-width: 72px !important; max-height: 72px !important; border-radius: 999px; display: grid; place-items: center; overflow: hidden; border: 1px solid rgba(255,255,255,.22); background: radial-gradient(circle at 35% 25%, rgba(255,255,255,.22), rgba(142,239,255,.10) 42%, rgba(0,0,0,.28)); box-shadow: 0 0 18px rgba(142,239,255,.14); }
+.loadout-orb img { width: 100% !important; height: 100% !important; max-width: 100% !important; max-height: 100% !important; object-fit: cover !important; display: block; border-radius: 999px; }
+.loadout-skill strong { display: block; max-width: 130px; color: #fff; font-size: .86rem; line-height: 1.15; overflow-wrap: anywhere; text-shadow: 0 1px 0 rgba(0,0,0,.6); }
+.loadout-skill.empty { opacity: .32; }
+@media (max-width: 720px) {
+  .guild-build-head { flex-direction: column; }
+  .loadout-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+
+/* v20 hard stop for class build pages: no manual save form; compact published cards only */
+body .build-page-main .guide-article,
+body .build-page-main .save-build-panel,
+body .build-page-main #saveBuildForm,
+body .build-page-main .manual-build-form { display:none!important; }
+body .compact-build-card img { max-width:72px!important; max-height:72px!important; }
+body .member-build-section { margin-top: 8px!important; }
+
+/* Forum v25 - modern game UI */
+.forums-page{background:radial-gradient(circle at 15% 12%,rgba(102,43,255,.16),transparent 34%),radial-gradient(circle at 85% 18%,rgba(0,220,255,.12),transparent 30%),#070910}
+.forums-page .forum-hero{position:relative;overflow:hidden;border-bottom:1px solid rgba(126,239,255,.18)}
+.forums-page .forum-hero:after{content:"";position:absolute;inset:auto 8% 0;height:2px;background:linear-gradient(90deg,transparent,#7cecff,#9c5cff,transparent);box-shadow:0 0 22px #6be7ff}
+.forums-page .forum-hero h1{font-size:clamp(2.8rem,8vw,5.8rem);text-transform:uppercase;letter-spacing:.06em;text-shadow:0 0 28px rgba(121,231,255,.28)}
+.forums-page .forum-login-card,.forums-page .forum-reader-card,.forums-page .forum-note .notice-card{background:linear-gradient(145deg,rgba(18,23,39,.96),rgba(7,10,20,.98));border:1px solid rgba(113,229,255,.18);box-shadow:0 18px 60px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.05)}
+.forum-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.forum-card{position:relative;overflow:hidden;min-height:245px;padding:22px;border:1px solid rgba(118,221,255,.2);border-radius:18px;background:linear-gradient(145deg,rgba(22,29,51,.96),rgba(8,12,23,.98));box-shadow:0 16px 40px rgba(0,0,0,.34);transition:.2s transform,.2s border-color,.2s box-shadow}
+.forum-card:hover{transform:translateY(-4px);border-color:rgba(124,236,255,.55);box-shadow:0 20px 52px rgba(0,0,0,.48),0 0 28px rgba(92,209,255,.10)}
+.forum-card-glow{position:absolute;inset:-35% 55% 45% -20%;background:radial-gradient(circle,rgba(112,92,255,.22),transparent 65%);pointer-events:none}
+.forum-card h3{font-size:1.35rem;letter-spacing:.03em}.forum-card p{color:#aeb8ca}.forum-card-head,.forum-card-foot{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px}.forum-card-foot{margin-top:auto;padding-top:18px}.forum-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,rgba(104,231,255,.16),rgba(126,65,255,.14));border:1px solid rgba(132,231,255,.24);font-size:1.7rem}.forum-badge,.forum-post-count,.reply-count{border:1px solid rgba(119,229,255,.22);background:rgba(9,14,26,.68);border-radius:999px;padding:7px 10px;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:#bff7ff}
+.forum-reader-card{max-width:1100px;margin:auto}.thread-list{display:grid;gap:18px}.game-thread{position:relative;overflow:hidden;border:1px solid rgba(112,226,255,.17);border-radius:18px;background:linear-gradient(145deg,rgba(20,26,45,.96),rgba(9,12,22,.98));padding:20px;box-shadow:0 14px 36px rgba(0,0,0,.32)}.thread-accent{position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(#65edff,#8b5cff);box-shadow:0 0 16px #62e8ff}.thread-topline{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:14px}.thread-topline h3{margin:10px 0 3px;font-size:1.45rem}.thread-body{padding:18px 0;line-height:1.65;color:#e8edf7}.forum-user-chip{display:flex;align-items:center;gap:10px}.forum-user-dot{width:12px;height:12px;border-radius:50%;background:var(--user-color);box-shadow:0 0 14px var(--user-color)}.forum-user-chip strong{color:var(--user-color)}.forum-user-chip small{display:block;color:#7f8ba1;text-transform:uppercase;letter-spacing:.08em;font-size:.62rem}.reply-list{display:grid;gap:10px}.reply-item{border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(3,6,14,.46);padding:14px}.reply-meta{font-size:.72rem;color:#7f8ba1;margin:6px 0}.reply-body{line-height:1.55}.modern-reply-composer{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-top:14px;align-items:stretch}.modern-reply-composer textarea{min-height:82px}.mini-upload{display:grid;place-items:center;width:44px;border:1px solid rgba(120,225,255,.22);border-radius:10px;cursor:pointer;background:rgba(255,255,255,.04)}.forum-upload-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.forum-upload-button{cursor:pointer;border:1px solid rgba(119,229,255,.3);border-radius:10px;padding:10px 14px;background:rgba(110,218,255,.08);color:#d9fbff;font-weight:800}.forum-image-preview img,.forum-post-image{max-width:min(100%,720px);max-height:520px;object-fit:contain;border-radius:14px;border:1px solid rgba(139,231,255,.18);background:#05070d}.forum-image-preview{margin-top:10px}.forum-post-image-link{display:block;margin-top:14px}.forum-submit-status{min-height:1.3em;margin:8px 0}.forum-submit-status.success{color:#75f0b0}.forum-submit-status.error,.reply-status{color:#ff8fa6}.forum-submit-status.working{color:#8eeeff}.danger-btn{border:1px solid rgba(255,89,120,.45);background:rgba(255,66,101,.1);color:#ff9aab;border-radius:10px;padding:9px 13px;cursor:pointer}.forum-actions{display:flex;gap:8px;margin-top:14px}.thread-composer{margin-top:24px;border-top:1px solid rgba(255,255,255,.1);padding-top:20px;display:grid;gap:12px}.thread-composer input,.thread-composer textarea,.modern-reply-composer textarea{width:100%;border:1px solid rgba(126,225,255,.18);background:rgba(2,6,14,.7);color:#eefbff;border-radius:12px;padding:13px;outline:none}.thread-composer input:focus,.thread-composer textarea:focus,.modern-reply-composer textarea:focus{border-color:#74e8ff;box-shadow:0 0 0 3px rgba(79,213,255,.08)}
+@media(max-width:700px){.modern-reply-composer{grid-template-columns:1fr auto}.modern-reply-composer textarea{grid-column:1/-1}.thread-topline{flex-direction:column}.forum-card{min-height:220px}}
+.build-delete-btn{border:1px solid rgba(255,88,112,.48);background:rgba(255,55,88,.12);color:#ff9cad;border-radius:999px;padding:8px 12px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;font-size:.72rem;cursor:pointer}.build-delete-btn:hover{background:rgba(255,55,88,.23);box-shadow:0 0 18px rgba(255,55,88,.15)}

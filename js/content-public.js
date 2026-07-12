@@ -319,18 +319,41 @@
   }, true);
 
   async function uploadInlineImage(event) {
-    const input = event.target; const file = input.files && input.files[0]; if (!file) return;
-    const form = new FormData(); form.append('file', file);
+    const input = event.target;
+    const file = input.files && input.files[0];
+    if (!file) return;
+    const replacingImage = activeUploadImage;
+    const toolbar = document.querySelector('#inlineEditToolbar');
+    const imageButton = toolbar?.querySelector('[data-inline-action="image"]');
+    const originalLabel = imageButton?.textContent || '+ Image';
+    if (imageButton) { imageButton.disabled = true; imageButton.textContent = 'Uploading…'; }
+    toast('Uploading image…');
+    const form = new FormData();
+    form.append('file', file, file.name || 'page-image.png');
     try {
-      const res = await fetch('/api/media/upload', { method: 'POST', body: form });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || data.ok === false) throw new Error(data.error || 'Upload failed.');
+      const res = await fetch('/api/media/upload', { method: 'POST', body: form, credentials: 'same-origin' });
+      const raw = await res.text();
+      let data = {};
+      try { data = raw ? JSON.parse(raw) : {}; } catch (_) {}
+      if (!res.ok || data.ok === false) throw new Error(data.error || `Upload failed (${res.status}).`);
       const url = data.asset?.url;
-      if (activeUploadImage) { activeUploadImage.src = url; activeUploadImage.alt = file.name.replace(/\.[^.]+$/, ''); }
-      else { insertHtmlAtCursor(`<figure><img src="${escapeAttr(url)}" alt="${escapeAttr(file.name.replace(/\.[^.]+$/, ''))}"><figcaption>Caption</figcaption></figure>`); }
-      toast('Image uploaded. Click Save Changes to keep it on the page.');
-    } catch (err) { alert(err.message); }
-    finally { input.value = ''; activeUploadImage = null; }
+      if (!url) throw new Error('Upload completed, but no image URL was returned.');
+      const alt = file.name.replace(/\.[^.]+$/, '') || 'Page image';
+      if (replacingImage && replacingImage.isConnected) {
+        replacingImage.src = url;
+        replacingImage.alt = alt;
+      } else {
+        insertHtmlAtCursor(`<figure><img src="${escapeAttr(url)}" alt="${escapeAttr(alt)}" loading="lazy"><figcaption>Caption</figcaption></figure>`);
+      }
+      toast('Image uploaded. Click Save Changes to publish it.');
+    } catch (err) {
+      console.error('Page image upload failed', err);
+      alert(err?.message || 'Image upload failed. Your page has not been changed.');
+    } finally {
+      input.value = '';
+      activeUploadImage = null;
+      if (imageButton) { imageButton.disabled = false; imageButton.textContent = originalLabel; }
+    }
   }
 
   function toast(text) { let el = document.querySelector('#inlineEditToast'); if (!el) { el = document.createElement('div'); el.id = 'inlineEditToast'; el.className = 'inline-edit-toast'; document.body.appendChild(el); } el.textContent = text; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2200); }

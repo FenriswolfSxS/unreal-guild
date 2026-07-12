@@ -256,3 +256,15 @@ INSERT OR IGNORE INTO forum_categories (id,title,type,icon,description,sort_orde
   ('dominator','Dominator','class','<img src="assets/class-icons/dominator.png" alt="Dominator">','Sage builds, Dominator / Prophet setups, healing, summons, support, and control.',4),
   ('game','The Game','game','🎮','General Sword X Staff discussion, questions, guides, updates, and progression help.',5),
   ('away','Away / Unable to Attend','away','📅','Post when you will be away, late, or unable to attend guild events.',6);
+
+-- v25 forum media + persistent reply storage
+CREATE TABLE IF NOT EXISTS forum_replies (
+  id TEXT PRIMARY KEY,
+  thread_id TEXT NOT NULL,
+  body TEXT NOT NULL DEFAULT '',
+  image_url TEXT NOT NULL DEFAULT '',
+  author_id TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+-- Existing databases are upgraded automatically by the Functions using PRAGMA table_info + ALTER TABLE.

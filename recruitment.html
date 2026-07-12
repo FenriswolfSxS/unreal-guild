@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Guild Forums | Unreal Guild</title>
-  <link rel="stylesheet" href="css/styles.css?v=forumv17" />
+  <link rel="stylesheet" href="css/styles.css?v=forumv25" />
 </head>
 <body class="forums-page">
   <div class="particles"></div>
@@ -82,7 +82,14 @@
         <h3>Create Post</h3>
         <input id="threadTitle" type="text" placeholder="Post title" />
         <textarea id="threadBody" placeholder="Write your post..."></textarea>
-        <button id="createThreadBtn" class="primary-btn" type="button">Post</button>
+        <div class="forum-upload-row">
+          <label class="forum-upload-button" for="threadImage">＋ Attach Image</label>
+          <input id="threadImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+          <span id="threadImageName" class="muted">PNG, JPG, WEBP, or GIF • 10 MB max</span>
+        </div>
+        <div id="threadImagePreview" class="forum-image-preview" hidden></div>
+        <p id="threadPostStatus" class="forum-submit-status" aria-live="polite"></p>
+        <button id="createThreadBtn" class="primary-btn" type="button">Publish Post</button>
       </div>
     </article>
   </section>
@@ -101,205 +108,6 @@
 </footer>
 <script src="js/app.js"></script>
 <script src="js/auth-ui.js"></script>
-<script>
-(function(){
-  let forums = [];
-  let threads = [];
-  let me = { signedIn:false, permissions:[] };
-  let activeForumId = null;
-
-  const $ = id => document.getElementById(id);
-  const grid = $('forumGrid');
-  const loginStatus = $('forumLoginStatus');
-  const signinHelp = $('forumSigninHelp');
-
-  function esc(v){ return String(v||'').replace(/[&<>'\"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch])); }
-  async function jsonFetch(url, opts){
-    const r = await fetch(url, opts);
-    const d = await r.json().catch(()=>({}));
-    if(!r.ok || d.ok === false) throw new Error(d.error || 'Request failed.');
-    return d;
-  }
-  function has(slug){ return (me.permissions||[]).includes(slug) || (me.permissions||[]).includes('admin_dashboard') || (me.permissions||[]).includes('moderate_posts'); }
-  function canPost(){ return !!me.signedIn && has('create_posts'); }
-  function canEdit(thread){ return !!me.signedIn && ((thread.author_id === me.user?.id && has('edit_own_posts')) || has('moderate_posts')); }
-  function canDelete(thread){ return !!me.signedIn && ((thread.author_id === me.user?.id && has('delete_own_posts')) || has('moderate_posts')); }
-
-  async function init(){
-    try { me = await jsonFetch('/api/me'); } catch(e) { me = { signedIn:false, permissions:[] }; }
-    if(me.signedIn){
-      const u = me.user || {};
-      loginStatus.textContent = 'Signed in as ' + (u.ingame_name || u.username || 'Guild Member') + ' • ' + (u.rank_name || 'Member');
-      signinHelp.hidden = true;
-    } else {
-      loginStatus.textContent = 'Browsing as Guest • read only';
-      signinHelp.hidden = false;
-    }
-    $('threadComposer').hidden = !canPost();
-    await loadForums();
-  }
-
-  async function loadForums(){
-    try { const d = await jsonFetch('/api/forums/list'); forums = d.forums || []; renderForums(); }
-    catch(e){ grid.innerHTML = '<article class="notice-card"><p class="error">'+esc(e.message)+'</p></article>'; }
-  }
-
-  function renderForums(){
-    grid.innerHTML = '';
-    forums.forEach(forum => {
-      const card = document.createElement('article');
-      card.className = 'notice-card forum-card forum-type-' + esc(forum.type);
-      card.innerHTML = `
-        <div class="forum-card-head">
-          <span class="forum-icon">${forum.icon || '💬'}</span>
-          <span class="forum-badge">${esc(forum.type)}</span>
-        </div>
-        <h3>${esc(forum.title)}</h3>
-        <p>${esc(forum.description || '')}</p>
-        <div class="forum-card-foot">
-          <button class="secondary-btn open-forum" type="button">Open Forum</button>
-          <span>${Number(forum.post_count || 0)} posts</span>
-        </div>`;
-      card.querySelector('.open-forum').addEventListener('click', () => openForum(forum.id));
-      grid.appendChild(card);
-    });
-  }
-
-  async function openForum(id){
-    activeForumId = id;
-    const forum = forums.find(f => f.id === id);
-    if(!forum) return;
-    $('readerType').textContent = forum.type + ' forum';
-    $('readerTitle').textContent = forum.title;
-    $('readerDescription').textContent = forum.description || '';
-    $('threadTitle').value = '';
-    $('threadBody').value = '';
-    $('forumReader').hidden = false;
-    $('threadComposer').hidden = !canPost();
-    await loadThreads(id);
-    $('forumReader').scrollIntoView({ behavior:'smooth', block:'start' });
-  }
-
-  async function loadThreads(id){
-    const list = $('threadList');
-    list.innerHTML = '<p class="muted">Loading posts...</p>';
-    try { const d = await jsonFetch('/api/forums/threads?forum_id=' + encodeURIComponent(id)); threads = d.threads || []; renderThreads(); }
-    catch(e){ list.innerHTML = '<p class="error">'+esc(e.message)+'</p>'; }
-  }
-
-  function canEditReply(reply){ return !!me.signedIn && ((reply.author_id === me.user?.id && has('edit_own_posts')) || has('moderate_posts')); }
-  function canDeleteReply(reply){ return !!me.signedIn && ((reply.author_id === me.user?.id && has('delete_own_posts')) || has('moderate_posts')); }
-
-  function renderThreads(){
-    const list = $('threadList');
-    if(!threads.length){
-      list.innerHTML = '<div class="empty-forum-card"><h3>No posts yet.</h3><p>Start the first conversation for this forum.</p></div>';
-      return;
-    }
-    list.innerHTML = '';
-    threads.forEach(thread => {
-      const item = document.createElement('article');
-      item.className = 'thread-item modern-thread';
-      const replies = Array.isArray(thread.replies) ? thread.replies : [];
-      item.innerHTML = `
-        <div class="thread-topline">
-          <div>
-            <h3>${esc(thread.title)}</h3>
-            <small>by <strong>${esc(thread.author_name)}</strong> • ${esc(thread.created_at)}</small>
-          </div>
-          <span class="reply-count">${replies.length} ${replies.length === 1 ? 'reply' : 'replies'}</span>
-        </div>
-        <div class="thread-body">${esc(thread.body).replace(/\n/g,'<br>')}</div>
-        <div class="reply-list">
-          ${replies.length ? replies.map(reply => `
-            <div class="reply-item" data-reply-id="${esc(reply.id)}">
-              <div class="reply-meta"><strong>${esc(reply.author_name)}</strong><span>${esc(reply.created_at)}</span></div>
-              <div class="reply-body">${esc(reply.body).replace(/\n/g,'<br>')}</div>
-            </div>`).join('') : '<p class="muted reply-empty">No replies yet.</p>'}
-        </div>
-        ${canPost() ? `
-          <div class="reply-composer modern-reply-composer" data-reply-box="${esc(thread.id)}">
-            <textarea data-reply-body="${esc(thread.id)}" placeholder="Write a reply... Press Enter to send, Shift+Enter for a new line."></textarea>
-            <button class="secondary-btn reply-send" type="button" data-reply-thread="${esc(thread.id)}">Reply</button>
-          </div>` : ''}`;
-      if(canEdit(thread) || canDelete(thread)){
-        const actions = document.createElement('div');
-        actions.className = 'forum-actions';
-        if(canEdit(thread)){
-          const edit = document.createElement('button'); edit.className='secondary-btn'; edit.type='button'; edit.textContent='Edit Post';
-          edit.addEventListener('click', () => editThread(thread)); actions.appendChild(edit);
-        }
-        if(canDelete(thread)){
-          const del = document.createElement('button'); del.className='secondary-btn'; del.type='button'; del.textContent='Delete Post';
-          del.addEventListener('click', () => deleteThread(thread)); actions.appendChild(del);
-        }
-        item.appendChild(actions);
-      }
-      item.querySelectorAll('[data-reply-thread]').forEach(btn => btn.addEventListener('click', () => createReply(btn.dataset.replyThread)));
-      item.querySelectorAll('[data-reply-body]').forEach(box => box.addEventListener('keydown', (ev) => {
-        if(ev.key === 'Enter' && !ev.shiftKey){
-          ev.preventDefault();
-          createReply(box.dataset.replyBody);
-        }
-      }));
-      list.appendChild(item);
-    });
-  }
-
-  async function createReply(threadId){
-    if(!canPost()) return;
-    const box = document.querySelector(`[data-reply-body="${CSS.escape(threadId)}"]`);
-    const body = box?.value.trim();
-    if(!body){ return; }
-    const btn = document.querySelector(`[data-reply-thread="${CSS.escape(threadId)}"]`);
-    if(btn) btn.disabled = true;
-    try{
-      const result = await jsonFetch('/api/forums/reply',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({thread_id:threadId, body})});
-      box.value='';
-      const thread = threads.find(t => String(t.id) === String(threadId));
-      if(thread){
-        thread.replies = Array.isArray(thread.replies) ? thread.replies : [];
-        thread.replies.push(result.reply || { id:'local_'+Date.now(), thread_id:threadId, body, author_name:(me.user?.ingame_name || me.user?.username || 'Member'), author_id:me.user?.id, created_at:'just now' });
-        renderThreads();
-      } else if(activeForumId){
-        await loadThreads(activeForumId);
-      }
-    } catch(e){
-      console.error('Reply failed', e);
-      alert(e.message || 'Could not save reply.');
-    } finally {
-      if(btn) btn.disabled = false;
-    }
-  }
-
-  async function createThread(){
-    if(!canPost() || !activeForumId) return;
-    const title = $('threadTitle').value.trim();
-    const body = $('threadBody').value.trim();
-    if(!title || !body){ alert('Add a post title and message.'); return; }
-    try{
-      await jsonFetch('/api/forums/threads',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({forum_id:activeForumId,title,body})});
-      $('threadTitle').value=''; $('threadBody').value='';
-      await loadForums(); await loadThreads(activeForumId);
-    } catch(e){ alert(e.message || 'Could not save post.'); }
-  }
-
-  async function editThread(thread){
-    const title = prompt('Edit post title:', thread.title); if(title === null) return;
-    const body = prompt('Edit post message:', thread.body); if(body === null) return;
-    try { await jsonFetch('/api/forums/threads',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({id:thread.id,title,body})}); await loadThreads(activeForumId); }
-    catch(e){ alert(e.message || 'Could not edit post.'); }
-  }
-  async function deleteThread(thread){
-    if(!confirm('Delete this post?')) return;
-    try { await jsonFetch('/api/forums/threads?id='+encodeURIComponent(thread.id),{method:'DELETE'}); await loadForums(); await loadThreads(activeForumId); }
-    catch(e){ alert(e.message || 'Could not delete post.'); }
-  }
-
-  $('createThreadBtn').addEventListener('click', createThread);
-  $('closeForumBtn').addEventListener('click', () => { $('forumReader').hidden = true; activeForumId = null; window.scrollTo({ top: document.querySelector('.forum-grid').offsetTop - 120, behavior:'smooth' }); });
-  document.addEventListener('DOMContentLoaded', init);
-})();
-</script>
+<script src="js/forums.js?v=25"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 import { json } from './_lib.js';
 
 import { onRequestGet as buildsListGet } from './_handlers/builds/list.js';
+import { onRequestDelete as buildsDelete } from './_handlers/builds/delete.js';
 import { onRequestPost as buildsSavePost } from './_handlers/builds/save.js';
 import { onRequestGet as classesGet } from './_handlers/classes.js';
 import { onRequestGet as homeBubblesGet, onRequestPut as homeBubblesPut } from './_handlers/content/home-bubbles.js';
@@ -32,6 +33,7 @@ function routeKey(request) {
 
 const routes = {
   'builds/list': { GET: buildsListGet },
+  'builds/delete': { DELETE: buildsDelete },
   'builds/save': { POST: buildsSavePost },
   'classes': { GET: classesGet },
   'content/home-bubbles': { GET: homeBubblesGet, PUT: homeBubblesPut, POST: homeBubblesPut },
