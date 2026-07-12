@@ -42,11 +42,12 @@ async function sxsUpdateAccountNav() {
       const name = data.user?.ingame_name || data.user?.username || 'Profile';
       link.innerHTML = `<span ${sxsClassStyle(data.user?.class_color)}>${name}</span>`;
       link.title = 'Profile';
-      if ((data.permissions || []).includes('admin_dashboard') && !nav.querySelector('.admin-nav-link')) {
+      if ((data.permissions || []).includes('admin_dashboard') && !nav.querySelector('.admin-nav-link, a[href="admin.html"], a[href$="/admin.html"]')) {
         const admin = document.createElement('a');
         admin.className = 'admin-nav-link';
         admin.href = 'admin.html';
         admin.textContent = 'Admin';
+        if (location.pathname.endsWith('/admin.html') || location.pathname === '/admin.html') admin.classList.add('active');
         const discord = nav.querySelector('.discord-link, .discord-pill');
         nav.insertBefore(admin, discord || null);
       }
