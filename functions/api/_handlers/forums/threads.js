@@ -11,8 +11,8 @@ async function ensure(env){
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS forum_categories (id TEXT PRIMARY KEY,title TEXT NOT NULL,type TEXT NOT NULL DEFAULT 'general',icon TEXT NOT NULL DEFAULT '💬',description TEXT NOT NULL DEFAULT '',sort_order INTEGER NOT NULL DEFAULT 0,created_by TEXT,created_at TEXT NOT NULL DEFAULT (datetime('now')))` ).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS forum_threads (id TEXT PRIMARY KEY,forum_id TEXT NOT NULL,title TEXT NOT NULL,body TEXT NOT NULL DEFAULT '',image_url TEXT NOT NULL DEFAULT '',author_id TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT (datetime('now')),updated_at TEXT NOT NULL DEFAULT (datetime('now')))` ).run();
   await env.DB.prepare(`CREATE TABLE IF NOT EXISTS forum_replies (id TEXT PRIMARY KEY,thread_id TEXT NOT NULL,body TEXT NOT NULL DEFAULT '',image_url TEXT NOT NULL DEFAULT '',author_id TEXT NOT NULL,created_at TEXT NOT NULL DEFAULT (datetime('now')),updated_at TEXT NOT NULL DEFAULT (datetime('now')))` ).run();
-  await ensureColumns(env,'forum_threads', [['image_url',"TEXT NOT NULL DEFAULT ''"],['updated_at',"TEXT DEFAULT (datetime('now'))"]]);
-  await ensureColumns(env,'forum_replies', [['image_url',"TEXT NOT NULL DEFAULT ''"],['updated_at',"TEXT DEFAULT (datetime('now'))"]]);
+  await ensureColumns(env,'forum_threads', [['body',"TEXT NOT NULL DEFAULT ''"],['image_url',"TEXT NOT NULL DEFAULT ''"],['updated_at',"TEXT NOT NULL DEFAULT ''"]]);
+  await ensureColumns(env,'forum_replies', [['body',"TEXT NOT NULL DEFAULT ''"],['image_url',"TEXT NOT NULL DEFAULT ''"],['created_at',"TEXT NOT NULL DEFAULT ''"],['updated_at',"TEXT NOT NULL DEFAULT ''"]]);
 }
 function can(perms, slug){ return perms.includes(slug) || perms.includes('admin_dashboard') || perms.includes('moderate_posts'); }
 function imageUrl(value){ const v=String(value||'').trim().slice(0,500); return v.startsWith('/api/media/file?') ? v : ''; }

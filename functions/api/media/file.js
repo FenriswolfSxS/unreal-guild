@@ -19,7 +19,9 @@ export async function onRequestGet({ request, env }) {
   const id = cleanText(url.searchParams.get('id'));
   const asset = await env.DB.prepare('SELECT id, filename FROM media_assets WHERE id=?').bind(id).first();
   if (!asset) return json({ ok:false, error:'Media item not found.' },404);
-  const object = await bucket.get(`media/${asset.id}/${asset.filename}`);
+  const storedName = String(asset.filename || '');
+  const key = storedName.startsWith('media/') ? storedName : `media/${asset.id}/${storedName}`;
+  const object = await bucket.get(key);
   if (!object) return json({ ok:false, error:'File is missing from R2.' },404);
   const headers = new Headers();
   object.writeHttpMetadata(headers);

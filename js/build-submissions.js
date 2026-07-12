@@ -7,7 +7,7 @@
   };
   const COLORS = { conqueror:'#ff6b5d', guardian:'#ffd166', destroyer:'#73b7ff', dominator:'#69ffe1' };
   let me = { signedIn:false, permissions:[] };
-  function canDeleteBuild(b){ const p=me.permissions||[]; return !!me.signedIn && ((b.created_by===me.user?.id && p.includes('delete_own_builds')) || p.includes('moderate_builds') || p.includes('admin_dashboard')); }
+  function canDeleteBuild(b){ const p=me.permissions||[]; const rank=String(me.user?.rank_slug||me.user?.rank_name||'').trim().toLowerCase(); const leadership=['leader','deputy','officer','admin'].includes(rank); return !!me.signedIn && (leadership || (b.created_by===me.user?.id && p.includes('delete_own_builds')) || p.includes('moderate_builds') || p.includes('admin_dashboard')); }
   function esc(v){return String(v||'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
   async function jsonFetch(url, opts){ const r=await fetch(url,opts); const d=await r.json().catch(()=>({})); if(!r.ok||d.ok===false) throw new Error(d.error||'Request failed.'); return d; }
   function pathKey(){
