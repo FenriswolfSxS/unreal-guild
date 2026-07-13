@@ -1701,3 +1701,34 @@ body.leadership-edit-on .home-info-grid, .home-info-grid.modular-page-root{posit
 .event-editor-fields label{display:grid;gap:5px;color:#c9d6ff;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em}.event-editor-fields input,.event-editor-fields select{width:100%;min-width:0;padding:9px 10px;border:1px solid rgba(132,218,255,.36);border-radius:9px;background:#10172f;color:#fff;font:inherit;text-transform:none;letter-spacing:normal}
 .event-block-tool{display:none!important}.events-builder-toolbar .event-block-tool{display:inline-flex!important;background:linear-gradient(135deg,#ffcf36,#ff8a4a)!important;color:#22243a!important;border-color:#ffe77f!important}.events-builder-toolbar:after{content:"EVENTS MODE";align-self:center;padding:7px 10px;border:1px solid rgba(103,255,193,.5);border-radius:999px;color:#78ffd0;font-size:.65rem;font-weight:950;letter-spacing:.12em}
 @media(max-width:700px){.event-editor-fields{grid-template-columns:1fr}.modular-event-card{padding:21px}.events-builder-toolbar:after{display:none}}
+
+
+/* V35 editor caret and centering fixes */
+.modular-page-root{width:100%;grid-template-columns:minmax(0,1fr)!important;justify-self:stretch}
+.home-info-grid.modular-page-root{width:100%!important;grid-template-columns:minmax(0,1fr)!important;justify-items:stretch!important}
+.home-info-grid.modular-page-root>.page-row{width:100%!important;max-width:none!important}
+.home-stage:has(.home-info-grid.modular-page-root){width:min(1200px,calc(100vw - 40px))!important;margin-left:auto!important;margin-right:auto!important}
+.page-block.selected-block{border-color:#ffd84f!important;box-shadow:0 0 0 2px rgba(255,216,79,.13),0 0 24px rgba(255,216,79,.12)!important}
+body.leadership-edit-on [contenteditable="true"]{cursor:text!important;user-select:text!important;-webkit-user-select:text!important;pointer-events:auto!important}
+body.leadership-edit-on [contenteditable="true"]:focus{outline:2px solid rgba(117,235,255,.7)!important;outline-offset:4px!important}
+
+/* V37 — truly persistent site-wide navigation */
+:root { --persistent-nav-height: 83px; }
+body { padding-top: var(--persistent-nav-height); }
+.site-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 10000 !important;
+  isolation: isolate;
+  transform: translateZ(0);
+  background: rgba(5, 6, 10, 0.94) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.34), 0 1px 0 rgba(142,239,255,.12);
+}
+.site-header .dropdown { z-index: 10020 !important; }
+@media (max-width: 860px) {
+  :root { --persistent-nav-height: 83px; }
+  .site-header { max-height: 100vh; overflow-y: auto; }
+}

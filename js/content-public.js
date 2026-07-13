@@ -596,20 +596,37 @@
   function publicHtmlFromRows() { return pageRows.map(row => rowHtml(row, false)).join(''); }
   async function saveInlinePage() {
     const root = editableRoot(); if (!root) return;
+    const saveButton = document.querySelector('[data-inline-action="save"]');
+    const originalText = saveButton?.textContent || '✓ Save Page';
     syncRowsFromDom();
     const pageKey = root.dataset.pageKey || root.dataset.inlineGuidePage || root.dataset.editablePage || pageKeyFromPath();
     const title = document.querySelector('h1')?.textContent?.trim() || pageKey;
-    await fetchJson('/api/content/page', { method:'PUT', headers:{'content-type':'application/json'}, body:JSON.stringify({page_key:pageKey,title,content_json:pageRows,content_html:publicHtmlFromRows()}) });
-    toast('Page saved.');
+    try {
+      if (saveButton) { saveButton.disabled = true; saveButton.classList.remove('save-error','save-success'); saveButton.classList.add('is-saving'); saveButton.textContent = 'Saving…'; }
+      await fetchJson('/api/content/page', { method:'PUT', credentials:'same-origin', headers:{'content-type':'application/json'}, body:JSON.stringify({page_key:pageKey,title,content_json:pageRows,content_html:publicHtmlFromRows()}) });
+      if (saveButton) { saveButton.classList.remove('is-saving'); saveButton.classList.add('save-success'); saveButton.textContent = '✓ Saved'; }
+      toast('Page saved successfully.');
+      setTimeout(() => { if (saveButton) { saveButton.classList.remove('save-success'); saveButton.textContent = originalText; saveButton.disabled = false; } }, 1600);
+    } catch (error) {
+      if (saveButton) { saveButton.classList.remove('is-saving'); saveButton.classList.add('save-error'); saveButton.textContent = 'Save failed'; saveButton.disabled = false; }
+      const message = error?.message || 'Page save failed.';
+      toast(message);
+      alert(message);
+      setTimeout(() => { if (saveButton) { saveButton.classList.remove('save-error'); saveButton.textContent = originalText; } }, 2600);
+    }
   }
 
   document.addEventListener('click', (event) => {
     if (!document.body.classList.contains('leadership-edit-on')) return;
     const clickedBlock = event.target.closest('.page-block');
     if (clickedBlock && !event.target.closest('.page-block-controls') && !event.target.closest('.replace-block-image')) {
-      syncRowsFromDom(); selectedBlockId = clickedBlock.dataset.blockId; renderPageRows(true); updateTextStyleToolbar();
-      const focusTarget = editableRoot()?.querySelector(`[data-block-id="${CSS.escape(selectedBlockId)}"] [contenteditable="true"]`);
-      if (event.target.closest('[contenteditable="true"]')) setTimeout(() => focusTarget?.focus(), 0);
+      // Never rebuild a block while the user is clicking into editable text. Replacing
+      // the DOM here destroyed the browser caret, which made every text field appear locked.
+      selectedBlockId = clickedBlock.dataset.blockId;
+      editableRoot()?.querySelectorAll('.page-block.selected-block').forEach(el => el.classList.remove('selected-block'));
+      clickedBlock.classList.add('selected-block');
+      updateTextStyleToolbar();
+      if (event.target.closest('a.page-button')) event.preventDefault();
       return;
     }
     const select = event.target.closest('[data-column-action="select"]');
@@ -639,6 +656,11 @@
     if (kind === 'up' && entry.blockIndex > 0) [entry.col[entry.blockIndex-1],entry.col[entry.blockIndex]]=[entry.col[entry.blockIndex],entry.col[entry.blockIndex-1]];
     if (kind === 'down' && entry.blockIndex < entry.col.length-1) [entry.col[entry.blockIndex+1],entry.col[entry.blockIndex]]=[entry.col[entry.blockIndex],entry.col[entry.blockIndex+1]];
     renderPageRows(true);
+  }, true);
+
+  document.addEventListener('input', (event) => {
+    if (!document.body.classList.contains('leadership-edit-on')) return;
+    if (event.target.closest('[contenteditable="true"], [data-block-field-input]')) syncRowsFromDom();
   }, true);
 
   document.addEventListener('dragstart', (event) => {
