@@ -18,7 +18,7 @@
       const data = await fetchJson('/api/me');
       me = data;
       editPermissions = data.permissions || [];
-      if (data.signedIn && (canEdit('edit_home') || canEdit('edit_guides'))) {
+      if (data.signedIn && (canEdit('edit_home') || canEdit('edit_guides') || canEdit('edit_events'))) {
         document.body.classList.add('leadership-edit-available');
         addEditToggle();
       }
@@ -109,6 +109,8 @@
     bar.className = 'inline-edit-toolbar home-edit-toolbar';
     bar.innerHTML = `<button type="button" data-home-action="save">Save Home</button><button type="button" data-home-action="reset">Reset Layout</button><label>Size <select data-home-style="font-size"><option value="">Default</option><option value="0.9rem">Small</option><option value="1rem">Normal</option><option value="1.25rem">Large</option><option value="1.5rem">XL</option><option value="2rem">XXL</option><option value="2.5rem">Hero</option></select></label><label>Color <input data-home-style="color" type="color" value="#ffffff"></label><button type="button" data-home-style="font-weight" data-value="900">Bold</button><button type="button" data-home-style="font-style" data-value="italic">Italic</button><span class="inline-edit-hint">Drag ✦ to move. Resize from corner. Click title/body then style it.</span>`;
     document.body.appendChild(bar);
+    const isEventsPage = (editableRoot()?.dataset.editablePage || editableRoot()?.dataset.inlineGuidePage || pageKeyFromPath()) === 'events';
+    bar.classList.toggle('events-builder-toolbar', isEventsPage);
     bar.addEventListener('click', (event) => {
       if (event.target.closest('[data-home-action="save"]')) saveHomeBubbles().catch(err => alert(err.message));
       if (event.target.closest('[data-home-action="reset"]')) resetHomeLayout();
@@ -267,6 +269,15 @@
       if (!rows.length) rows.push(makeRow(1, [[{ id:makeId(), type:'text', html:'<p>Start writing here.</p>' }]]));
       return rows;
     }
+    const pageKey = root.dataset.editablePage || root.dataset.inlineGuidePage || pageKeyFromPath();
+    if (pageKey === 'events') {
+      return [
+        makeRow(2, [
+          [{id:makeId(),type:'event',eyebrow:'Every 2 Days',title:'Guild Clash',description:'Coordinate teams, review strategy, and push Unreal higher.',start:'2026-07-13T20:00',timezone:'UTC',recurrence:'every2days',duration:120,status:'Scheduled',link:'',linkLabel:'Event Details'}],
+          [{id:makeId(),type:'event',eyebrow:'Daily UTC',title:'Conquest',description:'Conquest runs twice daily. Add a second Event Card for the second daily time.',start:'2026-07-13T13:00',timezone:'UTC',recurrence:'daily',duration:60,status:'Scheduled',link:'',linkLabel:'Event Details'}]
+        ])
+      ];
+    }
     [...root.children].forEach((node) => {
       const tag = node.tagName?.toLowerCase();
       if (!tag) return;
@@ -350,6 +361,15 @@
     const controls = editing ? blockControls() : '';
     let body = '';
     if (block.type === 'heading') body = `<h${Math.min(4,Math.max(2,Number(block.level)||2))} data-block-field="text"${styleAttr(block)}${editable}>${escapeHtml(block.text || 'New heading')}</h${Math.min(4,Math.max(2,Number(block.level)||2))}>`;
+    else if (block.type === 'event') {
+      const start = escapeAttr(block.start || '');
+      const tz = escapeAttr(block.timezone || 'UTC');
+      const recur = escapeAttr(block.recurrence || 'none');
+      const duration = Math.max(0, Math.min(1440, Number(block.duration) || 0));
+      const publicLink = block.link ? `<a class="event-action-link" href="${escapeAttr(block.link)}">${escapeHtml(block.linkLabel || 'Event Details')} →</a>` : '';
+      const editor = editing ? `<div class="event-editor-fields" contenteditable="false"><label>Start date & time<input data-block-field-input="start" type="datetime-local" value="${start}"></label><label>Timezone<select data-block-field-input="timezone"><option${tz==='UTC'?' selected':''}>UTC</option><option${tz==='America/New_York'?' selected':''} value="America/New_York">Eastern</option><option${tz==='America/Chicago'?' selected':''} value="America/Chicago">Central</option><option${tz==='America/Denver'?' selected':''} value="America/Denver">Mountain</option><option${tz==='America/Los_Angeles'?' selected':''} value="America/Los_Angeles">Pacific</option></select></label><label>Repeats<select data-block-field-input="recurrence"><option value="none"${recur==='none'?' selected':''}>Does not repeat</option><option value="daily"${recur==='daily'?' selected':''}>Daily</option><option value="weekly"${recur==='weekly'?' selected':''}>Weekly</option><option value="every2days"${recur==='every2days'?' selected':''}>Every 2 days</option><option value="monthly"${recur==='monthly'?' selected':''}>Monthly</option></select></label><label>Duration (minutes)<input data-block-field-input="duration" type="number" min="0" max="1440" value="${duration}"></label><label>Status<input data-block-field-input="status" value="${escapeAttr(block.status || 'Scheduled')}"></label><label>Optional link<input data-block-field-input="link" type="url" value="${escapeAttr(block.link || '')}" placeholder="https://…"></label><label>Link text<input data-block-field-input="linkLabel" value="${escapeAttr(block.linkLabel || 'Event Details')}"></label></div>` : '';
+      body = `<article class="modular-event-card" data-event-start="${start}" data-event-timezone="${tz}" data-event-recurrence="${recur}" data-event-duration="${duration}"><div class="event-card-orb"></div><p class="event-label" data-block-field="eyebrow"${editable}>${escapeHtml(block.eyebrow || 'Guild Event')}</p><h2 data-block-field="title"${styleAttr(block)}${editable}>${escapeHtml(block.title || 'New Event')}</h2><div class="event-description" data-block-field="description"${editable}>${escapeHtml(block.description || 'Add event details.')}</div><div class="event-schedule-line"><span class="event-date-display">${start ? escapeHtml(start.replace('T',' ')) : 'Set a date and time'}</span><span class="event-zone-display">${escapeHtml(tz)}</span></div><div class="event-live-status"><span class="event-status-dot"></span><strong data-block-field="status"${editable}>${escapeHtml(block.status || 'Scheduled')}</strong></div><div class="event-countdown" data-event-countdown>Set a start time</div>${publicLink}${editor}</article>`;
+    }
     else if (block.type === 'image') body = `<figure class="modular-image"><img data-block-image src="${escapeAttr(block.src || '')}" alt="${escapeAttr(block.alt || 'Page image')}" loading="lazy"><figcaption data-block-field="caption"${styleAttr(block)}${editable}>${escapeHtml(block.caption || 'Caption')}</figcaption>${editing ? '<button class="replace-block-image" type="button" data-block-action="replace-image" contenteditable="false">Replace image</button>' : ''}</figure>`;
     else if (block.type === 'divider') body = '<hr class="modular-divider">';
     else if (block.type === 'button') body = `<div class="modular-button-editor"><a class="page-button" data-block-link href="${escapeAttr(block.url || '#')}"${styleAttr(block)}><span data-block-field="label"${editable}>${escapeHtml(block.label || 'Button')}</span></a>${editing ? `<input data-block-field-input="url" type="url" value="${escapeAttr(block.url || '#')}" placeholder="https://…" contenteditable="false">` : ''}</div>`;
@@ -379,7 +399,36 @@
       root.querySelector(`.page-column[data-row-id="${CSS.escape(selectedColumn.rowId)}"][data-column-index="${selectedColumn.columnIndex}"]`)?.classList.add('selected-column');
     }
     updateTextStyleToolbar();
+    refreshEventCountdowns();
   }
+
+  function getEventNextStart(block) {
+    if (!block?.start) return null;
+    const base = new Date(block.start + (block.start.endsWith('Z') ? '' : ':00Z'));
+    if (Number.isNaN(base.getTime())) return null;
+    const now = new Date();
+    let next = new Date(base);
+    const recur = block.recurrence || 'none';
+    if (recur === 'daily' || recur === 'every2days' || recur === 'weekly') {
+      const step = recur === 'daily' ? 86400000 : recur === 'every2days' ? 172800000 : 604800000;
+      if (next <= now) next = new Date(next.getTime() + Math.ceil((now-next)/step)*step);
+    } else if (recur === 'monthly') { while (next <= now) next.setUTCMonth(next.getUTCMonth()+1); }
+    return next;
+  }
+  function refreshEventCountdowns() {
+    const entries = allBlocks().filter(x => x.block.type === 'event');
+    entries.forEach(({block}) => {
+      const el = editableRoot()?.querySelector(`[data-block-id="${CSS.escape(block.id)}"] [data-event-countdown]`); if (!el) return;
+      const next = getEventNextStart(block); if (!next) { el.textContent = 'Set a start time'; return; }
+      const diff = next - new Date();
+      const durationMs = Math.max(0, Number(block.duration)||0) * 60000;
+      if (diff <= 0 && diff > -durationMs) { el.textContent = 'LIVE NOW'; return; }
+      if (diff < 0) { el.textContent = 'Event completed'; return; }
+      const d=Math.floor(diff/86400000), h=Math.floor(diff%86400000/3600000), m=Math.floor(diff%3600000/60000), sec=Math.floor(diff%60000/1000);
+      el.textContent = d ? `${d}d ${h}h ${m}m` : h ? `${h}h ${m}m ${sec}s` : `${m}m ${sec}s`;
+    });
+  }
+  setInterval(refreshEventCountdowns, 1000);
 
   function renderStructuredHomeQuickLinks(root) {
     const wrap = document.querySelector('[data-home-quick-clicks]');
@@ -419,8 +468,10 @@
     if (document.querySelector('#inlineEditToolbar')) return;
     const bar = document.createElement('div');
     bar.id = 'inlineEditToolbar'; bar.className = 'inline-edit-toolbar modular-toolbar';
-    bar.innerHTML = `<button class="builder-primary" type="button" data-inline-action="save">✓ Save Page</button><div class="row-add-menu"><span class="builder-menu-label">Add layout</span><button type="button" data-row-add="1">＋ Full Width</button><button type="button" data-row-add="2">＋ Side by Side</button><button type="button" data-row-add="3">＋ Three Across</button></div><div class="block-add-menu"><span class="builder-menu-label">Add content</span><button type="button" data-inline-action="heading">Heading</button><button type="button" data-inline-action="text">Text</button><button type="button" data-inline-action="image">Photo</button><button type="button" data-inline-action="callout">Card</button><button type="button" data-inline-action="button">Link Button</button><button type="button" data-inline-action="divider">Divider</button></div><div class="text-style-menu" aria-label="Text style controls"><span class="builder-menu-label">Text style</span><select data-text-style="font" title="Font"><option value="inherit">Guild Default</option><option value="system-ui">Modern</option><option value='"Trebuchet MS",sans-serif'>Tech</option><option value="Georgia,serif">Epic Serif</option><option value='"Arial Black",Impact,sans-serif'>Heavy</option><option value='"Courier New",monospace'>Terminal</option></select><select data-text-style="size" title="Text size"><option value="">Size</option><option value="14">Small</option><option value="16">Normal</option><option value="20">Large</option><option value="26">XL</option><option value="34">Hero</option><option value="48">Massive</option></select><input data-text-style="color" type="color" value="#ffffff" title="Text color"><button type="button" data-text-command="bold" title="Bold"><b>B</b></button><button type="button" data-text-command="italic" title="Italic"><i>I</i></button><button type="button" data-text-command="underline" title="Underline"><u>U</u></button><button type="button" data-text-align="left" title="Align left">≡</button><button type="button" data-text-align="center" title="Align center">≡</button><button type="button" data-text-align="right" title="Align right">≡</button><button type="button" data-text-command="clear" title="Reset text style">Reset</button></div><span class="inline-edit-hint">Select content, then style it or drag it between areas.</span><input id="inlineImageUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>`;
+    bar.innerHTML = `<button class="builder-primary" type="button" data-inline-action="save">✓ Save Page</button><div class="row-add-menu"><span class="builder-menu-label">Add layout</span><button type="button" data-row-add="1">＋ Full Width</button><button type="button" data-row-add="2">＋ Side by Side</button><button type="button" data-row-add="3">＋ Three Across</button></div><div class="block-add-menu"><span class="builder-menu-label">Add content</span><button type="button" data-inline-action="heading">Heading</button><button type="button" data-inline-action="text">Text</button><button type="button" data-inline-action="image">Photo</button><button type="button" data-inline-action="callout">Card</button><button class="event-block-tool" type="button" data-inline-action="event">Event Card</button><button type="button" data-inline-action="button">Link Button</button><button type="button" data-inline-action="divider">Divider</button></div><div class="text-style-menu" aria-label="Text style controls"><span class="builder-menu-label">Text style</span><select data-text-style="font" title="Font"><option value="inherit">Guild Default</option><option value="system-ui">Modern</option><option value='"Trebuchet MS",sans-serif'>Tech</option><option value="Georgia,serif">Epic Serif</option><option value='"Arial Black",Impact,sans-serif'>Heavy</option><option value='"Courier New",monospace'>Terminal</option></select><select data-text-style="size" title="Text size"><option value="">Size</option><option value="14">Small</option><option value="16">Normal</option><option value="20">Large</option><option value="26">XL</option><option value="34">Hero</option><option value="48">Massive</option></select><input data-text-style="color" type="color" value="#ffffff" title="Text color"><button type="button" data-text-command="bold" title="Bold"><b>B</b></button><button type="button" data-text-command="italic" title="Italic"><i>I</i></button><button type="button" data-text-command="underline" title="Underline"><u>U</u></button><button type="button" data-text-align="left" title="Align left">≡</button><button type="button" data-text-align="center" title="Align center">≡</button><button type="button" data-text-align="right" title="Align right">≡</button><button type="button" data-text-command="clear" title="Reset text style">Reset</button></div><span class="inline-edit-hint">Select content, then style it or drag it between areas.</span><input id="inlineImageUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>`;
     document.body.appendChild(bar);
+    const isEventsPage = (editableRoot()?.dataset.editablePage || editableRoot()?.dataset.inlineGuidePage || pageKeyFromPath()) === 'events';
+    bar.classList.toggle('events-builder-toolbar', isEventsPage);
     bar.addEventListener('click', handleToolbarClick);
     bar.querySelector('#inlineImageUpload').addEventListener('change', uploadInlineImage);
     bar.addEventListener('change', handleTextStyleChange);
@@ -430,7 +481,9 @@
 
   function setInlineEditing(on) {
     const root = editableRoot();
-    if (canEdit('edit_guides') && root) {
+    const pageKey = root?.dataset.inlineGuidePage || root?.dataset.editablePage || pageKeyFromPath();
+    const allowed = pageKey === 'home' ? (canEdit('edit_home') || canEdit('edit_guides')) : pageKey === 'events' ? (canEdit('edit_events') || canEdit('edit_guides')) : canEdit('edit_guides');
+    if (allowed && root) {
       root.dataset.pageKey = root.dataset.inlineGuidePage || root.dataset.editablePage || pageKeyFromPath();
       root.classList.toggle('inline-edit-root', on);
       if (on && !selectedColumn && pageRows[0]) selectedColumn = { rowId:pageRows[0].id, columnIndex:0 };
@@ -444,6 +497,7 @@
     if (type === 'heading') return {id,type,level:2,text:'New section'};
     if (type === 'image') return {id,type,src:'',alt:'Page image',caption:'Caption'};
     if (type === 'callout') return {id,type,title:'Important',html:'<p>Add callout text.</p>'};
+    if (type === 'event') return {id,type,eyebrow:'Guild Event',title:'New Event',description:'Add event details.',start:'',timezone:'UTC',recurrence:'none',duration:60,status:'Scheduled',link:'',linkLabel:'Event Details'};
     if (type === 'button') return {id,type,label:'Button',url:'#'};
     if (type === 'divider') return {id,type};
     return {id,type:'text',html:'<p>Write new text here.</p>'};
@@ -634,5 +688,10 @@
   function escapeHtml(value) { return String(value).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
   function escapeAttr(value) { return escapeHtml(value).replace(/'/g,'&#39;'); }
 
-  document.addEventListener('DOMContentLoaded', async () => { await loadMeForEditing(); await loadHomeBubbles(); await loadEditablePage(); });
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadMeForEditing();
+    // Every editable page, including Home, now uses the same structured builder.
+    // Do not initialize the retired free-position Home bubble editor.
+    await loadEditablePage();
+  });
 })();
