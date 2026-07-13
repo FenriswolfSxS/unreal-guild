@@ -5,6 +5,8 @@
   let homeBubbles = [];
   let dragState = null;
   let activeHomeText = null;
+  let draftTimer = null;
+  let currentPageKey = '';
 
   async function fetchJson(url, options) {
     const res = await fetch(url, options);
@@ -299,7 +301,17 @@
   function sanitizeBlock(block) {
     if (!block || typeof block !== 'object') return null;
     const type = String(block.type || 'text');
-    return { ...block, id:String(block.id || makeId()), type };
+    const clean = { ...block, id:String(block.id || makeId()), type };
+    if (type === 'table') {
+      const rows = Array.isArray(block.rows) ? block.rows : [];
+      clean.rows = rows.slice(0,50).map(row => Array.isArray(row) ? row.slice(0,10).map(cell => String(cell ?? '').slice(0,5000)) : []);
+      if (!clean.rows.length) clean.rows = [['Header 1','Header 2'],['Cell 1','Cell 2']];
+      const width = Math.max(1, Math.min(10, Math.max(...clean.rows.map(r => r.length), 1)));
+      clean.rows = clean.rows.map(r => [...r, ...Array(Math.max(0,width-r.length)).fill('')].slice(0,width));
+      clean.caption = String(block.caption || '').slice(0,500);
+      clean.header = block.header !== false;
+    }
+    return clean;
   }
 
   function sanitizeRows(input) {
@@ -371,6 +383,15 @@
       body = `<article class="modular-event-card" data-event-start="${start}" data-event-timezone="${tz}" data-event-recurrence="${recur}" data-event-duration="${duration}"><div class="event-card-orb"></div><p class="event-label" data-block-field="eyebrow"${editable}>${escapeHtml(block.eyebrow || 'Guild Event')}</p><h2 data-block-field="title"${styleAttr(block)}${editable}>${escapeHtml(block.title || 'New Event')}</h2><div class="event-description" data-block-field="description"${editable}>${escapeHtml(block.description || 'Add event details.')}</div><div class="event-schedule-line"><span class="event-date-display">${start ? escapeHtml(start.replace('T',' ')) : 'Set a date and time'}</span><span class="event-zone-display">${escapeHtml(tz)}</span></div><div class="event-live-status"><span class="event-status-dot"></span><strong data-block-field="status"${editable}>${escapeHtml(block.status || 'Scheduled')}</strong></div><div class="event-countdown" data-event-countdown>Set a start time</div>${publicLink}${editor}</article>`;
     }
     else if (block.type === 'image') body = `<figure class="modular-image"><img data-block-image src="${escapeAttr(block.src || '')}" alt="${escapeAttr(block.alt || 'Page image')}" loading="lazy"><figcaption data-block-field="caption"${styleAttr(block)}${editable}>${escapeHtml(block.caption || 'Caption')}</figcaption>${editing ? '<button class="replace-block-image" type="button" data-block-action="replace-image" contenteditable="false">Replace image</button>' : ''}</figure>`;
+    else if (block.type === 'table') {
+      const rows = Array.isArray(block.rows) && block.rows.length ? block.rows : [['Header 1','Header 2'],['Cell 1','Cell 2']];
+      const tableRows = rows.map((row, ri) => {
+        const tag = block.header !== false && ri === 0 ? 'th' : 'td';
+        return `<tr>${row.map((cell, ci) => `<${tag} data-table-row="${ri}" data-table-col="${ci}"${editing ? ' contenteditable="true"' : ''}>${escapeHtml(cell)}</${tag}>`).join('')}</tr>`;
+      }).join('');
+      const tableTools = editing ? `<div class="table-block-tools" contenteditable="false"><button type="button" data-table-action="add-row">＋ Row</button><button type="button" data-table-action="remove-row">− Row</button><button type="button" data-table-action="add-col">＋ Column</button><button type="button" data-table-action="remove-col">− Column</button><label><input type="checkbox" data-table-header ${block.header !== false ? 'checked' : ''}> Header row</label></div>` : '';
+      body = `<figure class="modular-table-wrap">${block.caption ? `<figcaption data-block-field="caption"${styleAttr(block)}${editable}>${escapeHtml(block.caption)}</figcaption>` : (editing ? `<figcaption data-block-field="caption"${styleAttr(block)}${editable}>Table title</figcaption>` : '')}<div class="modular-table-scroll"><table class="modular-table"><tbody>${tableRows}</tbody></table></div>${tableTools}</figure>`;
+    }
     else if (block.type === 'divider') body = '<hr class="modular-divider">';
     else if (block.type === 'button') body = `<div class="modular-button-editor"><a class="page-button" data-block-link href="${escapeAttr(block.url || '#')}"${styleAttr(block)}><span data-block-field="label"${editable}>${escapeHtml(block.label || 'Button')}</span></a>${editing ? `<input data-block-field-input="url" type="url" value="${escapeAttr(block.url || '#')}" placeholder="https://…" contenteditable="false">` : ''}</div>`;
     else if (block.type === 'callout') body = `<aside class="modular-callout"${styleAttr(block)}><h3 data-block-field="title"${editable}>${escapeHtml(block.title || 'Important')}</h3><div data-block-field="html"${editable}>${block.html || '<p>Add callout text.</p>'}</div></aside>`;
@@ -446,9 +467,27 @@
     }
   }
 
+  function draftStorageKey(pageKey=currentPageKey) { return pageKey ? `unreal-page-draft-v39:${pageKey}` : ''; }
+  function saveDraftNow() {
+    const root = editableRoot(); if (!root) return;
+    syncRowsFromDom();
+    const key = draftStorageKey(root.dataset.pageKey || root.dataset.inlineGuidePage || root.dataset.editablePage || pageKeyFromPath());
+    if (!key) return;
+    try { localStorage.setItem(key, JSON.stringify({savedAt:Date.now(), rows:pageRows})); } catch (_) {}
+    const indicator = document.querySelector('#draftSaveIndicator');
+    if (indicator) { indicator.textContent = 'Draft protected'; indicator.classList.add('is-saved'); setTimeout(()=>indicator.classList.remove('is-saved'),900); }
+  }
+  function scheduleDraftSave() { clearTimeout(draftTimer); draftTimer = setTimeout(saveDraftNow, 350); }
+  function readDraft(pageKey) {
+    try { const raw=localStorage.getItem(draftStorageKey(pageKey)); if(!raw)return null; const parsed=JSON.parse(raw); return parsed && Array.isArray(parsed.rows) ? parsed : null; } catch (_) { return null; }
+  }
+  function clearDraft(pageKey=currentPageKey) { try { localStorage.removeItem(draftStorageKey(pageKey)); } catch (_) {} }
+
   async function loadEditablePage() {
     const target = editableRoot(); if (!target) return;
     const pageKey = target.dataset.inlineGuidePage || target.dataset.editablePage || pageKeyFromPath();
+    currentPageKey = pageKey;
+    target.dataset.pageKey = pageKey;
     try {
       const data = await fetchJson('/api/content/page?page_key=' + encodeURIComponent(pageKey));
       const json = data.page?.content_json;
@@ -460,15 +499,26 @@
         if (html && !isLegacyPlaceholder(pageKey, html)) target.innerHTML = html;
         pageRows = normalizeLegacyToRows(target);
       }
+      const draft = readDraft(pageKey);
+      if (draft?.rows?.length) {
+        pageRows = sanitizeRows(draft.rows);
+        target.dataset.draftRestored = '1';
+        setTimeout(() => toast('Unsaved draft restored. Your changes were protected.'), 300);
+      }
       renderPageRows(false);
-    } catch (_) { pageRows = normalizeLegacyToRows(target); renderPageRows(false); }
+    } catch (_) {
+      pageRows = normalizeLegacyToRows(target);
+      const draft = readDraft(pageKey);
+      if (draft?.rows?.length) pageRows = sanitizeRows(draft.rows);
+      renderPageRows(false);
+    }
   }
 
   function addInlineToolbar() {
     if (document.querySelector('#inlineEditToolbar')) return;
     const bar = document.createElement('div');
     bar.id = 'inlineEditToolbar'; bar.className = 'inline-edit-toolbar modular-toolbar';
-    bar.innerHTML = `<button class="builder-primary" type="button" data-inline-action="save">✓ Save Page</button><div class="row-add-menu"><span class="builder-menu-label">Add layout</span><button type="button" data-row-add="1">＋ Full Width</button><button type="button" data-row-add="2">＋ Side by Side</button><button type="button" data-row-add="3">＋ Three Across</button></div><div class="block-add-menu"><span class="builder-menu-label">Add content</span><button type="button" data-inline-action="heading">Heading</button><button type="button" data-inline-action="text">Text</button><button type="button" data-inline-action="image">Photo</button><button type="button" data-inline-action="callout">Card</button><button class="event-block-tool" type="button" data-inline-action="event">Event Card</button><button type="button" data-inline-action="button">Link Button</button><button type="button" data-inline-action="divider">Divider</button></div><div class="text-style-menu" aria-label="Text style controls"><span class="builder-menu-label">Text style</span><select data-text-style="font" title="Font"><option value="inherit">Guild Default</option><option value="system-ui">Modern</option><option value='"Trebuchet MS",sans-serif'>Tech</option><option value="Georgia,serif">Epic Serif</option><option value='"Arial Black",Impact,sans-serif'>Heavy</option><option value='"Courier New",monospace'>Terminal</option></select><select data-text-style="size" title="Text size"><option value="">Size</option><option value="14">Small</option><option value="16">Normal</option><option value="20">Large</option><option value="26">XL</option><option value="34">Hero</option><option value="48">Massive</option></select><input data-text-style="color" type="color" value="#ffffff" title="Text color"><button type="button" data-text-command="bold" title="Bold"><b>B</b></button><button type="button" data-text-command="italic" title="Italic"><i>I</i></button><button type="button" data-text-command="underline" title="Underline"><u>U</u></button><button type="button" data-text-align="left" title="Align left">≡</button><button type="button" data-text-align="center" title="Align center">≡</button><button type="button" data-text-align="right" title="Align right">≡</button><button type="button" data-text-command="clear" title="Reset text style">Reset</button></div><span class="inline-edit-hint">Select content, then style it or drag it between areas.</span><input id="inlineImageUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>`;
+    bar.innerHTML = `<button class="builder-primary" type="button" data-inline-action="save">✓ Save Page</button><div class="row-add-menu"><span class="builder-menu-label">Add layout</span><button type="button" data-row-add="1">＋ Full Width</button><button type="button" data-row-add="2">＋ Side by Side</button><button type="button" data-row-add="3">＋ Three Across</button></div><div class="block-add-menu"><span class="builder-menu-label">Add content</span><button type="button" data-inline-action="heading">Heading</button><button type="button" data-inline-action="text">Text</button><button type="button" data-inline-action="image">Photo</button><button type="button" data-inline-action="callout">Card</button><button type="button" data-inline-action="table">Table</button><button class="event-block-tool" type="button" data-inline-action="event">Event Card</button><button type="button" data-inline-action="button">Link Button</button><button type="button" data-inline-action="divider">Divider</button></div><div class="text-style-menu" aria-label="Text style controls"><span class="builder-menu-label">Text style</span><select data-text-style="font" title="Font"><option value="inherit">Guild Default</option><option value="system-ui">Modern</option><option value='"Trebuchet MS",sans-serif'>Tech</option><option value="Georgia,serif">Epic Serif</option><option value='"Arial Black",Impact,sans-serif'>Heavy</option><option value='"Courier New",monospace'>Terminal</option></select><select data-text-style="size" title="Text size"><option value="">Size</option><option value="14">Small</option><option value="16">Normal</option><option value="20">Large</option><option value="26">XL</option><option value="34">Hero</option><option value="48">Massive</option></select><input data-text-style="color" type="color" value="#ffffff" title="Text color"><button type="button" data-text-command="bold" title="Bold"><b>B</b></button><button type="button" data-text-command="italic" title="Italic"><i>I</i></button><button type="button" data-text-command="underline" title="Underline"><u>U</u></button><button type="button" data-text-align="left" title="Align left">≡</button><button type="button" data-text-align="center" title="Align center">≡</button><button type="button" data-text-align="right" title="Align right">≡</button><button type="button" data-text-command="clear" title="Reset text style">Reset</button></div><span class="inline-edit-hint">Select content, then style it or drag it between areas.</span><span id="draftSaveIndicator" class="draft-save-indicator">Draft protection on</span><input id="inlineImageUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>`;
     document.body.appendChild(bar);
     const isEventsPage = (editableRoot()?.dataset.editablePage || editableRoot()?.dataset.inlineGuidePage || pageKeyFromPath()) === 'events';
     bar.classList.toggle('events-builder-toolbar', isEventsPage);
@@ -497,6 +547,7 @@
     if (type === 'heading') return {id,type,level:2,text:'New section'};
     if (type === 'image') return {id,type,src:'',alt:'Page image',caption:'Caption'};
     if (type === 'callout') return {id,type,title:'Important',html:'<p>Add callout text.</p>'};
+    if (type === 'table') return {id,type,caption:'Table title',header:true,rows:[['Header 1','Header 2','Header 3'],['Row 1','Value','Notes'],['Row 2','Value','Notes']]};
     if (type === 'event') return {id,type,eyebrow:'Guild Event',title:'New Event',description:'Add event details.',start:'',timezone:'UTC',recurrence:'none',duration:60,status:'Scheduled',link:'',linkLabel:'Event Details'};
     if (type === 'button') return {id,type,label:'Button',url:'#'};
     if (type === 'divider') return {id,type};
@@ -523,7 +574,7 @@
   function updateTextStyleToolbar() {
     const bar = document.querySelector('#inlineEditToolbar'); if (!bar) return;
     const entry = selectedBlockEntry();
-    const disabled = !entry || entry.block.type === 'image' || entry.block.type === 'divider';
+    const disabled = !entry || ['image','divider','table'].includes(entry.block.type);
     bar.querySelectorAll('[data-text-style],[data-text-command],[data-text-align]').forEach(el => el.disabled = disabled);
     if (disabled) return;
     const st = entry.block.textStyle || {};
@@ -535,7 +586,7 @@
   }
   function applySelectedTextStyle(patch) {
     syncRowsFromDom();
-    const entry = selectedBlockEntry(); if (!entry || ['image','divider'].includes(entry.block.type)) return;
+    const entry = selectedBlockEntry(); if (!entry || ['image','divider','table'].includes(entry.block.type)) return;
     entry.block.textStyle = { ...(entry.block.textStyle || {}), ...patch };
     Object.keys(entry.block.textStyle).forEach(k => { if (entry.block.textStyle[k] === '' || entry.block.textStyle[k] == null || entry.block.textStyle[k] === false) delete entry.block.textStyle[k]; });
     renderPageRows(true); updateTextStyleToolbar();
@@ -561,7 +612,7 @@
     if (rowBtn) {
       syncRowsFromDom();
       const row = makeRow(Number(rowBtn.dataset.rowAdd), []);
-      pageRows.push(row); selectedColumn = {rowId:row.id,columnIndex:0}; renderPageRows(true);
+      pageRows.push(row); selectedColumn = {rowId:row.id,columnIndex:0}; saveDraftNow(); renderPageRows(true);
       editableRoot()?.querySelector(`[data-row-id="${CSS.escape(row.id)}"]`)?.scrollIntoView({behavior:'smooth',block:'center'});
       return;
     }
@@ -570,7 +621,7 @@
     if (action === 'save') return saveInlinePage();
     if (action === 'image') { activeUploadImage = {mode:'new', target:selectedColumn}; document.querySelector('#inlineImageUpload')?.click(); return; }
     syncRowsFromDom();
-    const {col} = activeColumn(); col.push(newBlock(action)); renderPageRows(true);
+    const {col} = activeColumn(); col.push(newBlock(action)); saveDraftNow(); renderPageRows(true);
   }
 
   function allBlocks() {
@@ -590,6 +641,19 @@
       });
       el.querySelectorAll('[data-block-field-input]').forEach((field) => { b[field.dataset.blockFieldInput] = field.value.trim(); });
       const img = el.querySelector('[data-block-image]'); if (img) { b.src = img.getAttribute('src') || ''; b.alt = img.getAttribute('alt') || ''; }
+      if (b.type === 'table') {
+        const cells = [...el.querySelectorAll('[data-table-row][data-table-col]')];
+        const maxRow = Math.max(-1, ...cells.map(c => Number(c.dataset.tableRow)));
+        const maxCol = Math.max(-1, ...cells.map(c => Number(c.dataset.tableCol)));
+        if (maxRow >= 0 && maxCol >= 0) {
+          b.rows = Array.from({length:maxRow+1}, (_,ri) => Array.from({length:maxCol+1}, (_,ci) => {
+            const cell = cells.find(c => Number(c.dataset.tableRow)===ri && Number(c.dataset.tableCol)===ci);
+            return cell ? cell.textContent.trim() : '';
+          }));
+        }
+        const headerToggle = el.querySelector('[data-table-header]');
+        if (headerToggle) b.header = !!headerToggle.checked;
+      }
     });
   }
 
@@ -604,6 +668,7 @@
     try {
       if (saveButton) { saveButton.disabled = true; saveButton.classList.remove('save-error','save-success'); saveButton.classList.add('is-saving'); saveButton.textContent = 'Saving…'; }
       await fetchJson('/api/content/page', { method:'PUT', credentials:'same-origin', headers:{'content-type':'application/json'}, body:JSON.stringify({page_key:pageKey,title,content_json:pageRows,content_html:publicHtmlFromRows()}) });
+      clearDraft(pageKey);
       if (saveButton) { saveButton.classList.remove('is-saving'); saveButton.classList.add('save-success'); saveButton.textContent = '✓ Saved'; }
       toast('Page saved successfully.');
       setTimeout(() => { if (saveButton) { saveButton.classList.remove('save-success'); saveButton.textContent = originalText; saveButton.disabled = false; } }, 1600);
@@ -619,7 +684,7 @@
   document.addEventListener('click', (event) => {
     if (!document.body.classList.contains('leadership-edit-on')) return;
     const clickedBlock = event.target.closest('.page-block');
-    if (clickedBlock && !event.target.closest('.page-block-controls') && !event.target.closest('.replace-block-image')) {
+    if (clickedBlock && !event.target.closest('.page-block-controls') && !event.target.closest('.replace-block-image') && !event.target.closest('.table-block-tools')) {
       // Never rebuild a block while the user is clicking into editable text. Replacing
       // the DOM here destroyed the browser caret, which made every text field appear locked.
       selectedBlockId = clickedBlock.dataset.blockId;
@@ -644,7 +709,23 @@
       if (kind === 'duplicate') { const copy=structuredClone(pageRows[idx]); copy.id=makeId(); copy.columns.forEach(col=>col.forEach(b=>b.id=makeId())); pageRows.splice(idx+1,0,copy); }
       if (kind === 'up' && idx > 0) [pageRows[idx-1],pageRows[idx]]=[pageRows[idx],pageRows[idx-1]];
       if (kind === 'down' && idx < pageRows.length-1) [pageRows[idx+1],pageRows[idx]]=[pageRows[idx],pageRows[idx+1]];
-      renderPageRows(true); return;
+      saveDraftNow(); renderPageRows(true); return;
+    }
+    const tableAction = event.target.closest('[data-table-action]');
+    if (tableAction) {
+      event.preventDefault(); event.stopPropagation(); syncRowsFromDom();
+      const blockEl = tableAction.closest('.page-block');
+      const entry = allBlocks().find(x => x.block.id === blockEl?.dataset.blockId);
+      if (!entry || entry.block.type !== 'table') return;
+      const rows = entry.block.rows || [['Header 1','Header 2'],['Cell 1','Cell 2']];
+      const width = Math.max(1, Math.max(...rows.map(r => r.length), 1));
+      const kind = tableAction.dataset.tableAction;
+      if (kind === 'add-row') rows.push(Array(width).fill('New cell'));
+      if (kind === 'remove-row' && rows.length > 1) rows.pop();
+      if (kind === 'add-col' && width < 10) rows.forEach((r,ri) => r.push(ri === 0 && entry.block.header !== false ? 'New header' : 'New cell'));
+      if (kind === 'remove-col' && width > 1) rows.forEach(r => r.pop());
+      entry.block.rows = rows;
+      saveDraftNow(); renderPageRows(true); return;
     }
     const action = event.target.closest('[data-block-action]'); if (!action) return;
     event.preventDefault(); event.stopPropagation(); syncRowsFromDom();
@@ -655,12 +736,18 @@
     if (kind === 'duplicate') { const copy=structuredClone(entry.block); copy.id=makeId(); entry.col.splice(entry.blockIndex+1,0,copy); }
     if (kind === 'up' && entry.blockIndex > 0) [entry.col[entry.blockIndex-1],entry.col[entry.blockIndex]]=[entry.col[entry.blockIndex],entry.col[entry.blockIndex-1]];
     if (kind === 'down' && entry.blockIndex < entry.col.length-1) [entry.col[entry.blockIndex+1],entry.col[entry.blockIndex]]=[entry.col[entry.blockIndex],entry.col[entry.blockIndex+1]];
-    renderPageRows(true);
+    saveDraftNow(); renderPageRows(true);
   }, true);
 
   document.addEventListener('input', (event) => {
     if (!document.body.classList.contains('leadership-edit-on')) return;
-    if (event.target.closest('[contenteditable="true"], [data-block-field-input]')) syncRowsFromDom();
+    if (event.target.closest('[contenteditable="true"], [data-block-field-input], [data-table-header]')) {
+      syncRowsFromDom(); scheduleDraftSave();
+    }
+  }, true);
+  document.addEventListener('change', (event) => {
+    if (!document.body.classList.contains('leadership-edit-on')) return;
+    if (event.target.matches('[data-table-header]')) { syncRowsFromDom(); scheduleDraftSave(); renderPageRows(true); }
   }, true);
 
   document.addEventListener('dragstart', (event) => {
@@ -702,13 +789,15 @@
         if(pending.target) selectedColumn=pending.target;
         const {col}=activeColumn(); col.push({id:makeId(),type:'image',src:url,alt,caption:'Caption'});
       }
-      renderPageRows(true); toast('Image added. Click Save Page.');
+      saveDraftNow(); renderPageRows(true); toast('Image added. Click Save Page.');
     } catch(err){alert(err?.message||'Image upload failed.');}
     finally{input.value='';activeUploadImage=null;if(imageButton){imageButton.disabled=false;imageButton.textContent=original;}}
   }
   function toast(text) { let el=document.querySelector('#inlineEditToast'); if(!el){el=document.createElement('div');el.id='inlineEditToast';el.className='inline-edit-toast';document.body.appendChild(el);} el.textContent=text;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200); }
   function escapeHtml(value) { return String(value).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
   function escapeAttr(value) { return escapeHtml(value).replace(/'/g,'&#39;'); }
+
+  window.addEventListener('beforeunload', () => { if (document.body.classList.contains('leadership-edit-on')) saveDraftNow(); });
 
   document.addEventListener('DOMContentLoaded', async () => {
     await loadMeForEditing();
