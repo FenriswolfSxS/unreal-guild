@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { json } from './_utils.js';
 
 export async function onRequestGet({ env }) {
@@ -14,3 +15,7 @@ export async function onRequestGet({ env }) {
   `).all();
   return json({ ok: true, members: rows.results });
 }
+=======
+import { json, roster } from './_lib.js';
+export async function onRequestGet({ env }) { if (!env.DB) return json({ ok:false, error:'D1 binding DB is missing.' },500); try { return await roster(env); } catch (err) { return json({ ok:false, error: err?.message || 'API error' },500); } }
+>>>>>>> origin/main

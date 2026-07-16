@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 -- SxS The Unreal / Unreal Guild user + guild roster schema for Cloudflare D1
 
+=======
+>>>>>>> origin/main
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS classes (
@@ -17,7 +20,27 @@ CREATE TABLE IF NOT EXISTS guild_ranks (
   name TEXT NOT NULL UNIQUE,
   slug TEXT NOT NULL UNIQUE,
   sort_order INTEGER NOT NULL UNIQUE,
+<<<<<<< HEAD
   requires_verification INTEGER NOT NULL DEFAULT 0
+=======
+  requires_verification INTEGER NOT NULL DEFAULT 0,
+  permission_group TEXT NOT NULL DEFAULT 'member'
+);
+
+CREATE TABLE IF NOT EXISTS permissions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS rank_permissions (
+  rank_id INTEGER NOT NULL,
+  permission_id INTEGER NOT NULL,
+  PRIMARY KEY (rank_id, permission_id),
+  FOREIGN KEY (rank_id) REFERENCES guild_ranks(id) ON DELETE CASCADE,
+  FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
+>>>>>>> origin/main
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -66,10 +89,85 @@ CREATE TABLE IF NOT EXISTS sessions (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
+=======
+CREATE TABLE IF NOT EXISTS posts (
+  id TEXT PRIMARY KEY,
+  author_id TEXT NOT NULL,
+  title TEXT NOT NULL,
+  body_html TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'published',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS site_pages (
+  page_key TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  content_html TEXT NOT NULL DEFAULT '',
+  updated_by TEXT,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (updated_by) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS home_bubbles (
+  id INTEGER PRIMARY KEY,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  button_label TEXT NOT NULL DEFAULT '',
+  button_link TEXT NOT NULL DEFAULT '',
+  quick_label TEXT NOT NULL DEFAULT '',
+  pos_x INTEGER NOT NULL DEFAULT 0,
+  pos_y INTEGER NOT NULL DEFAULT 0,
+  width INTEGER NOT NULL DEFAULT 260,
+  height INTEGER NOT NULL DEFAULT 190,
+  updated_by TEXT,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (updated_by) REFERENCES users(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS site_page_revisions (
+  id TEXT PRIMARY KEY,
+  page_key TEXT NOT NULL,
+  title TEXT NOT NULL,
+  content_html TEXT NOT NULL DEFAULT '',
+  edited_by TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (edited_by) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS media_assets (
+  id TEXT PRIMARY KEY,
+  filename TEXT NOT NULL,
+  url TEXT NOT NULL,
+  uploaded_by TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (uploaded_by) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS audit_log (
+  id TEXT PRIMARY KEY,
+  actor_user_id TEXT,
+  action TEXT NOT NULL,
+  target_type TEXT NOT NULL DEFAULT '',
+  target_id TEXT NOT NULL DEFAULT '',
+  details TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (actor_user_id) REFERENCES users(id)
+);
+
+>>>>>>> origin/main
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
 CREATE INDEX IF NOT EXISTS idx_guild_members_rank ON guild_members(rank_id);
 CREATE INDEX IF NOT EXISTS idx_guild_members_class ON guild_members(class_id);
+<<<<<<< HEAD
+=======
+CREATE INDEX IF NOT EXISTS idx_posts_author ON posts(author_id);
+CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor_user_id);
+>>>>>>> origin/main
 
 INSERT OR IGNORE INTO classes (name, slug, color, tier, active, sort_order) VALUES
   ('Guardian', 'guardian', '#f5c542', 4, 1, 1),
@@ -77,8 +175,119 @@ INSERT OR IGNORE INTO classes (name, slug, color, tier, active, sort_order) VALU
   ('Destroyer', 'destroyer', '#a855f7', 4, 1, 3),
   ('Dominator', 'dominator', '#38bdf8', 4, 1, 4);
 
+<<<<<<< HEAD
 INSERT OR IGNORE INTO guild_ranks (name, slug, sort_order, requires_verification) VALUES
   ('Leader', 'leader', 1, 1),
   ('Deputy', 'deputy', 2, 1),
   ('Officer', 'officer', 3, 1),
   ('Member', 'member', 4, 0);
+=======
+INSERT OR IGNORE INTO guild_ranks (name, slug, sort_order, requires_verification, permission_group) VALUES
+  ('Leader', 'leader', 1, 1, 'leadership'),
+  ('Deputy', 'deputy', 2, 1, 'leadership'),
+  ('Officer', 'officer', 3, 1, 'leadership'),
+  ('Member', 'member', 4, 0, 'member');
+
+UPDATE guild_ranks SET permission_group = 'leadership', requires_verification = 1 WHERE slug IN ('leader','deputy','officer');
+UPDATE guild_ranks SET permission_group = 'member', requires_verification = 0 WHERE slug = 'member';
+
+INSERT OR IGNORE INTO permissions (slug, name, description) VALUES
+  ('view_roster', 'View Guild Roster', 'Can view the guild roster.'),
+  ('edit_own_profile', 'Edit Own Profile', 'Can edit their own in-game name and class.'),
+  ('create_posts', 'Create Posts', 'Can create posts.'),
+  ('edit_own_posts', 'Edit Own Posts', 'Can edit their own posts.'),
+  ('delete_own_posts', 'Delete Own Posts', 'Can delete their own posts.'),
+  ('create_builds', 'Create Builds', 'Can create community builds.'),
+  ('edit_own_builds', 'Edit Own Builds', 'Can edit their own community builds.'),
+  ('delete_own_builds', 'Delete Own Builds', 'Can delete their own community builds.'),
+  ('admin_dashboard', 'Admin Dashboard', 'Can access the admin dashboard.'),
+  ('manage_members', 'Manage Members', 'Can manage member accounts and roster data.'),
+  ('change_ranks', 'Change Ranks', 'Can change guild ranks.'),
+  ('moderate_posts', 'Moderate Posts', 'Can edit or remove posts from anyone.'),
+  ('moderate_builds', 'Moderate Builds', 'Can edit or remove builds from anyone.'),
+  ('edit_guides', 'Edit Guides', 'Can edit guide pages and guide screenshots.'),
+  ('edit_home', 'Edit Homepage', 'Can edit homepage content bubbles.'),
+  ('manage_site_settings', 'Manage Site Settings', 'Can change site settings.'),
+  ('view_audit_log', 'View Audit Log', 'Can view administrative activity history.');
+
+INSERT OR IGNORE INTO rank_permissions (rank_id, permission_id)
+SELECT r.id, p.id
+FROM guild_ranks r, permissions p
+WHERE r.slug = 'member'
+AND p.slug IN (
+  'view_roster',
+  'edit_own_profile',
+  'create_posts',
+  'edit_own_posts',
+  'delete_own_posts',
+  'create_builds',
+  'edit_own_builds',
+  'delete_own_builds'
+);
+
+INSERT OR IGNORE INTO rank_permissions (rank_id, permission_id)
+SELECT r.id, p.id
+FROM guild_ranks r, permissions p
+WHERE r.slug IN ('leader','deputy','officer');
+
+INSERT OR IGNORE INTO home_bubbles (id, title, body, button_label, button_link) VALUES
+  (1, 'Welcome', 'Coming soon.', '', ''),
+  (2, 'Rules of Conduct', 'Coming soon.', '', ''),
+  (3, 'Expectations', 'Coming soon.', '', ''),
+  (4, 'Requirements', 'Coming soon.', '', '');
+
+INSERT OR IGNORE INTO site_pages (page_key, title, content_html) VALUES
+  ('guides', 'Guides', '<p>Guild knowledge, guides, and strategy pages.</p>'),
+  ('food-guide', 'Food Guide', '<p>Phee''s full Sword X Staff food system guide with recipes and screenshots.</p>'),
+  ('farming', 'Farming Guides', '<p>Routes, resources, farming tips, and material locations.</p>'),
+  ('fantamon', 'Fantamon Guides', '<p>Fantamon info, recommendations, and upgrade tips.</p>'),
+  ('stats', 'Stat Guide', '<p>Stat priorities, explanations, and class-specific stat notes.</p>');
+
+-- Safe forum tables. These do not erase existing member data.
+CREATE TABLE IF NOT EXISTS forum_categories (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  type TEXT NOT NULL DEFAULT 'general',
+  icon TEXT NOT NULL DEFAULT '💬',
+  description TEXT NOT NULL DEFAULT '',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_by TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS forum_threads (
+  id TEXT PRIMARY KEY,
+  forum_id TEXT NOT NULL,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL DEFAULT '',
+  author_id TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (forum_id) REFERENCES forum_categories(id) ON DELETE CASCADE,
+  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_forum_threads_forum ON forum_threads(forum_id);
+CREATE INDEX IF NOT EXISTS idx_forum_threads_author ON forum_threads(author_id);
+
+INSERT OR IGNORE INTO forum_categories (id,title,type,icon,description,sort_order) VALUES
+  ('conqueror','Conqueror','class','<img src="assets/class-icons/conqueror.png" alt="Conqueror">','Warrior damage builds, Conqueror / Ravager rotations, PvP pressure, and weapon choices.',1),
+  ('guardian','Guardian','class','<img src="assets/class-icons/guardian.png" alt="Guardian">','Tank builds, Guardian / Templar questions, survivability, threat, and group support.',2),
+  ('destroyer','Destroyer','class','<img src="assets/class-icons/destroyer.png" alt="Destroyer">','Mage damage, Destroyer / Magister theorycrafting, cooldowns, burst, and utility.',3),
+  ('dominator','Dominator','class','<img src="assets/class-icons/dominator.png" alt="Dominator">','Sage builds, Dominator / Prophet setups, healing, summons, support, and control.',4),
+  ('game','The Game','game','🎮','General Sword X Staff discussion, questions, guides, updates, and progression help.',5),
+  ('away','Away / Unable to Attend','away','📅','Post when you will be away, late, or unable to attend guild events.',6);
+
+-- v25 forum media + persistent reply storage
+CREATE TABLE IF NOT EXISTS forum_replies (
+  id TEXT PRIMARY KEY,
+  thread_id TEXT NOT NULL,
+  body TEXT NOT NULL DEFAULT '',
+  image_url TEXT NOT NULL DEFAULT '',
+  author_id TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+-- Existing databases are upgraded automatically by the Functions using PRAGMA table_info + ALTER TABLE.
+>>>>>>> origin/main

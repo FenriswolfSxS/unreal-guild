@@ -1,0 +1,1 @@
+Do not reset D1 or delete R2. Editable page content is saved through /api/content/page in D1, and uploaded images are stored in R2 via the ASSETS binding. Code deploys should only change templates/features.

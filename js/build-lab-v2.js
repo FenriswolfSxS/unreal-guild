@@ -19,6 +19,18 @@
   const $ = (id) => document.getElementById(id);
   const byId = new Map(DATA.skills.map(s => [s.id, s]));
 
+  const BUILD_PAGE_PATHS = {
+    duelist: "conqueror",
+    knight: "guardian",
+    sorcerer: "destroyer",
+    sage: "dominator",
+    conqueror: "conqueror",
+    guardian: "guardian",
+    destroyer: "destroyer",
+    dominator: "dominator"
+  };
+  function buildPagePath(){ return BUILD_PAGE_PATHS[state.path] || state.path; }
+
   function colorForPath(pid){
     return (DATA.paths[pid] && DATA.paths[pid].accent) || "#8eefff";
   }
@@ -282,14 +294,40 @@
     renderSummary();
   }
 
-  function stateForSave(){
+  function buildSnapshot(){
+    const p = currentPath();
+    const skillRows = [
+      ...state.technique.filter(Boolean).map(id => ({ slot: "Technique", skill: byId.get(id) })),
+      ...state.charm.filter(Boolean).map(id => ({ slot: "Charm", skill: byId.get(id) }))
+    ].filter(x => x.skill).map(x => ({
+      slot: x.slot,
+      id: x.skill.id,
+      name: x.skill.name,
+      type: x.skill.type,
+      tier: x.skill.tier,
+      icon: skillIcon(x.skill),
+      fallbackIcon: classIcon(x.skill.tier),
+      cooldown: x.skill.cooldown || "—",
+      description: x.skill.description || ""
+    }));
     return {
+      version: 2,
       path: state.path,
+      pathName: p?.name || "",
+      className: currentClass(),
       tierIndex: state.tierIndex,
       technique: state.technique,
       charm: state.charm,
-      selectedSlot: state.selectedSlot
+      selectedSlot: state.selectedSlot,
+      skills: skillRows
     };
+  }
+  function stateForSave(){ return buildSnapshot(); }
+  async function apiJson(url, opts){
+    const res = await fetch(url, opts);
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok || data.ok === false) throw new Error(data.error || "Request failed.");
+    return data;
   }
   function loadState(saved){
     if(!saved) return;
@@ -308,21 +346,60 @@
     render();
   }
 
-  function saveBuild(){
-    const name = prompt("Build name:", `${currentPath()?.name || "Unreal"} ${currentClass()}`);
-    if(!name) return;
-    const saved = JSON.parse(localStorage.getItem("unrealBuildLabV2") || "[]");
-    saved.push({ name, date:new Date().toLocaleString(), build:stateForSave() });
-    localStorage.setItem("unrealBuildLabV2", JSON.stringify(saved));
-    alert("Build saved.");
+  function buildPayload(visibility, title, notes=""){
+    const snap = buildSnapshot();
+    return {
+      path: buildPagePath(),
+      class_name: snap.className,
+      title,
+      tags: [snap.pathName, snap.className].filter(Boolean).join(", "),
+      import_code: encodeBuild(),
+      notes,
+      image_url: "",
+      visibility,
+      build_json: snap
+    };
   }
-  function myBuilds(){
+  async function saveBuild(){
+    const name = prompt("Build name for My Builds:", `${currentPath()?.name || "Unreal"} ${currentClass()}`);
+    if(!name) return;
+    try{
+      await apiJson('/api/builds/save',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(buildPayload('private', name))});
+      alert("Saved to My Builds.");
+    }catch(err){
+      alert(err.message || "Could not save build. Make sure you are signed in.");
+    }
+  }
+  async function publishBuild(){
+    const name = prompt("Build name to publish:", `${currentPath()?.name || "Unreal"} ${currentClass()} Build`);
+    if(!name) return;
+    const notes = prompt("Build description for the class build page:", "") || "";
+    try{
+      const d = await apiJson('/api/builds/save',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(buildPayload('public', name, notes))});
+      alert("Published to the matching class build page.");
+      const page = `${buildPagePath()}-builds.html`;
+      if(confirm("Open the class build page now?")) location.href = page;
+    }catch(err){
+      alert(err.message || "Could not publish build. Make sure you are signed in.");
+    }
+  }
+  async function myBuilds(){
     const dialog = $("buildDialog");
     const list = $("savedBuildList");
-    const saved = JSON.parse(localStorage.getItem("unrealBuildLabV2") || "[]");
-    list.innerHTML = saved.length ? saved.map((b,i)=>`<div class="saved-row"><div><strong>${escapeHtml(b.name)}</strong><br><span class="muted">${escapeHtml(b.date)}</span></div><button type="button" data-load-build="${i}">Load</button></div>`).join("") : `<p class="muted">No saved builds yet.</p>`;
-    list.querySelectorAll("[data-load-build]").forEach(btn => btn.addEventListener("click", () => { loadState(saved[Number(btn.dataset.loadBuild)].build); dialog.close(); }));
+    list.innerHTML = `<p class="muted">Loading your D1 saved builds...</p>`;
     dialog.showModal();
+    try{
+      const d = await apiJson('/api/builds/list?path='+encodeURIComponent(buildPagePath())+'&mine=1');
+      const saved = d.builds || [];
+      list.innerHTML = saved.length ? saved.map((b,i)=>`<div class="saved-row"><div><strong>${escapeHtml(b.title)}</strong><br><span class="muted">${escapeHtml(b.visibility || 'private')} • ${escapeHtml(b.updated_at || b.created_at || '')}</span></div><button type="button" data-load-build="${i}">Load</button></div>`).join("") : `<p class="muted">No saved builds yet.</p>`;
+      list.querySelectorAll("[data-load-build]").forEach(btn => btn.addEventListener("click", () => {
+        const b = saved[Number(btn.dataset.loadBuild)];
+        try{ loadState(JSON.parse(b.build_json || '{}')); dialog.close(); }
+        catch(e){ alert('This saved build could not be loaded.'); }
+      }));
+    }catch(err){
+      list.innerHTML = `<p class="muted">${escapeHtml(err.message || 'Could not load My Builds.')}</p>`;
+    }
   }
   function encodeBuild(){ return btoa(unescape(encodeURIComponent(JSON.stringify(stateForSave())))); }
   function decodeBuild(code){ return JSON.parse(decodeURIComponent(escape(atob(code)))); }
@@ -360,6 +437,7 @@
       $("searchInput").value = ""; $("typeFilter").value = "all"; $("tierFilter").value = "eligible"; renderCodex();
     });
     $("saveBuildBtn")?.addEventListener("click", saveBuild);
+    $("publishBuildBtn")?.addEventListener("click", publishBuild);
     $("myBuildsBtn")?.addEventListener("click", myBuilds);
     $("exportBuildBtn")?.addEventListener("click", exportBuild);
     $("importBuildBtn")?.addEventListener("click", importBuild);

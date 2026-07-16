@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { cleanText, createSession, json, readJson, sessionCookie, verifyPassword } from './_utils.js';
 
 export async function onRequestPost({ request, env }) {
@@ -20,3 +21,7 @@ export async function onRequestPost({ request, env }) {
   const token = await createSession(env, user.id);
   return json({ ok: true, message: 'Signed in.' }, 200, { 'set-cookie': sessionCookie(token) });
 }
+=======
+import { json, login } from './_lib.js';
+export async function onRequestPost({ request, env }) { if (!env.DB) return json({ ok:false, error:'D1 binding DB is missing.' },500); try { return await login(request, env); } catch (err) { return json({ ok:false, error: err?.message || 'API error' },500); } }
+>>>>>>> origin/main
