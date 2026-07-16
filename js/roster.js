@@ -1,18 +1,27 @@
-function rosterRankIcon(slug) {
-  return { leader: '👑', deputy: '⭐', officer: '🛡️', member: '👤' }[slug] || '👤';
+function rosterInitial(member) {
+  return (member.ingame_name || member.username || '?').slice(0, 1).toUpperCase();
 }
 
-function memberCard(member) {
-  const initial = (member.ingame_name || member.username || '?').slice(0,1).toUpperCase();
-  const photo = member.character_image_url
-    ? `<img class="roster-character-photo" src="${member.character_image_url}" alt="${member.ingame_name} character" loading="lazy" />`
-    : `<div class="roster-character-photo roster-character-placeholder" style="border-color:${member.class_color}; box-shadow:0 0 22px ${member.class_color}44">${initial}</div>`;
-  return `<article class="member-card class-${member.class_slug}" style="--member-class-color:${member.class_color}">
-    ${photo}
-    <div class="member-card-copy">
-      <h3 style="color:${member.class_color}; text-shadow:0 0 16px ${member.class_color}55">${member.ingame_name}</h3>
-      <p>${member.class_name} • ${member.rank_name}</p>
+function rosterMemberRow(member) {
+  const color = member.class_color || '#8eefff';
+  const name = member.ingame_name || member.username || 'Unknown Member';
+  const image = member.character_image_url
+    ? `<img class="roster-avatar-image" src="${member.character_image_url}" alt="${name} character" loading="lazy" />`
+    : `<span class="member-avatar roster-avatar-placeholder" aria-hidden="true">${rosterInitial(member)}</span>`;
+
+  return `<article class="roster-member-row" style="--member-class-color:${color}">
+    <div class="roster-member-identity">
+      ${image}
+      <span class="roster-member-name-wrap">
+        <strong style="color:${color}; text-shadow:0 0 14px ${color}44">${name}</strong>
+        <span>@${member.username || name}</span>
+      </span>
     </div>
+    <span class="roster-rank-badge rank-${member.rank_slug}">${member.rank_name}</span>
+    <span class="roster-class-cell" style="color:${color}">
+      <strong>${member.class_name}</strong>
+    </span>
+    <span class="roster-joined-cell">${member.joined_at ? new Date(member.joined_at.replace(' ', 'T') + 'Z').toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' }) : '—'}</span>
   </article>`;
 }
 
@@ -22,23 +31,24 @@ async function loadRoster() {
   try {
     const data = await fetch('/api/roster').then(r => r.json());
     if (!data.ok) throw new Error(data.error || 'Roster unavailable.');
-    const groups = new Map();
-    for (const m of data.members) {
-      const key = m.rank_slug;
-      if (!groups.has(key)) groups.set(key, { name: m.rank_name, slug: m.rank_slug, sort: m.rank_sort_order, members: [] });
-      groups.get(key).members.push(m);
-    }
-    const sorted = [...groups.values()].sort((a,b) => a.sort - b.sort);
-    if (!sorted.length) {
+
+    // Lowest sort_order is the highest guild rank. Keep this as the initial load order.
+    const members = [...(data.members || [])].sort((a, b) =>
+      Number(a.rank_sort_order) - Number(b.rank_sort_order) ||
+      String(a.ingame_name || a.username || '').localeCompare(String(b.ingame_name || b.username || ''))
+    );
+
+    if (!members.length) {
       mount.innerHTML = '<div class="notice-card"><h2>Guild Roster</h2><p>No guild members have registered yet.</p></div>';
       return;
     }
-    mount.innerHTML = sorted.map(group => `
-      <section class="roster-rank-section">
-        <h2>${rosterRankIcon(group.slug)} ${group.name}</h2>
-        <div class="member-grid">${group.members.map(memberCard).join('')}</div>
-      </section>
-    `).join('');
+
+    mount.innerHTML = `<div class="roster-table" role="table" aria-label="Guild roster">
+      <div class="roster-table-header" role="row">
+        <span>Member</span><span>Rank</span><span>Class</span><span>Joined</span>
+      </div>
+      <div class="roster-table-body">${members.map(rosterMemberRow).join('')}</div>
+    </div>`;
   } catch (err) {
     mount.innerHTML = `<div class="notice-card"><h2>Live Roster</h2><p>${err.message}</p><p>After D1 is bound and the schema is run, registered guild members will show here automatically.</p></div>`;
   }

@@ -155,3 +155,58 @@ body{padding-top:var(--persistent-nav-height)}
 }
 .forge-topbar .dropdown{z-index:10020!important}
 @media(max-width:820px){.forge-topbar{max-height:100vh;overflow-y:auto}}
+
+/* V24 — account/profile chip support on Build Lab navigation */
+.forge-nav .account-profile-chip{
+  display:flex!important;
+  align-items:center;
+  gap:8px;
+  min-height:42px;
+  padding:4px 8px!important;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:999px;
+  background:rgba(255,255,255,.045);
+}
+.forge-nav .account-profile-avatar,
+.forge-nav .account-profile-placeholder{
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  max-width:34px!important;
+  flex:0 0 34px!important;
+  border-radius:50%!important;
+  border:2px solid rgba(255,255,255,.28)!important;
+  object-fit:cover!important;
+  object-position:center!important;
+  background:rgba(0,0,0,.3);
+}
+.forge-nav .account-profile-placeholder{
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:950;
+}
+.forge-nav .account-profile-copy{
+  display:grid;
+  min-width:0;
+  line-height:1.08;
+  text-align:left;
+}
+.forge-nav .account-profile-copy strong{
+  max-width:145px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:.82rem;
+}
+.forge-nav .account-profile-copy small{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:.65rem;
+  font-weight:650;
+  white-space:nowrap;
+}
+@media(max-width:820px){
+  .forge-nav .account-profile-chip{width:auto;max-width:100%}
+  .forge-nav .account-profile-copy strong{max-width:180px}
+}

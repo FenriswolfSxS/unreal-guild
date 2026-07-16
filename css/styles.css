@@ -1835,3 +1835,83 @@ body.leadership-edit-on .modular-table [contenteditable="true"]:focus{background
 .member-card-copy { padding:16px; text-align:center; }
 .member-card h3 { margin:0 0 5px; font-size:1.3rem; }
 .member-card p { margin:0; }
+
+/* V23 compact roster + unified profile login treatment */
+.site-header {
+  background: linear-gradient(180deg, rgba(8,11,24,.97), rgba(8,11,24,.91)) !important;
+  border-bottom-color: rgba(255,255,255,.12) !important;
+  box-shadow: 0 12px 34px rgba(0,0,0,.28);
+}
+.account-profile-chip {
+  display:flex !important;
+  align-items:center;
+  gap:9px;
+  padding:5px 9px !important;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:999px;
+  background:rgba(255,255,255,.045);
+  min-height:44px;
+}
+.account-profile-avatar,.account-profile-placeholder {
+  width:36px;height:36px;flex:0 0 36px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.28);object-fit:cover;background:rgba(0,0,0,.3);
+}
+.account-profile-placeholder { display:grid;place-items:center;color:#fff;font-weight:950; }
+.account-profile-copy { display:grid;line-height:1.08;min-width:0;text-align:left; }
+.account-profile-copy strong { font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px; }
+.account-profile-copy small { margin-top:3px;color:#aeb8d8;font-size:.68rem;font-weight:650;white-space:nowrap; }
+
+.live-roster { margin-top:20px; }
+.roster-table {
+  overflow:hidden;border:1px solid rgba(255,255,255,.12);border-radius:16px;
+  background:linear-gradient(145deg,rgba(18,22,40,.9),rgba(8,12,25,.9));
+  box-shadow:0 24px 70px rgba(0,0,0,.32);
+}
+.roster-table-header,.roster-member-row {
+  display:grid;grid-template-columns:minmax(270px,1.35fr) minmax(135px,.65fr) minmax(145px,.72fr) minmax(125px,.55fr);
+  align-items:center;column-gap:20px;
+}
+.roster-table-header {
+  min-height:56px;padding:0 22px;color:#aeb8d8;text-transform:uppercase;letter-spacing:.065em;
+  font-size:.76rem;font-weight:950;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.11);
+}
+.roster-member-row { min-height:112px;padding:8px 22px;border-bottom:1px solid rgba(255,255,255,.09); }
+.roster-member-row:last-child { border-bottom:0; }
+.roster-member-row:hover { background:rgba(255,255,255,.035); }
+.roster-member-identity { display:flex;align-items:center;gap:15px;min-width:0;color:inherit; }
+.roster-avatar-image,.roster-avatar-placeholder {
+  width:96px !important;height:96px !important;flex:0 0 96px !important;border-radius:14px !important;
+  border:2px solid var(--member-class-color,rgba(142,239,255,.45)) !important;object-fit:cover;background:rgba(0,0,0,.25);
+  box-shadow:0 0 18px color-mix(in srgb,var(--member-class-color,#8eefff) 24%,transparent);
+}
+.roster-avatar-placeholder { display:grid;place-items:center;font-size:1.55rem; }
+.roster-member-name-wrap { display:grid;gap:5px;min-width:0; }
+.roster-member-name-wrap strong { font-size:1.08rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.roster-member-name-wrap span { color:#aeb8d8;font-size:.88rem; }
+.roster-rank-badge { justify-self:start;padding:9px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.11);font-size:.76rem;font-weight:950;text-transform:uppercase;letter-spacing:.045em;background:rgba(255,255,255,.06); }
+.rank-leader { color:#ffe080;background:rgba(255,193,7,.12);border-color:rgba(255,193,7,.24); }
+.rank-deputy,.rank-officer { color:#c99cff;background:rgba(151,71,255,.13);border-color:rgba(151,71,255,.25); }
+.rank-member { color:#84b8ff;background:rgba(38,109,228,.13);border-color:rgba(38,109,228,.25); }
+.roster-class-cell { display:grid;gap:3px;font-size:.98rem; }
+.roster-class-cell strong { font-weight:950; }
+.roster-joined-cell { color:#c0c9e5;font-size:.9rem; }
+
+.character-photo-preview-wrap {
+  width:96px !important;height:96px !important;aspect-ratio:1/1 !important;margin:14px 0 !important;
+  border-radius:14px !important;
+}
+
+@media(max-width:850px){
+  .account-profile-copy small{display:none}.account-profile-copy strong{max-width:100px}
+  .roster-table-header{display:none}
+  .roster-member-row{grid-template-columns:1fr auto;gap:10px 14px;padding:14px;min-height:0}
+  .roster-member-identity{grid-row:1 / span 3}
+  .roster-avatar-image,.roster-avatar-placeholder{width:76px!important;height:76px!important;flex-basis:76px!important}
+  .roster-rank-badge,.roster-class-cell,.roster-joined-cell{grid-column:2;justify-self:end;text-align:right}
+}
+@media(max-width:520px){
+  .account-profile-copy{display:none}.account-profile-chip{padding:4px!important}
+  .roster-member-row{grid-template-columns:1fr}
+  .roster-member-identity{grid-row:auto}
+  .roster-rank-badge,.roster-class-cell,.roster-joined-cell{grid-column:1;justify-self:start;text-align:left;margin-left:91px}
+}
