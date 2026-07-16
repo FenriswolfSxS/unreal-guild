@@ -210,3 +210,28 @@ body{padding-top:var(--persistent-nav-height)}
   .forge-nav .account-profile-chip{width:auto;max-width:100%}
   .forge-nav .account-profile-copy strong{max-width:180px}
 }
+
+/* V26 — centered Build Lab navigation + active-page glow + right-side profile UI */
+.forge-topbar {
+  display:grid !important;
+  grid-template-columns:minmax(190px,1fr) auto minmax(190px,1fr) !important;
+  align-items:center !important;
+  gap:22px !important;
+  padding:10px 4.5% !important;
+  min-height:72px;
+}
+.forge-topbar .forge-brand{justify-self:start;min-width:0}
+.forge-topbar .forge-nav{justify-self:center;justify-content:center;flex-wrap:nowrap;gap:24px}
+.forge-topbar .header-user-area{justify-self:end;display:flex;align-items:center;min-width:0}
+.forge-topbar .forge-nav > a,.forge-topbar .forge-nav > .nav-group > a{position:relative;padding:12px 0;color:#d8def4;transition:color .18s ease,text-shadow .18s ease,transform .18s ease}
+.forge-topbar .forge-nav > a:hover,.forge-topbar .forge-nav > .nav-group > a:hover{color:#fff;text-shadow:0 0 14px rgba(142,239,255,.9);transform:translateY(-1px)}
+.forge-topbar .forge-nav > a.active,.forge-topbar .forge-nav > .nav-group > a.active{color:var(--gold,#ffd166)!important;text-shadow:0 0 8px rgba(255,209,102,.92),0 0 22px rgba(255,209,102,.5)!important}
+.forge-topbar .forge-nav > a.active::after,.forge-topbar .forge-nav > .nav-group > a.active::after{content:"";position:absolute;left:18%;right:18%;bottom:5px;height:2px;border-radius:999px;background:currentColor;box-shadow:0 0 10px currentColor}
+.forge-topbar .header-user-area .account-profile-chip{display:inline-flex!important;align-items:center!important;flex-direction:row-reverse;gap:10px!important;padding:5px 7px 5px 12px!important;border:0!important;background:transparent!important;border-radius:14px!important;min-height:46px!important;max-width:230px}
+.forge-topbar .header-user-area .account-profile-chip:hover{background:rgba(255,255,255,.045)!important;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 0 22px rgba(142,239,255,.08)}
+.forge-topbar .header-user-area .account-profile-avatar,.forge-topbar .header-user-area .account-profile-placeholder{width:40px!important;height:40px!important;min-width:40px!important;max-width:40px!important;flex:0 0 40px!important;border-radius:50%!important;border:2px solid rgba(255,209,102,.5)!important;box-shadow:0 0 14px rgba(255,209,102,.22)}
+.forge-topbar .header-user-area .account-profile-copy{text-align:right!important}
+.forge-topbar .header-user-area .account-profile-copy strong{font-size:.9rem!important;max-width:145px!important}
+.forge-topbar .header-user-area .account-profile-copy small{font-size:.68rem!important}
+@media(max-width:1120px){.forge-topbar{grid-template-columns:auto 1fr auto!important;gap:14px!important;padding-left:3%!important;padding-right:3%!important}.forge-topbar .forge-nav{gap:14px}.forge-topbar .forge-nav a{font-size:.84rem}.forge-brand span{display:none}}
+@media(max-width:820px){.forge-topbar{display:flex!important;justify-content:space-between!important;flex-wrap:wrap!important;align-items:center!important;overflow:visible!important}.forge-topbar .forge-menu{display:block;order:2}.forge-topbar .header-user-area{order:3;margin-left:auto}.forge-topbar .forge-nav{order:4;width:100%;display:none;flex-direction:column;align-items:stretch;gap:0;padding:8px 0 14px}.forge-topbar .forge-nav.open{display:flex}.forge-topbar .forge-nav > a,.forge-topbar .forge-nav > .nav-group > a{display:block;width:100%;padding:11px 12px}.forge-topbar .forge-nav > a.active::after,.forge-topbar .forge-nav > .nav-group > a.active::after{left:12px;right:auto;width:34px;bottom:5px}}
