@@ -3,9 +3,13 @@ function rosterRankIcon(slug) {
 }
 
 function memberCard(member) {
-  return `<article class="member-card class-${member.class_slug}">
-    <div class="member-avatar" style="border-color:${member.class_color}; box-shadow:0 0 22px ${member.class_color}44">${member.ingame_name.slice(0,1).toUpperCase()}</div>
-    <div>
+  const initial = (member.ingame_name || member.username || '?').slice(0,1).toUpperCase();
+  const photo = member.character_image_url
+    ? `<img class="roster-character-photo" src="${member.character_image_url}" alt="${member.ingame_name} character" loading="lazy" />`
+    : `<div class="roster-character-photo roster-character-placeholder" style="border-color:${member.class_color}; box-shadow:0 0 22px ${member.class_color}44">${initial}</div>`;
+  return `<article class="member-card class-${member.class_slug}" style="--member-class-color:${member.class_color}">
+    ${photo}
+    <div class="member-card-copy">
       <h3 style="color:${member.class_color}; text-shadow:0 0 16px ${member.class_color}55">${member.ingame_name}</h3>
       <p>${member.class_name} • ${member.rank_name}</p>
     </div>

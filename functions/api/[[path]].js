@@ -20,7 +20,7 @@ import { onRequestPost as mediaUploadPost } from './_handlers/media/upload.js';
 import { onRequestGet as membersListGet } from './_handlers/members/list.js';
 import { onRequestPost as membersUpdatePost } from './_handlers/members/update.js';
 import { onRequestGet as optionsGet } from './_handlers/options.js';
-import { onRequestPost as profilePost } from './_handlers/profile.js';
+import { onRequestGet as profileGet, onRequestPost as profilePost } from './_handlers/profile.js';
 import { onRequestGet as ranksGet } from './_handlers/ranks.js';
 import { onRequestPost as registerPost } from './_handlers/register.js';
 import { onRequestGet as rosterGet } from './_handlers/roster.js';
@@ -52,7 +52,7 @@ const routes = {
   'members/list': { GET: membersListGet },
   'members/update': { POST: membersUpdatePost },
   'options': { GET: optionsGet },
-  'profile': { POST: profilePost },
+  'profile': { GET: profileGet, POST: profilePost },
   'ranks': { GET: ranksGet },
   'register': { POST: registerPost },
   'roster': { GET: rosterGet },

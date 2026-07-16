@@ -1,8 +1,3 @@
-<<<<<<< HEAD
--- SxS The Unreal / Unreal Guild user + guild roster schema for Cloudflare D1
-
-=======
->>>>>>> origin/main
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS classes (
@@ -20,9 +15,6 @@ CREATE TABLE IF NOT EXISTS guild_ranks (
   name TEXT NOT NULL UNIQUE,
   slug TEXT NOT NULL UNIQUE,
   sort_order INTEGER NOT NULL UNIQUE,
-<<<<<<< HEAD
-  requires_verification INTEGER NOT NULL DEFAULT 0
-=======
   requires_verification INTEGER NOT NULL DEFAULT 0,
   permission_group TEXT NOT NULL DEFAULT 'member'
 );
@@ -40,7 +32,6 @@ CREATE TABLE IF NOT EXISTS rank_permissions (
   PRIMARY KEY (rank_id, permission_id),
   FOREIGN KEY (rank_id) REFERENCES guild_ranks(id) ON DELETE CASCADE,
   FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
->>>>>>> origin/main
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -89,8 +80,6 @@ CREATE TABLE IF NOT EXISTS sessions (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-<<<<<<< HEAD
-=======
 CREATE TABLE IF NOT EXISTS posts (
   id TEXT PRIMARY KEY,
   author_id TEXT NOT NULL,
@@ -158,16 +147,12 @@ CREATE TABLE IF NOT EXISTS audit_log (
   FOREIGN KEY (actor_user_id) REFERENCES users(id)
 );
 
->>>>>>> origin/main
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
 CREATE INDEX IF NOT EXISTS idx_guild_members_rank ON guild_members(rank_id);
 CREATE INDEX IF NOT EXISTS idx_guild_members_class ON guild_members(class_id);
-<<<<<<< HEAD
-=======
 CREATE INDEX IF NOT EXISTS idx_posts_author ON posts(author_id);
 CREATE INDEX IF NOT EXISTS idx_audit_actor ON audit_log(actor_user_id);
->>>>>>> origin/main
 
 INSERT OR IGNORE INTO classes (name, slug, color, tier, active, sort_order) VALUES
   ('Guardian', 'guardian', '#f5c542', 4, 1, 1),
@@ -175,13 +160,6 @@ INSERT OR IGNORE INTO classes (name, slug, color, tier, active, sort_order) VALU
   ('Destroyer', 'destroyer', '#a855f7', 4, 1, 3),
   ('Dominator', 'dominator', '#38bdf8', 4, 1, 4);
 
-<<<<<<< HEAD
-INSERT OR IGNORE INTO guild_ranks (name, slug, sort_order, requires_verification) VALUES
-  ('Leader', 'leader', 1, 1),
-  ('Deputy', 'deputy', 2, 1),
-  ('Officer', 'officer', 3, 1),
-  ('Member', 'member', 4, 0);
-=======
 INSERT OR IGNORE INTO guild_ranks (name, slug, sort_order, requires_verification, permission_group) VALUES
   ('Leader', 'leader', 1, 1, 'leadership'),
   ('Deputy', 'deputy', 2, 1, 'leadership'),
@@ -290,4 +268,11 @@ CREATE TABLE IF NOT EXISTS forum_replies (
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 -- Existing databases are upgraded automatically by the Functions using PRAGMA table_info + ALTER TABLE.
->>>>>>> origin/main
+
+-- Optional member character photo shown on profile and roster.
+CREATE TABLE IF NOT EXISTS member_profiles (
+  user_id TEXT PRIMARY KEY,
+  character_image_url TEXT,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

@@ -183,19 +183,40 @@ export async function me(request, env) {
   return json({ ok: true, signedIn: true, user, permissions });
 }
 
+export async function ensureMemberProfileTable(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS member_profiles (
+    user_id TEXT PRIMARY KEY,
+    character_image_url TEXT,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  )`).run();
+}
+
 export async function roster(env) {
+  await ensureMemberProfileTable(env);
   const rows = await env.DB.prepare(`
     SELECT u.id, u.username, u.ingame_name, gm.joined_at,
            c.name AS class_name, c.slug AS class_slug, c.color AS class_color,
-           r.name AS rank_name, r.slug AS rank_slug, r.sort_order AS rank_sort_order
+           r.name AS rank_name, r.slug AS rank_slug, r.sort_order AS rank_sort_order,
+           mp.character_image_url
     FROM guild_members gm
     JOIN users u ON u.id = gm.user_id
     JOIN classes c ON c.id = gm.class_id
     JOIN guild_ranks r ON r.id = gm.rank_id
+    LEFT JOIN member_profiles mp ON mp.user_id = u.id
     WHERE u.status = 'active'
     ORDER BY r.sort_order ASC, lower(u.ingame_name) ASC
   `).all();
   return json({ ok: true, members: rows.results || [] });
+}
+
+
+export async function getProfile(request, env) {
+  const auth = await requireUser(request, env);
+  if (auth.error) return auth.error;
+  await ensureMemberProfileTable(env);
+  const row = await env.DB.prepare('SELECT character_image_url FROM member_profiles WHERE user_id = ?').bind(auth.user.id).first();
+  return json({ ok: true, character_image_url: row?.character_image_url || '' });
 }
 
 export async function profile(request, env) {
@@ -204,10 +225,15 @@ export async function profile(request, env) {
   const body = await readJson(request);
   const ingameName = cleanText(body?.ingameName);
   const classSlug = slugify(body?.classSlug);
+  const characterImageUrl = cleanText(body?.characterImageUrl);
   if (ingameName.length < 2) return json({ ok: false, error: 'In-game name is required.' }, 400);
   const duplicate = await env.DB.prepare('SELECT id FROM users WHERE lower(ingame_name) = lower(?) AND id != ? LIMIT 1').bind(ingameName, auth.user.id).first();
   if (duplicate) return json({ ok: false, error: 'That in-game name is already registered.' }, 409);
-  const statements = [env.DB.prepare('UPDATE users SET ingame_name = ?, updated_at = datetime(\'now\') WHERE id = ?').bind(ingameName, auth.user.id)];
+  await ensureMemberProfileTable(env);
+  const statements = [env.DB.prepare('UPDATE users SET ingame_name = ?, updated_at = datetime(\'now\') WHERE id = ?').bind(ingameName, auth.user.id),
+    env.DB.prepare(`INSERT INTO member_profiles (user_id, character_image_url, updated_at) VALUES (?, ?, datetime('now'))
+      ON CONFLICT(user_id) DO UPDATE SET character_image_url = excluded.character_image_url, updated_at = datetime('now')`).bind(auth.user.id, characterImageUrl || null)
+  ];
   if (auth.user.account_type === 'guild_member') {
     const classRow = await env.DB.prepare('SELECT id FROM classes WHERE slug = ? AND active = 1').bind(classSlug).first();
     if (!classRow) return json({ ok: false, error: 'Choose a valid class.' }, 400);

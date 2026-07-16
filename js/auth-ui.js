@@ -42,8 +42,6 @@ async function sxsUpdateAccountNav() {
       const name = data.user?.ingame_name || data.user?.username || 'Profile';
       link.innerHTML = `<span ${sxsClassStyle(data.user?.class_color)}>${name}</span>`;
       link.title = 'Profile';
-<<<<<<< HEAD
-=======
       if ((data.permissions || []).includes('admin_dashboard') && !nav.querySelector('.admin-nav-link, a[href="admin.html"], a[href$="/admin.html"]')) {
         const admin = document.createElement('a');
         admin.className = 'admin-nav-link';
@@ -53,7 +51,6 @@ async function sxsUpdateAccountNav() {
         const discord = nav.querySelector('.discord-link, .discord-pill');
         nav.insertBefore(admin, discord || null);
       }
->>>>>>> origin/main
     } else {
       link.href = 'account.html';
       link.textContent = 'Sign In';

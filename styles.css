@@ -983,8 +983,6 @@ html, body {
   text-decoration:none;
 }
 .pretty-button:hover { transform: translateY(-1px); border-color: rgba(245,197,66,.85); }
-<<<<<<< HEAD
-=======
 
 /* Account link injected on every page */
 .site-nav .account-nav-link{font-weight:800}
@@ -1734,4 +1732,3 @@ body { padding-top: var(--persistent-nav-height); }
   :root { --persistent-nav-height: 83px; }
   .site-header { max-height: 100vh; overflow-y: auto; }
 }
->>>>>>> origin/main
