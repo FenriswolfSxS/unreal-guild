@@ -1,6 +1,7 @@
 import { json, readJson, requireUser, getUserPermissions, cleanText, slugify } from '../../_lib.js';
 function has(perms, slug) { return perms.includes(slug) || perms.includes('admin_dashboard') || perms.includes('manage_site_settings'); }
 const ALLOWED = new Set(['home','events','guides','food-guide','farming-guide','fantamon-guide','stat-guide','class-builds','class-builds-notes','conqueror-builds','guardian-builds','destroyer-builds','dominator-builds','farming','fantamon','stats']);
+function isAllowedPage(key) { return ALLOWED.has(key) || /^guide-[a-z0-9][a-z0-9_-]{0,70}$/.test(key); }
 function normalizePageKey(key) {
   if (key === 'farming') return 'farming-guide';
   if (key === 'fantamon') return 'fantamon-guide';
@@ -29,7 +30,7 @@ export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   let pageKey = slugify(url.searchParams.get('page_key') || 'guides');
   pageKey = normalizePageKey(pageKey);
-  if (!ALLOWED.has(pageKey)) return json({ ok:false, error:'Unknown guide page.' },404);
+  if (!isAllowedPage(pageKey)) return json({ ok:false, error:'Unknown guide page.' },404);
   await ensurePageJsonColumn(env);
   let page = await env.DB.prepare('SELECT page_key, title, content_html, content_json, updated_at FROM site_pages WHERE page_key=?').bind(pageKey).first();
   if (!page) {
@@ -51,7 +52,7 @@ export async function onRequestPut({ request, env }) {
       ? (has(perms, 'edit_events') || has(perms, 'edit_guides'))
       : has(perms, 'edit_guides');
   if (!permitted) return json({ ok:false, error:'You do not have permission to edit this page.' },403);
-  if (!ALLOWED.has(pageKey)) return json({ ok:false, error:'Unknown guide page.' },400);
+  if (!isAllowedPage(pageKey)) return json({ ok:false, error:'Unknown guide page.' },400);
   const title = cleanText(body?.title).slice(0,100) || pageKey;
   const content = String(body?.content_html || '').slice(0,200000);
   let contentJson = '';

@@ -7,6 +7,7 @@
   let activeHomeText = null;
   let draftTimer = null;
   let currentPageKey = '';
+  let savedTextRange = null;
 
   async function fetchJson(url, options) {
     const res = await fetch(url, options);
@@ -368,11 +369,41 @@
     return css ? ` style="${escapeAttr(css)}"` : '';
   }
 
+
+  function sanitizeRichInline(html) {
+    const template = document.createElement('template');
+    template.innerHTML = String(html || '');
+    const allowed = new Set(['SPAN','B','STRONG','I','EM','U','S','BR','A']);
+    const allowedStyles = new Set(['font-size','font-family','color','font-weight','font-style','text-decoration','background-color']);
+    [...template.content.querySelectorAll('*')].forEach((el) => {
+      if (!allowed.has(el.tagName)) { el.replaceWith(...el.childNodes); return; }
+      [...el.attributes].forEach((attr) => {
+        if (attr.name === 'style') {
+          const safe=[];
+          for (const decl of attr.value.split(';')) {
+            const i=decl.indexOf(':'); if(i<0) continue;
+            const prop=decl.slice(0,i).trim().toLowerCase();
+            const val=decl.slice(i+1).trim();
+            if (allowedStyles.has(prop) && !/url\s*\(|expression|javascript:/i.test(val)) safe.push(`${prop}:${val}`);
+          }
+          if (safe.length) el.setAttribute('style',safe.join(';')); else el.removeAttribute('style');
+        } else if (el.tagName === 'A' && ['href','target','rel'].includes(attr.name)) {
+          if (attr.name === 'href' && /^javascript:/i.test(attr.value)) el.removeAttribute(attr.name);
+        } else el.removeAttribute(attr.name);
+      });
+    });
+    return template.innerHTML;
+  }
+  function richField(block, key, fallback='') {
+    const rich = block?.[key + 'Html'];
+    return rich ? sanitizeRichInline(rich) : escapeHtml(block?.[key] || fallback);
+  }
+
   function blockHtml(block, editing=false) {
     const editable = editing ? ' contenteditable="true"' : '';
     const controls = editing ? blockControls() : '';
     let body = '';
-    if (block.type === 'heading') body = `<h${Math.min(4,Math.max(2,Number(block.level)||2))} data-block-field="text"${styleAttr(block)}${editable}>${escapeHtml(block.text || 'New heading')}</h${Math.min(4,Math.max(2,Number(block.level)||2))}>`;
+    if (block.type === 'heading') body = `<h${Math.min(4,Math.max(2,Number(block.level)||2))} data-block-field="text"${styleAttr(block)}${editable}>${richField(block,'text','New heading')}</h${Math.min(4,Math.max(2,Number(block.level)||2))}>`;
     else if (block.type === 'event') {
       const start = escapeAttr(block.start || '');
       const tz = escapeAttr(block.timezone || 'UTC');
@@ -380,9 +411,9 @@
       const duration = Math.max(0, Math.min(1440, Number(block.duration) || 0));
       const publicLink = block.link ? `<a class="event-action-link" href="${escapeAttr(block.link)}">${escapeHtml(block.linkLabel || 'Event Details')} →</a>` : '';
       const editor = editing ? `<div class="event-editor-fields" contenteditable="false"><label>Start date & time<input data-block-field-input="start" type="datetime-local" value="${start}"></label><label>Timezone<select data-block-field-input="timezone"><option${tz==='UTC'?' selected':''}>UTC</option><option${tz==='America/New_York'?' selected':''} value="America/New_York">Eastern</option><option${tz==='America/Chicago'?' selected':''} value="America/Chicago">Central</option><option${tz==='America/Denver'?' selected':''} value="America/Denver">Mountain</option><option${tz==='America/Los_Angeles'?' selected':''} value="America/Los_Angeles">Pacific</option></select></label><label>Repeats<select data-block-field-input="recurrence"><option value="none"${recur==='none'?' selected':''}>Does not repeat</option><option value="daily"${recur==='daily'?' selected':''}>Daily</option><option value="weekly"${recur==='weekly'?' selected':''}>Weekly</option><option value="every2days"${recur==='every2days'?' selected':''}>Every 2 days</option><option value="monthly"${recur==='monthly'?' selected':''}>Monthly</option></select></label><label>Duration (minutes)<input data-block-field-input="duration" type="number" min="0" max="1440" value="${duration}"></label><label>Status<input data-block-field-input="status" value="${escapeAttr(block.status || 'Scheduled')}"></label><label>Optional link<input data-block-field-input="link" type="url" value="${escapeAttr(block.link || '')}" placeholder="https://…"></label><label>Link text<input data-block-field-input="linkLabel" value="${escapeAttr(block.linkLabel || 'Event Details')}"></label></div>` : '';
-      body = `<article class="modular-event-card" data-event-start="${start}" data-event-timezone="${tz}" data-event-recurrence="${recur}" data-event-duration="${duration}"><div class="event-card-orb"></div><p class="event-label" data-block-field="eyebrow"${editable}>${escapeHtml(block.eyebrow || 'Guild Event')}</p><h2 data-block-field="title"${styleAttr(block)}${editable}>${escapeHtml(block.title || 'New Event')}</h2><div class="event-description" data-block-field="description"${editable}>${escapeHtml(block.description || 'Add event details.')}</div><div class="event-schedule-line"><span class="event-date-display">${start ? escapeHtml(start.replace('T',' ')) : 'Set a date and time'}</span><span class="event-zone-display">${escapeHtml(tz)}</span></div><div class="event-live-status"><span class="event-status-dot"></span><strong data-block-field="status"${editable}>${escapeHtml(block.status || 'Scheduled')}</strong></div><div class="event-countdown" data-event-countdown>Set a start time</div>${publicLink}${editor}</article>`;
+      body = `<article class="modular-event-card" data-event-start="${start}" data-event-timezone="${tz}" data-event-recurrence="${recur}" data-event-duration="${duration}"><div class="event-card-orb"></div><p class="event-label" data-block-field="eyebrow"${editable}>${richField(block,'eyebrow','Guild Event')}</p><h2 data-block-field="title"${styleAttr(block)}${editable}>${richField(block,'title','New Event')}</h2><div class="event-description" data-block-field="description"${editable}>${richField(block,'description','Add event details.')}</div><div class="event-schedule-line"><span class="event-date-display">${start ? escapeHtml(start.replace('T',' ')) : 'Set a date and time'}</span><span class="event-zone-display">${escapeHtml(tz)}</span></div><div class="event-live-status"><span class="event-status-dot"></span><strong data-block-field="status"${editable}>${escapeHtml(block.status || 'Scheduled')}</strong></div><div class="event-countdown" data-event-countdown>Set a start time</div>${publicLink}${editor}</article>`;
     }
-    else if (block.type === 'image') body = `<figure class="modular-image"><img data-block-image src="${escapeAttr(block.src || '')}" alt="${escapeAttr(block.alt || 'Page image')}" loading="lazy"><figcaption data-block-field="caption"${styleAttr(block)}${editable}>${escapeHtml(block.caption || 'Caption')}</figcaption>${editing ? '<button class="replace-block-image" type="button" data-block-action="replace-image" contenteditable="false">Replace image</button>' : ''}</figure>`;
+    else if (block.type === 'image') body = `<figure class="modular-image"><img data-block-image src="${escapeAttr(block.src || '')}" alt="${escapeAttr(block.alt || 'Page image')}" loading="lazy"><figcaption data-block-field="caption"${styleAttr(block)}${editable}>${richField(block,'caption','Caption')}</figcaption>${editing ? '<button class="replace-block-image" type="button" data-block-action="replace-image" contenteditable="false">Replace image</button>' : ''}</figure>`;
     else if (block.type === 'table') {
       const rows = Array.isArray(block.rows) && block.rows.length ? block.rows : [['Header 1','Header 2'],['Cell 1','Cell 2']];
       const tableRows = rows.map((row, ri) => {
@@ -390,11 +421,11 @@
         return `<tr>${row.map((cell, ci) => `<${tag} data-table-row="${ri}" data-table-col="${ci}"${editing ? ' contenteditable="true"' : ''}>${escapeHtml(cell)}</${tag}>`).join('')}</tr>`;
       }).join('');
       const tableTools = editing ? `<div class="table-block-tools" contenteditable="false"><button type="button" data-table-action="add-row">＋ Row</button><button type="button" data-table-action="remove-row">− Row</button><button type="button" data-table-action="add-col">＋ Column</button><button type="button" data-table-action="remove-col">− Column</button><label><input type="checkbox" data-table-header ${block.header !== false ? 'checked' : ''}> Header row</label></div>` : '';
-      body = `<figure class="modular-table-wrap">${block.caption ? `<figcaption data-block-field="caption"${styleAttr(block)}${editable}>${escapeHtml(block.caption)}</figcaption>` : (editing ? `<figcaption data-block-field="caption"${styleAttr(block)}${editable}>Table title</figcaption>` : '')}<div class="modular-table-scroll"><table class="modular-table"><tbody>${tableRows}</tbody></table></div>${tableTools}</figure>`;
+      body = `<figure class="modular-table-wrap">${block.caption ? `<figcaption data-block-field="caption"${styleAttr(block)}${editable}>${richField(block,'caption','')}</figcaption>` : (editing ? `<figcaption data-block-field="caption"${styleAttr(block)}${editable}>Table title</figcaption>` : '')}<div class="modular-table-scroll"><table class="modular-table"><tbody>${tableRows}</tbody></table></div>${tableTools}</figure>`;
     }
     else if (block.type === 'divider') body = '<hr class="modular-divider">';
-    else if (block.type === 'button') body = `<div class="modular-button-editor"><a class="page-button" data-block-link href="${escapeAttr(block.url || '#')}"${styleAttr(block)}><span data-block-field="label"${editable}>${escapeHtml(block.label || 'Button')}</span></a>${editing ? `<input data-block-field-input="url" type="url" value="${escapeAttr(block.url || '#')}" placeholder="https://…" contenteditable="false">` : ''}</div>`;
-    else if (block.type === 'callout') body = `<aside class="modular-callout"${styleAttr(block)}><h3 data-block-field="title"${editable}>${escapeHtml(block.title || 'Important')}</h3><div data-block-field="html"${editable}>${block.html || '<p>Add callout text.</p>'}</div></aside>`;
+    else if (block.type === 'button') body = `<div class="modular-button-editor"><a class="page-button" data-block-link href="${escapeAttr(block.url || '#')}"${styleAttr(block)}><span data-block-field="label"${editable}>${richField(block,'label','Button')}</span></a>${editing ? `<input data-block-field-input="url" type="url" value="${escapeAttr(block.url || '#')}" placeholder="https://…" contenteditable="false">` : ''}</div>`;
+    else if (block.type === 'callout') body = `<aside class="modular-callout"${styleAttr(block)}><h3 data-block-field="title"${editable}>${richField(block,'title','Important')}</h3><div data-block-field="html"${editable}>${block.html || '<p>Add callout text.</p>'}</div></aside>`;
     else body = `<div class="modular-text" data-block-field="html"${styleAttr(block)}${editable}>${block.html || '<p>Write text here.</p>'}</div>`;
     return `<section class="page-block page-block-${escapeAttr(block.type)}${editing ? ' is-editing' : ''}${editing && selectedBlockId === block.id ? ' selected-block' : ''}" data-block-id="${escapeAttr(block.id)}" data-block-type="${escapeAttr(block.type)}">${controls}${body}</section>`;
   }
@@ -518,7 +549,7 @@
     if (document.querySelector('#inlineEditToolbar')) return;
     const bar = document.createElement('div');
     bar.id = 'inlineEditToolbar'; bar.className = 'inline-edit-toolbar modular-toolbar';
-    bar.innerHTML = `<button class="builder-primary" type="button" data-inline-action="save">✓ Save Page</button><div class="row-add-menu"><span class="builder-menu-label">Add layout</span><button type="button" data-row-add="1">＋ Full Width</button><button type="button" data-row-add="2">＋ Side by Side</button><button type="button" data-row-add="3">＋ Three Across</button></div><div class="block-add-menu"><span class="builder-menu-label">Add content</span><button type="button" data-inline-action="heading">Heading</button><button type="button" data-inline-action="text">Text</button><button type="button" data-inline-action="image">Photo</button><button type="button" data-inline-action="callout">Card</button><button type="button" data-inline-action="table">Table</button><button class="event-block-tool" type="button" data-inline-action="event">Event Card</button><button type="button" data-inline-action="button">Link Button</button><button type="button" data-inline-action="divider">Divider</button></div><div class="text-style-menu" aria-label="Text style controls"><span class="builder-menu-label">Text style</span><select data-text-style="font" title="Font"><option value="inherit">Guild Default</option><option value="system-ui">Modern</option><option value='"Trebuchet MS",sans-serif'>Tech</option><option value="Georgia,serif">Epic Serif</option><option value='"Arial Black",Impact,sans-serif'>Heavy</option><option value='"Courier New",monospace'>Terminal</option></select><select data-text-style="size" title="Text size"><option value="">Size</option><option value="14">Small</option><option value="16">Normal</option><option value="20">Large</option><option value="26">XL</option><option value="34">Hero</option><option value="48">Massive</option></select><input data-text-style="color" type="color" value="#ffffff" title="Text color"><button type="button" data-text-command="bold" title="Bold"><b>B</b></button><button type="button" data-text-command="italic" title="Italic"><i>I</i></button><button type="button" data-text-command="underline" title="Underline"><u>U</u></button><button type="button" data-text-align="left" title="Align left">≡</button><button type="button" data-text-align="center" title="Align center">≡</button><button type="button" data-text-align="right" title="Align right">≡</button><button type="button" data-text-command="clear" title="Reset text style">Reset</button></div><span class="inline-edit-hint">Select content, then style it or drag it between areas.</span><span id="draftSaveIndicator" class="draft-save-indicator">Draft protection on</span><input id="inlineImageUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>`;
+    bar.innerHTML = `<button class="builder-primary" type="button" data-inline-action="save">✓ Save Page</button><div class="row-add-menu"><span class="builder-menu-label">Add layout</span><button type="button" data-row-add="1">＋ Full Width</button><button type="button" data-row-add="2">＋ Side by Side</button><button type="button" data-row-add="3">＋ Three Across</button></div><div class="block-add-menu"><span class="builder-menu-label">Add content</span><button type="button" data-inline-action="heading">Heading</button><button type="button" data-inline-action="text">Text</button><button type="button" data-inline-action="image">Photo</button><button type="button" data-inline-action="callout">Card</button><button type="button" data-inline-action="table">Table</button><button class="event-block-tool" type="button" data-inline-action="event">Event Card</button><button type="button" data-inline-action="button">Link Button</button><button type="button" data-inline-action="divider">Divider</button></div><div class="text-style-menu" aria-label="Text style controls"><span class="builder-menu-label">Text style</span><select data-text-style="font" title="Font"><option value="inherit">Guild Default</option><option value="system-ui">Modern</option><option value='"Trebuchet MS",sans-serif'>Tech</option><option value="Georgia,serif">Epic Serif</option><option value='"Arial Black",Impact,sans-serif'>Heavy</option><option value='"Courier New",monospace'>Terminal</option></select><input data-text-style="size" type="number" min="8" max="96" step="1" value="16" title="Selected text size in points"><span class="point-label">pt</span><input data-text-style="color" type="color" value="#ffffff" title="Text color"><button type="button" data-text-command="bold" title="Bold"><b>B</b></button><button type="button" data-text-command="italic" title="Italic"><i>I</i></button><button type="button" data-text-command="underline" title="Underline"><u>U</u></button><button type="button" data-text-align="left" title="Align left">≡</button><button type="button" data-text-align="center" title="Align center">≡</button><button type="button" data-text-align="right" title="Align right">≡</button><button type="button" data-text-command="clear" title="Reset text style">Reset</button></div><span class="inline-edit-hint">Highlight only the words you want to format, then choose a point size or style.</span><span id="draftSaveIndicator" class="draft-save-indicator">Draft protection on</span><input id="inlineImageUpload" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>`;
     document.body.appendChild(bar);
     const isEventsPage = (editableRoot()?.dataset.editablePage || editableRoot()?.dataset.inlineGuidePage || pageKeyFromPath()) === 'events';
     bar.classList.toggle('events-builder-toolbar', isEventsPage);
@@ -579,7 +610,17 @@
     if (disabled) return;
     const st = entry.block.textStyle || {};
     const font = bar.querySelector('[data-text-style="font"]'); if (font) font.value = Object.prototype.hasOwnProperty.call(allowedFonts, st.font) ? st.font : 'inherit';
-    const size = bar.querySelector('[data-text-style="size"]'); if (size) size.value = st.size ? String(st.size) : '';
+    const size = bar.querySelector('[data-text-style="size"]');
+    if (size && document.activeElement !== size) {
+      let points = st.size ? Math.round(Number(st.size) * .75) : 16;
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount && !sel.isCollapsed) {
+        const node = sel.anchorNode?.nodeType === 1 ? sel.anchorNode : sel.anchorNode?.parentElement;
+        const px = parseFloat(node ? getComputedStyle(node).fontSize : '');
+        if (px) points = Math.round(px * .75);
+      }
+      size.value = String(Math.max(8, Math.min(96, points)));
+    }
     const color = bar.querySelector('[data-text-style="color"]'); if (color) color.value = /^#[0-9a-f]{6}$/i.test(st.color || '') ? st.color : '#ffffff';
     bar.querySelectorAll('[data-text-command]').forEach(btn => btn.classList.toggle('is-active', !!st[btn.dataset.textCommand]));
     bar.querySelectorAll('[data-text-align]').forEach(btn => btn.classList.toggle('is-active', st.align === btn.dataset.textAlign));
@@ -591,11 +632,56 @@
     Object.keys(entry.block.textStyle).forEach(k => { if (entry.block.textStyle[k] === '' || entry.block.textStyle[k] == null || entry.block.textStyle[k] === false) delete entry.block.textStyle[k]; });
     renderPageRows(true); updateTextStyleToolbar();
   }
+  function selectionInsideEditable() {
+    const selection = window.getSelection();
+    if (!selection || !selection.rangeCount) return null;
+    const range = selection.getRangeAt(0);
+    const container = range.commonAncestorContainer.nodeType === 1 ? range.commonAncestorContainer : range.commonAncestorContainer.parentElement;
+    const editable = container?.closest?.('[contenteditable="true"]');
+    if (!editable || !editableRoot()?.contains(editable)) return null;
+    return range.cloneRange();
+  }
+  function rememberTextSelection() {
+    const range = selectionInsideEditable();
+    if (range) savedTextRange = range;
+  }
+  function restoreTextSelection() {
+    if (!savedTextRange) return false;
+    const selection = window.getSelection();
+    selection.removeAllRanges(); selection.addRange(savedTextRange);
+    return true;
+  }
+  function applySelectionCss(styles) {
+    if (!restoreTextSelection()) return false;
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) return false;
+    const range = selection.getRangeAt(0);
+    const span = document.createElement('span');
+    Object.assign(span.style, styles);
+    try { range.surroundContents(span); }
+    catch (_) { const fragment=range.extractContents(); span.appendChild(fragment); range.insertNode(span); }
+    const next=document.createRange(); next.selectNodeContents(span); selection.removeAllRanges(); selection.addRange(next); savedTextRange=next.cloneRange();
+    syncRowsFromDom(); scheduleDraftSave(); return true;
+  }
+  function applySelectionCommand(command, value=null) {
+    if (!restoreTextSelection()) return false;
+    const selection=window.getSelection(); if(!selection || selection.isCollapsed) return false;
+    document.execCommand('styleWithCSS', false, true);
+    document.execCommand(command, false, value);
+    rememberTextSelection(); syncRowsFromDom(); scheduleDraftSave(); return true;
+  }
   function handleTextStyleChange(event) {
     const control = event.target.closest('[data-text-style]'); if (!control) return;
-    if (control.dataset.textStyle === 'size') applySelectedTextStyle({size:control.value ? Number(control.value) : ''});
-    if (control.dataset.textStyle === 'font') applySelectedTextStyle({font:control.value});
-    if (control.dataset.textStyle === 'color') applySelectedTextStyle({color:control.value});
+    if (control.dataset.textStyle === 'size') {
+      const points=Math.max(8,Math.min(96,Number(control.value)||16)); control.value=String(points);
+      if (!applySelectionCss({fontSize:points+'pt'})) toast('Highlight the exact text you want to resize first.');
+    }
+    if (control.dataset.textStyle === 'font') {
+      if (!applySelectionCss({fontFamily:control.value==='inherit'?'inherit':control.value})) toast('Highlight the exact text you want to change first.');
+    }
+    if (control.dataset.textStyle === 'color') {
+      if (!applySelectionCss({color:control.value})) toast('Highlight the exact text you want to color first.');
+    }
   }
 
   async function handleToolbarClick(event) {
@@ -603,11 +689,19 @@
     if (command) {
       const entry = selectedBlockEntry(); if (!entry) return;
       const key = command.dataset.textCommand;
-      if (key === 'clear') { syncRowsFromDom(); entry.block.textStyle = {}; renderPageRows(true); updateTextStyleToolbar(); return; }
-      applySelectedTextStyle({[key]:!entry.block.textStyle?.[key]}); return;
+      if (key === 'clear') {
+        if (!applySelectionCommand('removeFormat')) { syncRowsFromDom(); entry.block.textStyle = {}; renderPageRows(true); updateTextStyleToolbar(); }
+        return;
+      }
+      if (!applySelectionCommand(key)) applySelectedTextStyle({[key]:!entry.block.textStyle?.[key]});
+      return;
     }
     const align = event.target.closest('[data-text-align]');
-    if (align) { applySelectedTextStyle({align:align.dataset.textAlign}); return; }
+    if (align) {
+      const commandName={left:'justifyLeft',center:'justifyCenter',right:'justifyRight'}[align.dataset.textAlign];
+      if (!applySelectionCommand(commandName)) applySelectedTextStyle({align:align.dataset.textAlign});
+      return;
+    }
     const rowBtn = event.target.closest('[data-row-add]');
     if (rowBtn) {
       syncRowsFromDom();
@@ -637,7 +731,12 @@
       const b = entry.block;
       el.querySelectorAll('[data-block-field]').forEach((field) => {
         const key = field.dataset.blockField;
-        b[key] = key.toLowerCase().includes('html') ? field.innerHTML : field.textContent.trim();
+        if (key.toLowerCase().includes('html')) b[key] = field.innerHTML;
+        else {
+          b[key] = field.textContent.trim();
+          b[key + 'Html'] = sanitizeRichInline(field.innerHTML);
+          if (b[key + 'Html'] === escapeHtml(b[key])) delete b[key + 'Html'];
+        }
       });
       el.querySelectorAll('[data-block-field-input]').forEach((field) => { b[field.dataset.blockFieldInput] = field.value.trim(); });
       const img = el.querySelector('[data-block-image]'); if (img) { b.src = img.getAttribute('src') || ''; b.alt = img.getAttribute('alt') || ''; }
@@ -680,6 +779,9 @@
       setTimeout(() => { if (saveButton) { saveButton.classList.remove('save-error'); saveButton.textContent = originalText; } }, 2600);
     }
   }
+
+  document.addEventListener('selectionchange', () => { if (document.body.classList.contains('leadership-edit-on')) rememberTextSelection(); });
+  document.addEventListener('pointerdown', (event) => { if (event.target.closest('#inlineEditToolbar [data-text-style], #inlineEditToolbar [data-text-command], #inlineEditToolbar [data-text-align]')) rememberTextSelection(); }, true);
 
   document.addEventListener('click', (event) => {
     if (!document.body.classList.contains('leadership-edit-on')) return;

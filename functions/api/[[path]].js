@@ -6,6 +6,7 @@ import { onRequestPost as buildsSavePost } from './_handlers/builds/save.js';
 import { onRequestGet as classesGet } from './_handlers/classes.js';
 import { onRequestGet as homeBubblesGet, onRequestPut as homeBubblesPut } from './_handlers/content/home-bubbles.js';
 import { onRequestGet as contentPageGet, onRequestPut as contentPagePut } from './_handlers/content/page.js';
+import { onRequestGet as guidesManageGet, onRequestPost as guidesManagePost } from './_handlers/guides/manage.js';
 import { onRequestGet as forumsListGet } from './_handlers/forums/list.js';
 import { onRequestGet as forumThreadsGet, onRequestPost as forumThreadsPost, onRequestPut as forumThreadsPut, onRequestDelete as forumThreadsDelete } from './_handlers/forums/threads.js';
 import { onRequestPost as forumReplyPost } from './_handlers/forums/reply.js';
@@ -41,6 +42,7 @@ const routes = {
   'forums/list': { GET: forumsListGet },
   'forums/threads': { GET: forumThreadsGet, POST: forumThreadsPost, PUT: forumThreadsPut, DELETE: forumThreadsDelete },
   'forums/reply': { POST: forumReplyPost },
+  'guides/manage': { GET: guidesManageGet, POST: guidesManagePost },
   'health': { GET: healthGet },
   'login': { POST: loginPost },
   'logout': { POST: logoutPost },

@@ -34,7 +34,7 @@ function sxsFindNavs() {
 function sxsSetActiveNav(nav) {
   const page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
   const buildPages = new Set(['builds.html','class-builds.html','community-builds.html','conqueror-builds.html','guardian-builds.html','destroyer-builds.html','dominator-builds.html']);
-  const guidePages = new Set(['guides.html','food-guide.html','farming-guide.html','fantamon-guide.html','stat-guide.html']);
+  const guidePages = new Set(['guides.html','food-guide.html','farming-guide.html','fantamon-guide.html','stat-guide.html','guide.html']);
   const forumPages = new Set(['recruitment.html']);
 
   nav.querySelectorAll(':scope > a, :scope > .nav-group > a').forEach(a => a.classList.remove('active'));

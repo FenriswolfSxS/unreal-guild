@@ -1946,3 +1946,39 @@ body.leadership-edit-on .modular-table [contenteditable="true"]:focus{background
   .roster-member-identity{grid-row:auto}
   .roster-rank-badge,.roster-class-cell,.roster-joined-cell{grid-column:1;justify-self:start;text-align:left;margin-left:91px}
 }
+
+/* V40 cinematic homepage hero */
+.cinematic-home-hero {
+  min-height: clamp(520px, 47vw, 760px);
+  background-image: url("../assets/unreal-home-hero.png?v=41");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-bottom: 1px solid rgba(104, 213, 255, .18);
+  box-shadow: inset 0 -60px 90px rgba(2, 5, 14, .45);
+}
+.cinematic-home-hero .hero-overlay { background: linear-gradient(to bottom, rgba(2,4,10,.04), rgba(2,4,10,.08) 70%, rgba(2,4,10,.42)); }
+/* The artwork already contains the guild title. Keep semantic text available without duplicating it visually. */
+.cinematic-home-hero .hero-content { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; }
+@media (max-width: 700px) {
+  .cinematic-home-hero { min-height: 500px; background-position:center; background-size:cover; }
+}
+
+/* Admin-created guide controls */
+.guide-library-admin { width:min(1460px,92%); margin:0 auto 20px; display:flex; justify-content:flex-end; }
+.guide-create-button { border:1px solid rgba(126,239,255,.5); border-radius:14px; padding:12px 18px; background:linear-gradient(135deg,rgba(36,87,123,.45),rgba(75,41,121,.42)); color:#fff; font-weight:900; cursor:pointer; box-shadow:0 0 20px rgba(126,239,255,.1); }
+.guide-create-button:hover { border-color:#8eefff; box-shadow:0 0 25px rgba(126,239,255,.24); transform:translateY(-1px); }
+.guide-create-modal { position:fixed; inset:0; z-index:10020; display:grid; place-items:center; padding:20px; background:rgba(2,4,12,.8); backdrop-filter:blur(8px); }
+.guide-create-dialog { width:min(540px,100%); padding:26px; border:1px solid rgba(126,239,255,.35); border-radius:22px; background:linear-gradient(145deg,#151a2c,#090d18); box-shadow:0 30px 90px rgba(0,0,0,.65); }
+.guide-create-dialog h2 { margin-top:0; }
+.guide-create-dialog label { display:grid; gap:7px; margin:14px 0; color:#cbd4eb; font-weight:800; }
+.guide-create-dialog input,.guide-create-dialog textarea { width:100%; box-sizing:border-box; border:1px solid rgba(255,255,255,.16); border-radius:10px; padding:11px 12px; background:#080c17; color:#fff; font:inherit; }
+.guide-create-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+.guide-create-actions button { border:1px solid rgba(255,255,255,.2); border-radius:10px; padding:10px 15px; background:#20263a; color:#fff; font-weight:800; cursor:pointer; }
+.guide-create-actions .primary { background:#1b6678; border-color:#65ddf4; }
+.custom-guide-card .guide-card-icon { font-size:2.3rem; display:block; margin-bottom:12px; }
+
+/* True selection-based rich text controls */
+.text-style-menu input[data-text-style="size"] { width:76px; min-width:76px; border:1px solid rgba(255,255,255,.18); border-radius:10px; padding:9px 8px; background:#22283a; color:#fff; font-weight:800; }
+.text-style-menu .point-label { color:#9eacc8; font-size:.78rem; font-weight:900; margin-left:-5px; }
+.rich-selection-note { color:#7ef0ff; font-size:.78rem; font-weight:800; white-space:nowrap; }
