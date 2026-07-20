@@ -425,12 +425,31 @@
     try{
       const d = await apiJson('/api/builds/list?mine=1&_='+Date.now(), { cache:'no-store' });
       const saved = d.builds || [];
-      list.innerHTML = saved.length ? saved.map((b,i)=>`<div class="saved-row"><div><strong>${escapeHtml(b.title)}</strong><br><span class="muted">${escapeHtml(b.path || 'build')} • ${escapeHtml(b.visibility || 'private')} • ${escapeHtml(b.updated_at || b.created_at || '')}</span></div><button type="button" data-load-build="${i}">Load</button></div>`).join("") : `<p class="muted">No saved builds yet.</p>`;
-      list.querySelectorAll("[data-load-build]").forEach(btn => btn.addEventListener("click", () => {
-        const b = saved[Number(btn.dataset.loadBuild)];
-        try{ loadState(JSON.parse(b.build_json || '{}')); dialog.close(); }
-        catch(e){ alert('This saved build could not be loaded.'); }
-      }));
+      const renderSavedBuilds = () => {
+        list.innerHTML = saved.length ? saved.map((b,i)=>`<div class="saved-row" data-saved-build-id="${escapeHtml(b.id)}"><div class="saved-row-copy"><strong>${escapeHtml(b.title)}</strong><br><span class="muted">${escapeHtml(b.path || 'build')} • ${escapeHtml(b.visibility || 'private')} • ${escapeHtml(b.updated_at || b.created_at || '')}</span></div><div class="saved-row-actions"><button type="button" data-load-build="${i}">Load</button><button type="button" class="saved-build-delete" data-delete-saved-build="${i}">Delete</button></div></div>`).join("") : `<p class="muted">No saved builds yet.</p>`;
+        list.querySelectorAll("[data-load-build]").forEach(btn => btn.addEventListener("click", () => {
+          const b = saved[Number(btn.dataset.loadBuild)];
+          try{ loadState(JSON.parse(b.build_json || '{}')); dialog.close(); }
+          catch(e){ alert('This saved build could not be loaded.'); }
+        }));
+        list.querySelectorAll("[data-delete-saved-build]").forEach(btn => btn.addEventListener("click", async () => {
+          const index = Number(btn.dataset.deleteSavedBuild);
+          const b = saved[index];
+          if(!b || !confirm(`Permanently delete “${b.title || 'this build'}”? This cannot be undone.`)) return;
+          btn.disabled = true;
+          btn.textContent = 'Deleting…';
+          try{
+            await apiJson('/api/builds/delete?id='+encodeURIComponent(b.id), { method:'DELETE', cache:'no-store' });
+            saved.splice(index, 1);
+            renderSavedBuilds();
+          }catch(err){
+            btn.disabled = false;
+            btn.textContent = 'Delete';
+            alert(err.message || 'Could not delete this build.');
+          }
+        }));
+      };
+      renderSavedBuilds();
     }catch(err){
       list.innerHTML = `<p class="muted">${escapeHtml(err.message || 'Could not load My Builds.')}</p>`;
     }

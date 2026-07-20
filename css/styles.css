@@ -2144,3 +2144,11 @@ body.leadership-edit-on .modular-table [contenteditable="true"]:focus{background
 .build-drag-handle{float:left;margin:0 8px 4px 0;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:rgba(255,255,255,.06);color:#fff;cursor:grab;padding:4px 8px;font-size:1rem}.guild-build-card.is-dragging{opacity:.4}.guild-build-card.drag-over{outline:2px solid #8eefff;transform:translateY(-2px)}
 .build-notes{margin:10px 0;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;background:rgba(5,8,18,.3);font-size:.86rem;line-height:1.4}.build-skill-setup{margin-top:10px;border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden}.build-skill-row h4{text-align:center;margin:0;padding:6px;background:rgba(0,0,0,.18);text-transform:uppercase;letter-spacing:.14em;font-size:.67rem}.build-skill-row>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:10px}.build-skill-orb{display:grid;justify-items:center;gap:5px;text-align:center;min-width:0}.build-skill-orb span{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;overflow:hidden;border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.25)}.build-skill-orb img{width:52px!important;height:52px!important;max-width:52px!important;max-height:52px!important;object-fit:cover;border-radius:50%}.build-skill-orb strong{font-size:.68rem;line-height:1.1;overflow-wrap:anywhere}.build-skill-orb.empty{opacity:.22}.empty-build-card{max-width:900px;margin:0 auto;padding:24px;border:1px solid rgba(142,239,255,.22);border-radius:20px;background:rgba(20,28,48,.85)}
 @media(max-width:900px){.member-build-grid{grid-template-columns:1fr;width:min(700px,calc(100vw - 28px))}}
+
+
+/* V48 centered build grid */
+body .build-page-main{width:100%;max-width:none;margin-inline:auto;padding-inline:clamp(18px,4vw,64px);box-sizing:border-box}
+body .build-page-main .member-build-section{width:100%;max-width:1480px;margin:8px auto 0!important;padding-inline:0;box-sizing:border-box}
+body .build-page-main .member-build-list{width:100%;margin:0 auto}
+body .build-page-main .member-build-grid{width:100%;max-width:1480px;margin:0 auto;box-sizing:border-box}
+@media(max-width:900px){body .build-page-main{padding-inline:14px}body .build-page-main .member-build-grid{width:100%}}

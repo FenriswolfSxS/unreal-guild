@@ -235,3 +235,13 @@ body{padding-top:var(--persistent-nav-height)}
 .forge-topbar .header-user-area .account-profile-copy small{font-size:.68rem!important}
 @media(max-width:1120px){.forge-topbar{grid-template-columns:auto 1fr auto!important;gap:14px!important;padding-left:3%!important;padding-right:3%!important}.forge-topbar .forge-nav{gap:14px}.forge-topbar .forge-nav a{font-size:.84rem}.forge-brand span{display:none}}
 @media(max-width:820px){.forge-topbar{display:flex!important;justify-content:space-between!important;flex-wrap:wrap!important;align-items:center!important;overflow:visible!important}.forge-topbar .forge-menu{display:block;order:2}.forge-topbar .header-user-area{order:3;margin-left:auto}.forge-topbar .forge-nav{order:4;width:100%;display:none;flex-direction:column;align-items:stretch;gap:0;padding:8px 0 14px}.forge-topbar .forge-nav.open{display:flex}.forge-topbar .forge-nav > a,.forge-topbar .forge-nav > .nav-group > a{display:block;width:100%;padding:11px 12px}.forge-topbar .forge-nav > a.active::after,.forge-topbar .forge-nav > .nav-group > a.active::after{left:12px;right:auto;width:34px;bottom:5px}}
+
+
+/* V48 My Builds delete controls */
+#savedBuildList{display:grid;gap:10px;min-width:min(680px,78vw);margin:12px 0 18px}
+.saved-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px;border:1px solid rgba(255,255,255,.13);border-radius:12px;background:rgba(255,255,255,.035)}
+.saved-row-copy{min-width:0;overflow-wrap:anywhere}
+.saved-row-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.saved-build-delete{border-color:rgba(255,83,112,.65)!important;background:rgba(255,58,92,.13)!important;color:#ff9caf!important}
+.saved-build-delete:hover{background:rgba(255,58,92,.24)!important}
+@media(max-width:620px){#savedBuildList{min-width:0}.saved-row{align-items:flex-start;flex-direction:column}.saved-row-actions{width:100%}.saved-row-actions button{flex:1}}

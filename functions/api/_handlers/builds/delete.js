@@ -10,7 +10,7 @@ export async function onRequestDelete({request,env}){
   const own=build.created_by===auth.user.id;
   const rank=String(auth.user.rank_slug||auth.user.rank_name||'').trim().toLowerCase();
   const leadership=['leader','deputy','officer','admin'].includes(rank);
-  const allowed=leadership||(own&&perms.includes('delete_own_builds'))||perms.includes('moderate_builds')||perms.includes('admin_dashboard');
+  const allowed=own||leadership||perms.includes('moderate_builds')||perms.includes('admin_dashboard');
   if(!allowed)return json({ok:false,error:'You do not have permission to delete this build.'},403);
   const result=await env.DB.prepare('DELETE FROM member_builds WHERE id=?').bind(id).run();
   if(!result?.success)return json({ok:false,error:'The build could not be deleted.'},500);
