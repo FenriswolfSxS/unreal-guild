@@ -2152,3 +2152,66 @@ body .build-page-main .member-build-section{width:100%;max-width:1480px;margin:8
 body .build-page-main .member-build-list{width:100%;margin:0 auto}
 body .build-page-main .member-build-grid{width:100%;max-width:1480px;margin:0 auto;box-sizing:border-box}
 @media(max-width:900px){body .build-page-main{padding-inline:14px}body .build-page-main .member-build-grid{width:100%}}
+
+/* V49 — separate Builds dropdown from the Build Lab tab */
+.site-header .nav-dropdown-toggle{
+  appearance:none;
+  border:0;
+  background:transparent;
+  font:inherit;
+  font-weight:inherit;
+  cursor:pointer;
+  position:relative;
+  padding:12px 0;
+  color:#d8def4;
+  transition:color .18s ease,text-shadow .18s ease,transform .18s ease;
+}
+.site-header .nav-dropdown-toggle:hover,
+.site-header .nav-dropdown-toggle:focus-visible{
+  color:#fff;
+  text-shadow:0 0 14px rgba(142,239,255,.9);
+  transform:translateY(-1px);
+  outline:none;
+}
+.site-header .nav-dropdown-toggle.active{
+  color:var(--gold,#ffd166)!important;
+  text-shadow:0 0 8px rgba(255,209,102,.92),0 0 22px rgba(255,209,102,.5)!important;
+}
+.site-header .nav-dropdown-toggle.active::after{
+  content:"";
+  position:absolute;
+  left:18%;right:18%;bottom:5px;height:2px;
+  border-radius:999px;
+  background:currentColor;
+  box-shadow:0 0 10px currentColor;
+}
+.nav-group.dropdown-open .dropdown{display:flex;flex-direction:column;gap:4px}
+
+@media(max-width:900px){
+  .site-header .site-nav > .nav-group{display:block;width:100%;padding:0}
+  .site-header .site-nav > .nav-group > .nav-dropdown-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    padding:11px 12px;
+    text-align:left;
+  }
+  .site-header .site-nav > .nav-group > .nav-dropdown-toggle.active::after{
+    left:12px;right:auto;width:34px;bottom:5px;
+  }
+  .site-header .site-nav .nav-group .dropdown{
+    position:static;
+    min-width:0;
+    width:100%;
+    margin:0 0 5px;
+    padding:4px 8px 8px 20px;
+    border:0;
+    border-radius:0;
+    background:rgba(255,255,255,.025);
+    box-shadow:none;
+  }
+  .site-header .site-nav .nav-group:not(.dropdown-open) .dropdown{display:none!important}
+  .site-header .site-nav .nav-group.dropdown-open .dropdown{display:flex!important}
+  .site-header .site-nav .dropdown a{padding:10px 12px}
+}

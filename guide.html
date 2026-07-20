@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Guide | Unreal Guild</title>
-  <link rel="stylesheet" href="css/styles.css?v=home-guides41" />
+  <link rel="stylesheet" href="css/styles.css?v=49-nav" />
 </head>
 <body>
   <div class="particles"></div><div class="ambient-glow glow-one"></div><div class="ambient-glow glow-two"></div>
@@ -13,7 +13,13 @@
     <button class="menu-button" id="menuButton" aria-label="Open menu">☰</button>
     <nav class="site-nav" id="siteNav">
       <a href="index.html">Home</a><a href="events.html">Events</a><a href="roster.html">Roster</a>
-      <div class="nav-group"><a href="builds.html">Builds ▾</a><div class="dropdown"><a href="builds.html">Build Lab</a><a class="spec-nav-link" href="conqueror-builds.html"><img src="assets/class-icons/conqueror.png" alt="">Conqueror</a><a class="spec-nav-link" href="guardian-builds.html"><img src="assets/class-icons/guardian.png" alt="">Guardian</a><a class="spec-nav-link" href="destroyer-builds.html"><img src="assets/class-icons/destroyer.png" alt="">Destroyer</a><a class="spec-nav-link" href="dominator-builds.html"><img src="assets/class-icons/dominator.png" alt="">Dominator</a></div></div>
+      <div class="nav-group builds-nav-group">
+      <button class="nav-dropdown-toggle" type="button" aria-expanded="false" aria-haspopup="true">Builds <span aria-hidden="true">▾</span></button>
+      <div class="dropdown">
+        <a class="spec-nav-link" href="conqueror-builds.html"><img src="assets/class-icons/conqueror.png" alt="">Conqueror</a><a class="spec-nav-link" href="guardian-builds.html"><img src="assets/class-icons/guardian.png" alt="">Guardian</a><a class="spec-nav-link" href="destroyer-builds.html"><img src="assets/class-icons/destroyer.png" alt="">Destroyer</a><a class="spec-nav-link" href="dominator-builds.html"><img src="assets/class-icons/dominator.png" alt="">Dominator</a>
+      </div>
+    </div>
+    <a href="builds.html">Build Lab</a>
       <div class="nav-group"><a class="active" href="guides.html">Guides ▾</a><div class="dropdown"><a href="guides.html">All Guides</a><a href="food-guide.html">Food Guide</a><a href="farming-guide.html">Farming Guide</a><a href="fantamon-guide.html">Fantamon Guide</a><a href="stat-guide.html">Stat Guide</a></div></div>
       <a href="recruitment.html">Guild Forums</a><a class="discord-link" href="https://discord.gg/xWHdMsVxKG" target="_blank" rel="noopener">Discord</a>
     </nav>
@@ -36,6 +42,6 @@
       }).catch(()=>{});
     })();
   </script>
-  <script src="js/app.js"></script><script src="js/auth-ui.js?v=26nav"></script><script src="js/content-public.js?v=richtext41"></script>
+  <script src="js/app.js?v=49-nav"></script><script src="js/auth-ui.js?v=26nav"></script><script src="js/content-public.js?v=richtext41"></script>
 </body>
 </html>
