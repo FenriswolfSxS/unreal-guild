@@ -14,6 +14,7 @@ import re
 import sys
 import time
 import traceback
+import shutil
 import unicodedata
 from pathlib import Path
 from urllib.parse import urljoin, urlparse, unquote
@@ -29,6 +30,7 @@ SKILLS_JSON = DATA_DIR / 'skills.json'
 ICON_DIR = ROOT / 'assets' / 'skills'
 LOG_DIR = ROOT / 'logs'
 LOG_FILE = LOG_DIR / 'lootwaifus-skill-sync.json'
+BACKUP_DIR = ROOT / 'backups' / 'skill-updates'
 
 USER_AGENT = 'Mozilla/5.0 UnrealGuildSkillSync/2.0'
 
@@ -370,44 +372,94 @@ def load_existing_build_data() -> dict:
         return {'paths': PATHS, 'skills': []}
 
 
-def merge_skills(existing: list[dict], harvested: list[dict]) -> list[dict]:
-    """Merge Loot & Waifus details into the Build Lab's known skill list.
+def class_metadata(tier_value: str) -> tuple[str | None, int | None, str | None]:
+    """Return (path, tier number, canonical class name) for supported Build Lab classes."""
+    raw = clean_text(tier_value)
+    if not raw:
+        return None, None, None
+    best = None
+    for cls in sorted(CLASS_TO_PATH.keys(), key=len, reverse=True):
+        if re.search(r'\b' + re.escape(cls) + r'\b', raw, re.I):
+            best = cls
+            break
+    if not best:
+        return None, None, None
+    tier_num = CLASS_TIER.get(best)
+    # The current Build Lab supports the five global tiers only. Future/TW tier-6
+    # classes are intentionally ignored so they cannot break filters or paths.
+    if not tier_num or tier_num > 5:
+        return None, None, None
+    canonical = next((c for c in CLASS_TO_PATH if c == best), best).title()
+    return CLASS_TO_PATH.get(best), tier_num, canonical
 
-    Important: the Loot & Waifus page also exposes glossary/status records and future/TW
-    class data. Those broke the Build Lab tiers when we treated every harvested object as
-    a Build Lab skill. This function now keeps the site's existing curated Build Lab skill
-    list as the source of truth for path, tier, tierNumber, type, and ordering, then only
-    imports details/icons/cooldowns/tags/scaling from Loot & Waifus by skill name.
+
+def build_new_skill(candidate: dict, used_ids: set[str]) -> dict | None:
+    """Convert a harvested record into a safe Build Lab skill row."""
+    name = clean_text(candidate.get('name'))
+    typ = clean_text(candidate.get('type')).lower()
+    tier_raw = candidate.get('tier') or candidate.get('class') or ''
+    path, tier_num, canonical_tier = class_metadata(str(tier_raw))
+    if not name or typ not in {'technique', 'charm'} or not path or not tier_num:
+        return None
+
+    base_id = f'{slugify(canonical_tier)}-{slugify(name)}'
+    skill_id = base_id
+    suffix = 2
+    while skill_id in used_ids:
+        skill_id = f'{base_id}-{suffix}'
+        suffix += 1
+    used_ids.add(skill_id)
+
+    out = {
+        'id': skill_id,
+        'name': name,
+        'type': typ,
+        'tier': canonical_tier,
+        'tierNumber': tier_num,
+        'path': path,
+        'icon': '',
+        'classIconPath': f'assets/class-icons/{slugify(canonical_tier)}.svg',
+        'cooldown': candidate.get('cooldown') or '—',
+        'description': candidate.get('description') or 'Description pending.',
+        'source': candidate.get('source') or SOURCE_URL,
+    }
+    for fld in ['tags', 'keywords', 'scaling', 'iconUrl', 'iconSource', 'extra']:
+        val = candidate.get(fld)
+        if val not in [None, '', [], {}]:
+            out[fld] = val
+    return out
+
+
+def merge_skills(existing: list[dict], harvested: list[dict]) -> tuple[list[dict], list[str]]:
+    """Update known skills and safely append genuinely missing supported skills.
+
+    D1 and R2 are never read or written. The updater only modifies static files in
+    this project: builds.html, data/skills.json, local icons, logs, and backups.
     """
     harvested_by_name: dict[str, list[dict]] = {}
+    parsed_harvest: list[dict] = []
     for item in harvested:
-        parsed = parse_object(item) if not (isinstance(item, dict) and item.get('name')) else item
+        parsed = parse_object(item) if not (isinstance(item, dict) and item.get('name')) else dict(item)
         if not parsed or not parsed.get('name'):
             continue
+        parsed_harvest.append(parsed)
         harvested_by_name.setdefault(norm_name(parsed['name']), []).append(parsed)
 
-    if not existing:
-        # Emergency fallback only. Normal site updates should always have existing skills.
-        fallback = []
-        for arr in harvested_by_name.values():
-            first = dict(arr[0])
-            if not first.get('id'):
-                first['id'] = f'skill-{slugify(first.get("name"))}'
-            first['type'] = str(first.get('type') or 'technique').lower()
-            first['cooldown'] = first.get('cooldown') or '—'
-            first['description'] = first.get('description') or 'Description pending.'
-            fallback.append(first)
-        return sorted(fallback, key=lambda s: str(s.get('name','')))
-
     updated: list[dict] = []
+    existing_names: set[str] = set()
+    used_ids: set[str] = set()
+
     for old in existing:
         skill = dict(old)
+        used_ids.add(str(skill.get('id') or ''))
         key = norm_name(skill.get('name', ''))
+        existing_names.add(key)
         candidates = harvested_by_name.get(key, [])
         if candidates:
-            # Prefer a candidate whose class field matches the Build Lab tier.
-            chosen = next((x for x in candidates if norm_name(x.get('class', '') or x.get('tier', '')) == norm_name(skill.get('tier', ''))), candidates[0])
-            # Import display/detail fields only. Do NOT replace path/tier/type from Loot data.
+            chosen = next(
+                (x for x in candidates if norm_name(x.get('class', '') or x.get('tier', '')) == norm_name(skill.get('tier', ''))),
+                candidates[0],
+            )
             for fld in ['description', 'cooldown', 'tags', 'keywords', 'scaling', 'iconUrl', 'iconSource', 'source', 'extra']:
                 val = chosen.get(fld)
                 if val not in [None, '', [], {}]:
@@ -415,14 +467,28 @@ def merge_skills(existing: list[dict], harvested: list[dict]) -> list[dict]:
         skill['type'] = str(skill.get('type') or 'technique').lower()
         skill['cooldown'] = skill.get('cooldown') or '—'
         skill['description'] = skill.get('description') or 'Description pending.'
-        if not skill.get('iconUrl') and skill.get('iconSource', '').startswith('http'):
+        if not skill.get('iconUrl') and str(skill.get('iconSource', '')).startswith('http'):
             skill['iconUrl'] = skill['iconSource']
         updated.append(skill)
 
-    def sort_key(s):
-        path_index = list(PATHS.keys()).index(s.get('path')) if s.get('path') in PATHS else 99
-        return (path_index, int(s.get('tierNumber') or 99), str(s.get('type') or ''), str(s.get('name') or ''))
-    return sorted(updated, key=sort_key)
+    added_names: list[str] = []
+    for candidate in parsed_harvest:
+        key = norm_name(candidate.get('name', ''))
+        if not key or key in existing_names:
+            continue
+        new_skill = build_new_skill(candidate, used_ids)
+        if not new_skill:
+            continue
+        updated.append(new_skill)
+        existing_names.add(key)
+        added_names.append(new_skill['name'])
+
+    def sort_key(skill):
+        path_index = list(PATHS.keys()).index(skill.get('path')) if skill.get('path') in PATHS else 99
+        type_index = 0 if skill.get('type') == 'technique' else 1
+        return (path_index, int(skill.get('tierNumber') or 99), type_index, str(skill.get('name') or ''))
+
+    return sorted(updated, key=sort_key), sorted(added_names)
 
 def guess_extension(url: str, content_type: str = '') -> str:
     if url.startswith('data:image/'):
@@ -483,12 +549,44 @@ def update_builds_html(build_data: dict) -> None:
     BUILDS_HTML.write_text(new_text, encoding='utf-8')
 
 
+def create_backup() -> Path:
+    stamp = time.strftime('%Y%m%d-%H%M%S')
+    destination = BACKUP_DIR / stamp
+    destination.mkdir(parents=True, exist_ok=True)
+    for source in [BUILDS_HTML, SKILLS_JSON]:
+        if source.exists():
+            shutil.copy2(source, destination / source.name)
+    return destination
+
+
+def validate_output(existing_count: int, skills: list[dict]) -> None:
+    if not skills:
+        raise RuntimeError('Refusing to write an empty skill list.')
+    if existing_count and len(skills) < existing_count:
+        raise RuntimeError(
+            f'Refusing to shrink the skill list from {existing_count} to {len(skills)}. '
+            'The previous files remain available in backups/skill-updates.'
+        )
+    seen = set()
+    for skill in skills:
+        required = ['id', 'name', 'type', 'tier', 'tierNumber', 'path']
+        missing = [field for field in required if skill.get(field) in [None, '']]
+        if missing:
+            raise RuntimeError(f'Invalid skill {skill.get("name", "(unknown)")}: missing {missing}')
+        if skill['id'] in seen:
+            raise RuntimeError(f'Duplicate skill id detected: {skill["id"]}')
+        seen.add(skill['id'])
+
+
 def main() -> int:
     print(f'Fetching {SOURCE_URL}')
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     ICON_DIR.mkdir(parents=True, exist_ok=True)
-    report = {'source': SOURCE_URL, 'started': time.strftime('%Y-%m-%d %H:%M:%S'), 'api_hits': [], 'asset_hits': [], 'errors': []}
+    report = {'source': SOURCE_URL, 'started': time.strftime('%Y-%m-%d %H:%M:%S'), 'api_hits': [], 'asset_hits': [], 'errors': [], 'database_changes': False}
+
+    backup_path = create_backup()
+    report['backup'] = str(backup_path.relative_to(ROOT)).replace(os.sep, '/')
 
     existing_data = load_existing_build_data()
     existing_skills = existing_data.get('skills', [])
@@ -524,7 +622,8 @@ def main() -> int:
         if gained:
             report['asset_hits'].append({'url': url, 'objects': gained})
 
-    skills = merge_skills(existing_skills, harvested_raw)
+    skills, added_names = merge_skills(existing_skills, harvested_raw)
+    validate_output(len(existing_skills), skills)
     icon_count = 0
     desc_count = 0
     cooldown_count = 0
@@ -545,7 +644,10 @@ def main() -> int:
     report.update({
         'finished': time.strftime('%Y-%m-%d %H:%M:%S'),
         'raw_objects_found': len(harvested_raw),
+        'skills_before': len(existing_skills),
         'skills_written': len(skills),
+        'skills_added': len(added_names),
+        'added_skill_names': added_names,
         'icons_downloaded': icon_count,
         'descriptions_present': desc_count,
         'cooldowns_present': cooldown_count,
@@ -555,6 +657,11 @@ def main() -> int:
 
     print(f'Found {len(harvested_raw)} raw skill/detail records.')
     print(f'Wrote {len(skills)} skills to data/skills.json and builds.html.')
+    print(f'New supported skills added: {len(added_names)}')
+    if added_names:
+        print('Added: ' + ', '.join(added_names))
+    print(f'Backup: {backup_path}')
+    print('Database safety: D1 and R2 were not accessed or changed.')
     print(f'Descriptions present: {desc_count}')
     print(f'Cooldowns present: {cooldown_count}')
     print(f'Icons downloaded/updated: {icon_count}')

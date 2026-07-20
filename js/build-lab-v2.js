@@ -58,7 +58,30 @@
     return p ? p.classes.slice(0, state.tierIndex + 1) : [];
   }
   function skillColor(skill){ return colorForPath(skill.path); }
-  function isEligible(skill){ return skill.path === state.path && eligibleClasses().includes(skill.tier); }
+
+  // Base-class skills are shared by both specialization branches.
+  // Example: Mage skills are stored once under the Sorcerer branch, but they
+  // must also be available to Sage / Arcanist / Dominator / Prophet builds.
+  // The same rule also keeps Warrior skills available to both melee branches.
+  function skillBelongsToPath(skill, pathId = state.path){
+    if(skill.path === pathId) return true;
+
+    const selectedPath = DATA.paths[pathId];
+    const sourcePath = DATA.paths[skill.path];
+    if(!selectedPath || !sourcePath) return false;
+
+    const selectedBaseClass = selectedPath.classes?.[0];
+    const sourceBaseClass = sourcePath.classes?.[0];
+    return Boolean(
+      selectedBaseClass &&
+      selectedBaseClass === sourceBaseClass &&
+      skill.tier === selectedBaseClass
+    );
+  }
+
+  function isEligible(skill){
+    return skillBelongsToPath(skill) && eligibleClasses().includes(skill.tier);
+  }
 
   function renderPaths(){
     const grid = $("pathGrid");
@@ -153,7 +176,7 @@
 
   function filteredSkills(){
     let list = DATA.skills.slice();
-    list = list.filter(s => s.path === state.path);
+    list = list.filter(s => skillBelongsToPath(s));
 
     if(state.classFilter === "eligible") {
       const eligible = new Set(eligibleClasses());
@@ -170,6 +193,17 @@
 
     const q = state.query.trim().toLowerCase();
     if(q) list = list.filter(s => [s.name,s.type,s.tier,s.description,s.cooldown].join(" ").toLowerCase().includes(q));
+
+    // The embedded database contains copied T1 Warrior/Mage rows for both branches.
+    // Show one canonical card per ability, regardless of the branch-copy id.
+    const unique = new Map();
+    for (const skill of list) {
+      const key = [skill.tier, skill.type, skill.name].map(v => String(v || '').trim().toLowerCase()).join('|');
+      const existing = unique.get(key);
+      // Prefer the native row over a generated shared copy so saved ids remain stable.
+      if (!existing || (skill.path === state.path && existing.path !== state.path)) unique.set(key, skill);
+    }
+    list = [...unique.values()];
 
     const order = currentPath()?.classes || [];
     list.sort((a,b) => (order.indexOf(a.tier)-order.indexOf(b.tier)) || a.type.localeCompare(b.type) || a.name.localeCompare(b.name));
@@ -389,9 +423,9 @@
     list.innerHTML = `<p class="muted">Loading your D1 saved builds...</p>`;
     dialog.showModal();
     try{
-      const d = await apiJson('/api/builds/list?path='+encodeURIComponent(buildPagePath())+'&mine=1');
+      const d = await apiJson('/api/builds/list?mine=1&_='+Date.now(), { cache:'no-store' });
       const saved = d.builds || [];
-      list.innerHTML = saved.length ? saved.map((b,i)=>`<div class="saved-row"><div><strong>${escapeHtml(b.title)}</strong><br><span class="muted">${escapeHtml(b.visibility || 'private')} • ${escapeHtml(b.updated_at || b.created_at || '')}</span></div><button type="button" data-load-build="${i}">Load</button></div>`).join("") : `<p class="muted">No saved builds yet.</p>`;
+      list.innerHTML = saved.length ? saved.map((b,i)=>`<div class="saved-row"><div><strong>${escapeHtml(b.title)}</strong><br><span class="muted">${escapeHtml(b.path || 'build')} • ${escapeHtml(b.visibility || 'private')} • ${escapeHtml(b.updated_at || b.created_at || '')}</span></div><button type="button" data-load-build="${i}">Load</button></div>`).join("") : `<p class="muted">No saved builds yet.</p>`;
       list.querySelectorAll("[data-load-build]").forEach(btn => btn.addEventListener("click", () => {
         const b = saved[Number(btn.dataset.loadBuild)];
         try{ loadState(JSON.parse(b.build_json || '{}')); dialog.close(); }
